@@ -31,22 +31,19 @@ class _LoginWidgetState extends State<LoginWidget> {
     return Scaffold(
       body: Stack(
         children: [
-          // Fondo con imagen de opacidad
           Container(
             width: size.width,
             height: size.height,
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(
-                    'assets/images/img_inicio_sesion.png'), // Cambia el nombre si es necesario
+                image: AssetImage('assets/images/img_inicio_sesion.png'),
                 fit: BoxFit.cover,
               ),
             ),
             child: Container(
-              color: Colors.black.withOpacity(0.4), // Aplicamos opacidad
+              color: Colors.black.withOpacity(0.4),
             ),
           ),
-          // Contenido principal
           Center(
             child: SingleChildScrollView(
               child: Padding(
