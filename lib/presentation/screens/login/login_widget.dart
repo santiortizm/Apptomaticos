@@ -102,7 +102,6 @@ class _LoginWidgetState extends State<LoginWidget> {
                               onPressed: () async {
                                 final isValid =
                                     _formKey.currentState?.validate();
-
                                 if (isValid != true) {
                                   // Implementar la lógica de inicio de sesión
                                   return;
@@ -134,8 +133,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   vertical: size.height * 0.02,
                                   horizontal: size.width * 0.2,
                                 ),
-                                backgroundColor:
-                                    const Color(0xFF00796B), // Color del botón
+                                backgroundColor: const Color(0xFF00796B),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
