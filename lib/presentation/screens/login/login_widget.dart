@@ -31,22 +31,19 @@ class _LoginWidgetState extends State<LoginWidget> {
     return Scaffold(
       body: Stack(
         children: [
-          // Fondo con imagen de opacidad
           Container(
             width: size.width,
             height: size.height,
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(
-                    'assets/images/img_inicio_sesion.png'), // Cambia el nombre si es necesario
+                image: AssetImage('assets/images/img_inicio_sesion.png'),
                 fit: BoxFit.cover,
               ),
             ),
             child: Container(
-              color: Colors.black.withOpacity(0.4), // Aplicamos opacidad
+              color: Colors.black.withOpacity(0.4),
             ),
           ),
-          // Contenido principal
           Center(
             child: SingleChildScrollView(
               child: Padding(
@@ -105,7 +102,6 @@ class _LoginWidgetState extends State<LoginWidget> {
                               onPressed: () async {
                                 final isValid =
                                     _formKey.currentState?.validate();
-
                                 if (isValid != true) {
                                   // Implementar la lógica de inicio de sesión
                                   return;
@@ -137,8 +133,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   vertical: size.height * 0.02,
                                   horizontal: size.width * 0.2,
                                 ),
-                                backgroundColor:
-                                    const Color(0xFF00796B), // Color del botón
+                                backgroundColor: const Color(0xFF00796B),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),

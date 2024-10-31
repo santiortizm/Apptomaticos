@@ -1,47 +1,36 @@
+import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
-class PermissionsService {
-  Future<void> requestPermission() async {
-    const permission = Permission.camera;
+Future<bool> storagePermission() async {
+  final DeviceInfoPlugin info = DeviceInfoPlugin();
+  final AndroidDeviceInfo androidInfo = await info.androidInfo;
+  debugPrint('releaseVersion : ${androidInfo.version.release}');
+  final int androidVersion = int.parse(androidInfo.version.release);
+  bool havePermission = false;
 
-    if (await permission.isDenied) {
-      final result = await permission.request();
-      if (result.isGranted) {
-        // Permission is granted
-      } else if (result.isDenied) {
-        // Permission is denied
-      } else if (result.isPermanentlyDenied) {
-        // Permission is permanently denied
-      }
-    }
+  // Here you can use android api level
+  // like android api level 33 = android 13
+  // This way you can also find out how to request storage permission
+
+  if (androidVersion >= 13) {
+    final request = await [
+      Permission.videos,
+      Permission.photos,
+      //..... as needed
+    ].request(); //import 'package:permission_handler/permission_handler.dart';
+
+    havePermission =
+        request.values.every((status) => status == PermissionStatus.granted);
+  } else {
+    final status = await Permission.storage.request();
+    havePermission = status.isGranted;
   }
-  // // Solicitar permiso de cámara
-  // Future<bool> requestCameraPermission() async {
-  //   final status = await Permission.camera.request();
-  //   if (status == PermissionStatus.permanentlyDenied) {
-  //     openAppSettings(); // Redirigir a la configuración si está permanentemente denegado
-  //   }
-  //   return status == PermissionStatus.granted;
-  // }
 
-  // // Solicitar permiso de almacenamiento
-  // Future<bool> requestStoragePermission() async {
-  //   final status = await Permission.storage.request(); // Para Android
-  //   if (status == PermissionStatus.permanentlyDenied) {
-  //     openAppSettings(); // Redirigir a la configuración si está permanentemente denegado
-  //   }
-  //   return status == PermissionStatus.granted;
-  // }
+  if (!havePermission) {
+    // if no permission then open app-setting
+    await openAppSettings();
+  }
 
-  // // Solicitar permisos de cámara y almacenamiento (para Android)
-  // Future<bool> requestCameraAndGalleryPermissions() async {
-  //   final cameraStatus = await Permission.camera.request();
-  //   final storageStatus = await Permission.storage.request(); // Para Android
-
-  //   if (cameraStatus.isPermanentlyDenied || storageStatus.isPermanentlyDenied) {
-  //     openAppSettings(); // Redirigir a configuración si algún permiso está permanentemente denegado
-  //   }
-
-  //   return cameraStatus.isGranted && (storageStatus.isGranted);
-  // }
+  return havePermission;
 }
