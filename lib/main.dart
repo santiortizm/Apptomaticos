@@ -1,6 +1,7 @@
 import 'package:apptomaticos/presentation/router/app_router.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -15,7 +16,15 @@ Future main() async {
     anonKey: supabaseKey,
   );
 
-  runApp(MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Fijar la orientación en solo vertical
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then((_) {
+    runApp(MyApp());
+  });
 }
 
 class MyApp extends StatelessWidget {

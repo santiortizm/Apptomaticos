@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:apptomaticos/core/constants/colors.dart';
+import 'package:apptomaticos/core/services/permissions_service.dart';
 
 import 'package:apptomaticos/core/widgets/custom_button.dart';
 import 'package:apptomaticos/core/widgets/custom_dialog_confimation.dart';
@@ -8,6 +11,8 @@ import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class AddProductWidget extends StatefulWidget {
   const AddProductWidget({super.key});
@@ -18,6 +23,70 @@ class AddProductWidget extends StatefulWidget {
 
 class _AddProductWidgetState extends State<AddProductWidget> {
   final AddProductModel _model = AddProductModel();
+  final ImagePicker _picker = ImagePicker();
+  XFile? _selectedImage;
+  // Método para verificar permisos y abrir opciones de selección de imagen
+  Future<void> _selectImage() async {
+    // Verificar y solicitar permisos de cámara y almacenamiento
+    final bool permissionGranted = await storagePermission();
+
+    if (permissionGranted) {
+      // Si los permisos están concedidos, mostrar opciones
+      showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return SafeArea(
+            child: Wrap(
+              children: <Widget>[
+                ListTile(
+                  leading: const Icon(Icons.photo_library),
+                  title: const Text('Seleccionar de la galería'),
+                  onTap: () async {
+                    Navigator.of(context).pop();
+                    final XFile? image =
+                        await _picker.pickImage(source: ImageSource.gallery);
+                    if (image != null) {
+                      setState(() {
+                        _selectedImage = image;
+                      });
+                    }
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.camera_alt),
+                  title: const Text('Tomar una foto'),
+                  onTap: () async {
+                    Navigator.of(context).pop();
+                    final XFile? image =
+                        await _picker.pickImage(source: ImageSource.camera);
+                    if (image != null) {
+                      setState(() {
+                        _selectedImage = image;
+                      });
+                    }
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    } else {
+      // Si no se concedieron permisos, mostrar un SnackBar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content:
+              const Text('Permisos de almacenamiento y cámara no concedidos.'),
+          action: SnackBarAction(
+            label: 'Configurar',
+            onPressed: () {
+              openAppSettings();
+            },
+          ),
+        ),
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -69,10 +138,13 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const CircleAvatar(
-                            radius: 50,
-                            backgroundImage:
-                                AssetImage('assets/images/fondo1.jpg')),
+                        CircleAvatar(
+                          radius: 50,
+                          backgroundImage: _selectedImage != null
+                              ? FileImage(File(_selectedImage!.path))
+                              : const AssetImage('assets/images/fondo1.jpg')
+                                  as ImageProvider,
+                        ),
                         Padding(
                           padding: EdgeInsets.only(
                             top: size.height * 0.075,
@@ -82,7 +154,7 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                                 backgroundColor:
                                     WidgetStatePropertyAll(redApp)),
                             color: redApp,
-                            onPressed: () {}, // Llamamos a _pickImage aquí
+                            onPressed: _selectImage,
                             icon: const Icon(
                               size: 26,
                               Icons.camera_alt_rounded,
