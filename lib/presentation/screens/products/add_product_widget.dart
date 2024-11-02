@@ -166,14 +166,13 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  // Nombre del producto
+
                   TextFormFieldWidget(
                     labelText: 'Nombre Producto',
                     controller: _model.nameController,
                     icon: Icons.shopping_cart,
                   ),
                   const SizedBox(height: 16),
-                  // Cantidad (Canasta)
                   TextFormFieldWidget(
                     labelText: 'Cantidad (CANASTA)',
                     controller: _model.quantityController,
