@@ -1,7 +1,7 @@
 import 'package:apptomaticos/core/constants/colors.dart';
 import 'package:apptomaticos/core/widgets/custom_button.dart';
-import 'package:go_router/go_router.dart';
-import 'package:apptomaticos/presentation/screens/products/widgets/custom_listview.dart';
+import 'package:apptomaticos/presentation/screens/products/add_product_widget.dart';
+import 'package:apptomaticos/core/widgets/custom_listview.dart';
 import 'package:apptomaticos/presentation/screens/profile/profile_widget.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -20,7 +20,6 @@ class _MenuProductsWidgetState extends State<MenuProductsWidget>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _selectedIndex = 0;
-
   @override
   void initState() {
     super.initState();
@@ -86,7 +85,10 @@ class _MenuProductsWidgetState extends State<MenuProductsWidget>
               width: size.width * 0.4,
               alignment: const Alignment(0.0, 0.95),
               child: CustomButton(
-                onPressed: () => context.go('/registerProduct'),
+                onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AddProductWidget())),
                 color: buttonGreen,
                 border: 18,
                 width: 0.4,
@@ -163,8 +165,13 @@ class _MenuProductsWidgetState extends State<MenuProductsWidget>
   }
 
   Widget _buildProfileTab(BuildContext context, Size size) {
-    return const Center(
-      child: Text('Aquí va el perfil', style: TextStyle(color: Colors.white)),
+    return const Column(
+      children: [
+        Center(
+          child:
+              Text('Aquí va el perfil', style: TextStyle(color: Colors.white)),
+        ),
+      ],
     );
   }
 }

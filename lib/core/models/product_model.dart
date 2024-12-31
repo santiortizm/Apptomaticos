@@ -24,7 +24,6 @@ class Product {
     required this.precio,
   });
 
-  // Factory para crear una instancia de Product desde un mapa (ej. de JSON)
   factory Product.fromMap(Map<String, dynamic> map) {
     return Product(
       idProducto: map['idProducto'] as int,
@@ -40,7 +39,6 @@ class Product {
     );
   }
 
-  // Método para convertir la instancia de Product a un mapa (para enviar a Supabase, por ejemplo)
   Map<String, dynamic> toMap() {
     return {
       'idProducto': idProducto,

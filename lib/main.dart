@@ -15,7 +15,6 @@ Future main() async {
     url: supabaseUrl,
     anonKey: supabaseKey,
   );
-
   WidgetsFlutterBinding.ensureInitialized();
 
   // Fijar la orientación en solo vertical

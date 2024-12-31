@@ -13,17 +13,20 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AddProductWidget extends StatefulWidget {
   const AddProductWidget({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _AddProductWidgetState createState() => _AddProductWidgetState();
 }
 
 class _AddProductWidgetState extends State<AddProductWidget> {
   final AddProductModel _model = AddProductModel();
   final ImagePicker _picker = ImagePicker();
+  final SupabaseClient supabase = Supabase.instance.client;
   XFile? _selectedImage;
   // Método para verificar permisos y abrir opciones de selección de imagen
   Future<void> _selectImage() async {
@@ -33,6 +36,7 @@ class _AddProductWidgetState extends State<AddProductWidget> {
     if (permissionGranted) {
       // Si los permisos están concedidos, mostrar opciones
       showModalBottomSheet(
+        // ignore: use_build_context_synchronously
         context: context,
         builder: (BuildContext context) {
           return SafeArea(
@@ -73,6 +77,7 @@ class _AddProductWidgetState extends State<AddProductWidget> {
       );
     } else {
       // Si no se concedieron permisos, mostrar un SnackBar
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content:
@@ -269,7 +274,74 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                         ),
                       ),
                       CustomButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          try {
+                            // Validar que todos los campos requeridos estén completos
+                            if (_model.nameController.text.isEmpty ||
+                                _model.quantityController.text.isEmpty ||
+                                _model.harvestDateController.text.isEmpty ||
+                                _model.expirationDateController.text.isEmpty ||
+                                _model.priceController.text.isEmpty ||
+                                _model.selectedMaturity == null ||
+                                _model.selectedFertilizer == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      'Por favor complete todos los campos requeridos.'),
+                                ),
+                              );
+                              return;
+                            }
+
+                            // Obtener el ID del usuario autenticado
+                            final userIdResponse = await supabase
+                                .from('usuarios')
+                                .select('idUsuario')
+                                .eq('idAuth', supabase.auth.currentUser!.id)
+                                .single();
+
+                            final idUsuario = userIdResponse['idUsuario'];
+
+                            // Insertar producto y obtener datos
+                            final response =
+                                await supabase.from('productos').insert({
+                              'nombreProducto': _model.nameController.text,
+                              'cantidad':
+                                  int.parse(_model.quantityController.text),
+                              'descripcion': _model.descriptionController.text,
+                              'maduracion': _model.selectedMaturity,
+                              'fertilizantes': _model.selectedFertilizer,
+                              'fechaCosecha': _model.harvestDateController.text,
+                              'fechaCaducidad':
+                                  _model.expirationDateController.text,
+                              'precio':
+                                  double.parse(_model.priceController.text),
+                              'idUsuario': idUsuario,
+                            }).select();
+
+                            // Verificar si response contiene datos
+                            if (response.isNotEmpty) {
+                              // ignore: use_build_context_synchronously
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text(
+                                        'Producto agregado correctamente')),
+                              );
+                            } else {
+                              // ignore: use_build_context_synchronously
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text(
+                                        'No se devolvieron datos de la inserción')),
+                              );
+                            }
+                          } catch (e) {
+                            // ignore: use_build_context_synchronously
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Error inesperado: $e')),
+                            );
+                          }
+                        },
                         color: buttonGreen,
                         border: 18,
                         width: 0.2,

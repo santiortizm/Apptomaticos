@@ -1,11 +1,9 @@
 import 'package:apptomaticos/data/repositories/product_repository.dart';
-import 'package:apptomaticos/presentation/screens/products/widgets/custom_card_products.dart';
+import 'package:apptomaticos/core/widgets/custom_card_products.dart';
 import 'package:flutter/material.dart';
 
 class CustomListview extends StatefulWidget {
-  const CustomListview({
-    super.key,
-  });
+  const CustomListview({super.key});
 
   @override
   State<CustomListview> createState() => _CustomListviewState();
@@ -14,6 +12,7 @@ class CustomListview extends StatefulWidget {
 class _CustomListviewState extends State<CustomListview> {
   final ProductRepository productRepository = ProductRepository();
   late Future<List> productsFuture;
+
   @override
   void initState() {
     productsFuture = productRepository.readData();
@@ -48,14 +47,17 @@ class _CustomListviewState extends State<CustomListview> {
               );
             }
             return ListView.builder(
-                itemCount: snapshot.data.length,
-                itemBuilder: (context, int index) {
-                  var data = snapshot.data[index];
-                  return CustomCardProducts(
-                      title: data['nombreProducto'],
-                      state: data['maduracion'],
-                      price: data['precio'].toString());
-                });
+              itemCount: snapshot.data.length,
+              itemBuilder: (context, int index) {
+                var data = snapshot.data[index];
+                return CustomCardProducts(
+                  title: data['nombreProducto'],
+                  state: data['maduracion'],
+                  price: data['precio'].toString(),
+                  imageUrl: data['imageUrl'] ?? '',
+                );
+              },
+            );
           }
           return const Center(
             child: CircularProgressIndicator(),

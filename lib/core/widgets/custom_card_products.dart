@@ -5,11 +5,15 @@ class CustomCardProducts extends StatelessWidget {
   final String title;
   final String state;
   final String price;
-  const CustomCardProducts(
-      {super.key,
-      required this.title,
-      required this.state,
-      required this.price});
+  final String imageUrl;
+
+  const CustomCardProducts({
+    super.key,
+    required this.title,
+    required this.state,
+    required this.price,
+    required this.imageUrl,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +33,11 @@ class CustomCardProducts extends StatelessWidget {
           Container(
             width: size.width * 1,
             height: size.height * 0.28,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage('assets/images/fondo_2.jpg'),
-                  fit: BoxFit.cover),
+                image: NetworkImage(imageUrl),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           Padding(
