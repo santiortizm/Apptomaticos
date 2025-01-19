@@ -1,3 +1,4 @@
+import 'package:apptomaticos/core/constants/colors.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
@@ -20,27 +21,28 @@ class CustomTabButton extends StatelessWidget {
 
     return Container(
       width: size.width * 0.4,
+      height: size.height * 0.06,
       padding: EdgeInsets.symmetric(vertical: size.height * 0.02),
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: isSelected ? Colors.red : Colors.blueAccent,
+        color: isSelected ? buttonGreen : buttoGreenSelected,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
+        spacing: 2,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             icon,
             color: Colors.white,
-            size: size.height * 0.03,
+            size: 18,
           ),
-          SizedBox(width: size.width * 0.02),
           AutoSizeText(
             label,
             style: textTheme.bodyMedium!.copyWith(color: Colors.white),
             maxLines: 1,
-            minFontSize: 12,
-            maxFontSize: 14,
+            minFontSize: 14,
+            maxFontSize: 16,
             overflow: TextOverflow.ellipsis,
           ),
         ],

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:apptomaticos/core/constants/colors.dart';
-import 'package:apptomaticos/core/services/permissions_service.dart';
 
 import 'package:apptomaticos/core/widgets/custom_button.dart';
 import 'package:apptomaticos/core/widgets/custom_dialog_confimation.dart';
@@ -12,7 +11,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AddProductWidget extends StatefulWidget {
@@ -25,72 +23,31 @@ class AddProductWidget extends StatefulWidget {
 
 class _AddProductWidgetState extends State<AddProductWidget> {
   final AddProductModel _model = AddProductModel();
-  final ImagePicker _picker = ImagePicker();
   final SupabaseClient supabase = Supabase.instance.client;
-  XFile? _selectedImage;
-  // Método para verificar permisos y abrir opciones de selección de imagen
-  Future<void> _selectImage() async {
-    // Verificar y solicitar permisos de cámara y almacenamiento
-    final bool permissionGranted = await storagePermission();
+  File? _imageFile;
+  Future pickImage() async {
+    final ImagePicker picker = ImagePicker();
 
-    if (permissionGranted) {
-      // Si los permisos están concedidos, mostrar opciones
-      showModalBottomSheet(
-        // ignore: use_build_context_synchronously
-        context: context,
-        builder: (BuildContext context) {
-          return SafeArea(
-            child: Wrap(
-              children: <Widget>[
-                ListTile(
-                  leading: const Icon(Icons.photo_library),
-                  title: const Text('Seleccionar de la galería'),
-                  onTap: () async {
-                    Navigator.of(context).pop();
-                    final XFile? image =
-                        await _picker.pickImage(source: ImageSource.gallery);
-                    if (image != null) {
-                      setState(() {
-                        _selectedImage = image;
-                      });
-                    }
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.camera_alt),
-                  title: const Text('Tomar una foto'),
-                  onTap: () async {
-                    Navigator.of(context).pop();
-                    final XFile? image =
-                        await _picker.pickImage(source: ImageSource.camera);
-                    if (image != null) {
-                      setState(() {
-                        _selectedImage = image;
-                      });
-                    }
-                  },
-                ),
-              ],
-            ),
-          );
-        },
-      );
-    } else {
-      // Si no se concedieron permisos, mostrar un SnackBar
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content:
-              const Text('Permisos de almacenamiento y cámara no concedidos.'),
-          action: SnackBarAction(
-            label: 'Configurar',
-            onPressed: () {
-              openAppSettings();
-            },
-          ),
-        ),
-      );
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      setState(() {
+        _imageFile = File(image.path);
+      });
     }
+  }
+
+  Future upLoadImage() async {
+    if (_imageFile == null) {
+      return;
+    }
+
+    final fileName = DateTime.now().millisecondsSinceEpoch.toString();
+    final path = 'product/$fileName';
+
+    await supabase.storage.from('products').upload(path, _imageFile!).then(
+        (value) => ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Imagen subida correctamente'))));
   }
 
   @override
@@ -132,10 +89,13 @@ class _AddProductWidgetState extends State<AddProductWidget> {
               padding: EdgeInsets.symmetric(
                   horizontal: size.width * 0.05, vertical: 15),
               width: size.width,
-              height: size.height * 1.04,
+              height: size.height * 1.1,
               decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(20))),
+                color: Colors.white,
+                borderRadius: BorderRadius.all(
+                  Radius.circular(20),
+                ),
+              ),
               child: Column(
                 children: [
                   Padding(
@@ -145,8 +105,8 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                       children: [
                         CircleAvatar(
                           radius: 50,
-                          backgroundImage: _selectedImage != null
-                              ? FileImage(File(_selectedImage!.path))
+                          backgroundImage: _imageFile != null
+                              ? FileImage(File(_imageFile!.path))
                               : const AssetImage('assets/images/fondo1.jpg')
                                   as ImageProvider,
                         ),
@@ -159,7 +119,7 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                                 backgroundColor:
                                     WidgetStatePropertyAll(redApp)),
                             color: redApp,
-                            onPressed: _selectImage,
+                            onPressed: pickImage,
                             icon: const Icon(
                               size: 26,
                               Icons.camera_alt_rounded,
@@ -169,6 +129,10 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                         )
                       ],
                     ),
+                  ),
+                  MaterialButton(
+                    onPressed: upLoadImage,
+                    child: const Text('subir imagen'),
                   ),
                   const SizedBox(height: 16),
                   // Nombre del producto
@@ -321,14 +285,28 @@ class _AddProductWidgetState extends State<AddProductWidget> {
 
                             // Verificar si response contiene datos
                             if (response.isNotEmpty) {
-                              // ignore: use_build_context_synchronously
+                              // Limpiar campos
+                              _model.nameController.clear();
+                              _model.quantityController.clear();
+                              _model.descriptionController.clear();
+                              _model.harvestDateController.clear();
+                              _model.expirationDateController.clear();
+                              _model.priceController.clear();
+                              setState(() {
+                                _model.selectedMaturity = null;
+                                _model.selectedFertilizer = null;
+                              });
+                              upLoadImage;
+
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                     content: Text(
                                         'Producto agregado correctamente')),
                               );
+
+                              // Redirigir al menú
+                              context.go('/menu');
                             } else {
-                              // ignore: use_build_context_synchronously
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                     content: Text(
@@ -336,7 +314,7 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                               );
                             }
                           } catch (e) {
-                            // ignore: use_build_context_synchronously
+                            print('Error inesperado: $e');
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text('Error inesperado: $e')),
                             );

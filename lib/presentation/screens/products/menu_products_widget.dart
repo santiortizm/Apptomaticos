@@ -1,10 +1,5 @@
-import 'package:apptomaticos/core/constants/colors.dart';
-import 'package:apptomaticos/core/widgets/custom_button.dart';
-import 'package:apptomaticos/presentation/screens/products/add_product_widget.dart';
 import 'package:apptomaticos/core/widgets/custom_listview.dart';
 import 'package:apptomaticos/presentation/screens/profile/profile_widget.dart';
-import 'package:apptomaticos/presentation/themes/app_theme.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:apptomaticos/core/widgets/custom_tabbar_button.dart';
 
@@ -55,7 +50,7 @@ class _MenuProductsWidgetState extends State<MenuProductsWidget>
               ),
             ),
             child: Container(
-              color: Colors.black.withOpacity(0.5),
+              color: Colors.black.withValues(alpha: 0.5),
             ),
           ),
           // Contenido principal
@@ -74,49 +69,16 @@ class _MenuProductsWidgetState extends State<MenuProductsWidget>
                       child: const CustomListview(),
                     ),
                     _buildPricesTab(context, size),
-                    const ProfileWidget(),
+                    Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: size.width * 0.05,
+                            vertical: size.height * 0.025),
+                        child: const ProfileWidget()),
                   ],
                 ),
               ),
             ],
           ),
-          Center(
-            child: Container(
-              width: size.width * 0.4,
-              alignment: const Alignment(0.0, 0.95),
-              child: CustomButton(
-                onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const AddProductWidget())),
-                color: buttonGreen,
-                border: 18,
-                width: 0.4,
-                height: 0.07,
-                elevation: 4,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.sell,
-                      color: redApp,
-                      size: 26,
-                    ),
-                    AutoSizeText(
-                      'Vender',
-                      maxFontSize: 32,
-                      minFontSize: 14,
-                      maxLines: 1,
-                      style: temaApp.textTheme.titleSmall!.copyWith(
-                          fontSize: 18,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          )
         ],
       ),
     );
@@ -161,17 +123,6 @@ class _MenuProductsWidgetState extends State<MenuProductsWidget>
     return const Center(
       child:
           Text('Aquí van los precios', style: TextStyle(color: Colors.white)),
-    );
-  }
-
-  Widget _buildProfileTab(BuildContext context, Size size) {
-    return const Column(
-      children: [
-        Center(
-          child:
-              Text('Aquí va el perfil', style: TextStyle(color: Colors.white)),
-        ),
-      ],
     );
   }
 }

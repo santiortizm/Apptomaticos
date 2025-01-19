@@ -14,18 +14,23 @@ class Avatar extends StatelessWidget {
 
     return Column(
       children: [
-        SizedBox(
+        Container(
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
           width: 150,
           height: 150,
           child: imageUrl != null
               ? Image.network(
                   imageUrl!,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                 )
               : Container(
                   color: Colors.grey,
                   child: const Center(
-                    child: Text('No image'),
+                    child: Icon(
+                      Icons.person,
+                      size: 100,
+                      color: Color.fromARGB(255, 53, 50, 50),
+                    ),
                   ),
                 ),
         ),

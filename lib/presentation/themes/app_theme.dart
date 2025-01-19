@@ -8,7 +8,6 @@ final temaApp = ThemeData(
     ),
     titleSmall: TextStyle(
       fontFamily: 'Poppins',
-      fontWeight: FontWeight.w600,
     ),
   ),
 );
