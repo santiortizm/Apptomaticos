@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:apptomaticos/core/constants/colors.dart';
 import 'package:apptomaticos/core/widgets/custom_button.dart';
 import 'package:apptomaticos/data/repositories/product_repository.dart';
@@ -6,6 +8,7 @@ import 'package:apptomaticos/presentation/screens/products/add_product_widget.da
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CustomListview extends StatefulWidget {
   const CustomListview({super.key});
@@ -16,14 +19,49 @@ class CustomListview extends StatefulWidget {
 
 class _CustomListviewState extends State<CustomListview> {
   String? userRole;
-
+  final supabase = Supabase.instance.client;
   final ProductRepository productRepository = ProductRepository();
   late Future<List> productsFuture;
+  late List products = [];
 
   @override
   void initState() {
     productsFuture = productRepository.readData();
+    _fetchUserRole();
+    _loadProducts();
     super.initState();
+  }
+
+  /// Carga inicial de productos
+  Future<void> _loadProducts() async {
+    try {
+      final data = await productRepository.readData();
+      setState(() {
+        products = data;
+      });
+    } catch (e) {
+      print('Error cargando productos: $e');
+    }
+  }
+
+  Future<void> _fetchUserRole() async {
+    try {
+      final user = supabase.auth.currentUser;
+
+      if (user != null) {
+        final response = await supabase
+            .from('usuarios')
+            .select('rol')
+            .eq('idAuth', user.id)
+            .single();
+
+        setState(() {
+          userRole = response['rol'];
+        });
+      }
+    } catch (e) {
+      print('Error al obtener el rol del usuario: $e');
+    }
   }
 
   @override
@@ -70,43 +108,48 @@ class _CustomListviewState extends State<CustomListview> {
                     );
                   },
                 ),
-                Center(
-                  child: Container(
-                    width: size.width * 0.4,
-                    alignment: const Alignment(0.0, 0.95),
-                    child: CustomButton(
-                      onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const AddProductWidget())),
-                      color: buttonGreen,
-                      border: 18,
-                      width: 0.4,
-                      height: 0.07,
-                      elevation: 4,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.sell,
-                            color: redApp,
-                            size: 26,
-                          ),
-                          AutoSizeText(
-                            'Vender',
-                            maxFontSize: 32,
-                            minFontSize: 14,
-                            maxLines: 1,
-                            style: temaApp.textTheme.titleSmall!.copyWith(
-                                fontSize: 18,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600),
-                          ),
-                        ],
+                if (userRole == null)
+                  const CircularProgressIndicator()
+                else if (userRole == 'Productor') ...[
+                  Center(
+                    child: Container(
+                      width: size.width * 0.4,
+                      alignment: const Alignment(0.0, 0.95),
+                      child: CustomButton(
+                        onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const AddProductWidget())),
+                        color: buttonGreen,
+                        border: 18,
+                        width: 0.4,
+                        height: 0.07,
+                        elevation: 4,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.sell,
+                              color: redApp,
+                              size: 26,
+                            ),
+                            AutoSizeText(
+                              'Vender',
+                              maxFontSize: 32,
+                              minFontSize: 14,
+                              maxLines: 1,
+                              style: temaApp.textTheme.titleSmall!.copyWith(
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
+                ]
               ],
             );
           }

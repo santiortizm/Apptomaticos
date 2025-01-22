@@ -16,7 +16,11 @@ class BuyProductWidget extends StatefulWidget {
 
 class _BuyProductWidgetState extends State<BuyProductWidget> {
   String? userRole;
+  bool isOwner = false;
   final supabase = Supabase.instance.client;
+  late final ProductService productService =
+      ProductService(Supabase.instance.client);
+
   final dataProduct = ProductService(Supabase.instance.client);
   late Future<Map<String, dynamic>> productDetails;
 
@@ -24,6 +28,7 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
   void initState() {
     super.initState();
     _fetchUserRole();
+    _checkProductOwnership();
     productDetails = dataProduct.fetchProductDetails(widget.productId);
   }
 
@@ -41,12 +46,19 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
             .single();
 
         setState(() {
-          userRole = response['rol']; // Guarda el rol en el estado
+          userRole = response['rol'];
         });
       }
     } catch (e) {
       print('Error al obtener el rol del usuario: $e');
     }
+  }
+
+  Future<void> _checkProductOwnership() async {
+    final ownership = await productService.isProductOwner(widget.productId);
+    setState(() {
+      isOwner = ownership;
+    });
   }
 
   @override
@@ -119,19 +131,22 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
                                 ],
                               ),
                             ),
-                            CustomButton(
-                              onPressed: () {},
-                              color: Colors.white,
-                              border: 0,
-                              width: 0.1,
-                              height: 0.1,
-                              elevation: 0,
-                              child: Icon(
-                                size: 32,
-                                Icons.edit,
-                                color: redApp,
+                            if (isOwner)
+                              CustomButton(
+                                onPressed: () {
+                                  print('Editar producto habilitado');
+                                },
+                                color: Colors.white,
+                                border: 0,
+                                width: 0.1,
+                                height: 0.1,
+                                elevation: 0,
+                                child: Icon(
+                                  size: 32,
+                                  Icons.edit,
+                                  color: redApp,
+                                ),
                               ),
-                            ),
                           ],
                         ),
                         AutoSizeText(
