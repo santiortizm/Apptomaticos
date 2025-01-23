@@ -14,6 +14,8 @@ class ProfileWidget extends StatefulWidget {
 }
 
 class _ProfileWidgetState extends State<ProfileWidget> {
+  String? userRole;
+
   String? _imageUrl;
   Map<String, dynamic>? _userInfo;
   Map<String, dynamic>? _authInfo;
@@ -25,6 +27,27 @@ class _ProfileWidgetState extends State<ProfileWidget> {
     _loadUserProfileImage();
     _loadUserInfo();
     _loadAuthUserInfo();
+    _fetchUserRole();
+  }
+
+  Future<void> _fetchUserRole() async {
+    try {
+      final user = supabase.auth.currentUser;
+
+      if (user != null) {
+        final response = await supabase
+            .from('usuarios')
+            .select('rol')
+            .eq('idAuth', user.id)
+            .single();
+
+        setState(() {
+          userRole = response['rol'];
+        });
+      }
+    } catch (e) {
+      print('Error al obtener el rol del usuario: $e');
+    }
   }
 
   Future<void> _loadUserProfileImage() async {
@@ -40,11 +63,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
           _imageUrl = publicUrl;
         });
       }
-    } catch (e) {
-      setState(() {
-        _imageUrl = null;
-      });
-    }
+    } catch (e) {}
   }
 
   Future<void> _loadUserInfo() async {

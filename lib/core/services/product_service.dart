@@ -15,6 +15,23 @@ class ProductService {
     return response;
   }
 
+  /// Actualiza los detalles de un producto
+  Future<bool> updateProductDetails(
+      String productId, Map<String, dynamic> updates) async {
+    try {
+      final response = await supabaseClient
+          .from('productos')
+          .update(updates)
+          .eq('idProducto', productId)
+          .select();
+
+      return response.isNotEmpty;
+    } catch (e) {
+      print('Error actualizando los detalles del producto: $e');
+      return false;
+    }
+  }
+
   /// Verifica si el producto pertenece al usuario actual
   Future<bool> isProductOwner(String productId) async {
     try {

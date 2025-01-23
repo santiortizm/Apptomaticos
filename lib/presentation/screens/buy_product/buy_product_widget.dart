@@ -134,7 +134,7 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
                             if (isOwner)
                               CustomButton(
                                 onPressed: () {
-                                  print('Editar producto habilitado');
+                                  _dialogBuilder(context);
                                 },
                                 color: Colors.white,
                                 border: 0,
@@ -158,18 +158,20 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
                               fontWeight: FontWeight.w600),
                         ),
                         Container(
+                          alignment: Alignment.center,
                           margin: EdgeInsets.symmetric(
                               horizontal: size.width * 0.05),
                           padding: EdgeInsets.symmetric(
                               vertical: size.height * 0.025,
                               horizontal: size.width * 0.05),
                           width: size.width * 1,
-                          height: size.height * 0.26,
+                          height: size.height * 0.30,
                           decoration: BoxDecoration(
                             border: Border.all(color: redApp),
                             borderRadius: BorderRadius.circular(18),
                           ),
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             spacing: 10,
                             children: [
                               Row(
@@ -434,6 +436,111 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
           );
         },
       ),
+    );
+  }
+
+  Future<void> _dialogBuilder(BuildContext context) {
+    final TextEditingController titleController = TextEditingController();
+    final TextEditingController descriptionController = TextEditingController();
+    final TextEditingController priceController = TextEditingController();
+    final TextEditingController quantityController = TextEditingController();
+
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Actualizar Datos'),
+          content: FutureBuilder<Map<String, dynamic>>(
+            future: productDetails,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (!snapshot.hasData) {
+                return const Center(child: Text('Producto no encontrado'));
+              }
+
+              final productData = snapshot.data!;
+
+              // Inicializamos los controladores con los datos del producto
+              titleController.text = productData['nombreProducto'] ?? '';
+              descriptionController.text = productData['descripcion'] ?? '';
+              priceController.text = productData['precio']?.toString() ?? '';
+              quantityController.text =
+                  productData['cantidad']?.toString() ?? '';
+
+              return SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextFormField(
+                      controller: titleController,
+                      decoration: const InputDecoration(labelText: 'Título'),
+                    ),
+                    TextFormField(
+                      controller: descriptionController,
+                      decoration:
+                          const InputDecoration(labelText: 'Descripción'),
+                      maxLines: 3,
+                    ),
+                    TextFormField(
+                      controller: priceController,
+                      decoration: const InputDecoration(labelText: 'Precio'),
+                      keyboardType: TextInputType.number,
+                    ),
+                    TextFormField(
+                      controller: quantityController,
+                      decoration: const InputDecoration(labelText: 'Cantidad'),
+                      keyboardType: TextInputType.number,
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Actualizar'),
+              onPressed: () async {
+                final updatedData = {
+                  'nombreProducto': titleController.text,
+                  'descripcion': descriptionController.text,
+                  'precio': double.tryParse(priceController.text),
+                  'cantidad': int.tryParse(quantityController.text),
+                };
+
+                final success = await productService.updateProductDetails(
+                    widget.productId, updatedData);
+
+                if (success) {
+                  setState(() {
+                    productDetails =
+                        productService.fetchProductDetails(widget.productId);
+                  });
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Producto actualizado exitosamente')),
+                  );
+                } else {
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Error al actualizar el producto')),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

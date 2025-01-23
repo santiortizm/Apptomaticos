@@ -44,6 +44,11 @@ class _CustomListviewState extends State<CustomListview> {
     }
   }
 
+  Stream<List<Map<String, dynamic>>> _productsStream() {
+    return supabase.from('productos').stream(primaryKey: ['idProducto']).map(
+        (event) => event.map((e) => e).toList());
+  }
+
   Future<void> _fetchUserRole() async {
     try {
       final user = supabase.auth.currentUser;
@@ -74,39 +79,46 @@ class _CustomListviewState extends State<CustomListview> {
           borderRadius: BorderRadius.circular(20)),
       width: size.width * 1,
       height: size.height * 1,
-      child: FutureBuilder(
-        future: productsFuture,
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
+      child: StreamBuilder<List<Map<String, dynamic>>>(
+        stream: _productsStream(), // Escucha los cambios en la tabla productos
+        builder: (BuildContext context,
+            AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
           if (snapshot.hasError) {
-            return Dialog(
-              child: SizedBox(
-                width: size.width * 0.4,
-                height: size.height * 0.3,
-                child: const Text('Error'),
-              ),
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
             );
           }
           if (snapshot.hasData) {
-            if (snapshot.data.length == 0) {
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return const Center(
                 child: Text('Datos no disponibles'),
               );
             }
             return Stack(
               children: [
-                ListView.builder(
-                  itemCount: snapshot.data.length,
-                  itemBuilder: (context, int index) {
-                    var data = snapshot.data[index];
-                    return CustomCardProducts(
-                      productId: data['idProducto'].toString(),
-                      title: data['nombreProducto'],
-                      state: data['maduracion'],
-                      price: data['precio'].toString(),
-                      imageUrl: data['idImagen'] ??
-                          'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp',
-                    );
+                RefreshIndicator(
+                  onRefresh: () async {
+                    // Llama al método para recargar los datos
+                    await _loadProducts();
+                    // Vuelve a establecer los productos en el estado
+                    setState(() {
+                      productsFuture = productRepository.readData();
+                    });
                   },
+                  child: ListView.builder(
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, int index) {
+                      var data = snapshot.data![index];
+                      return CustomCardProducts(
+                        productId: data['idProducto'].toString(),
+                        title: data['nombreProducto'],
+                        state: data['maduracion'],
+                        price: data['precio'].toString(),
+                        imageUrl: data['idImagen'] ??
+                            'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp',
+                      );
+                    },
+                  ),
                 ),
                 if (userRole == null)
                   const CircularProgressIndicator()
