@@ -363,7 +363,6 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
                           ),
                         ),
                         Container(
-                          height: size.height * 0.3,
                           margin: EdgeInsets.symmetric(
                               horizontal: size.width * 0.05),
                           alignment: Alignment.topLeft,
@@ -426,6 +425,45 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
                               ),
                             ],
                           ),
+                        ] else if (userRole == 'Productor') ...[
+                          CustomButton(
+                              onPressed: () async {
+                                final success = await productService
+                                    .deleteProduct(widget.productId);
+
+                                if (success) {
+                                  setState(() {
+                                    productDetails = productService
+                                        .fetchProductDetails(widget.productId);
+                                  });
+                                  Navigator.of(context).pop();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'Producto eliminado exitosamente')),
+                                  );
+                                } else {
+                                  Navigator.of(context).pop();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'Error al eliminar el producto')),
+                                  );
+                                }
+                              },
+                              color: redApp,
+                              border: 12,
+                              width: 0.2,
+                              height: 0.08,
+                              elevation: 0,
+                              child: AutoSizeText(
+                                'Eliminar',
+                                minFontSize: 12,
+                                maxFontSize: 18,
+                                maxLines: 1,
+                                style: temaApp.textTheme.titleSmall!.copyWith(
+                                    fontSize: 18, color: Colors.white),
+                              ))
                         ],
                       ],
                     ),
@@ -444,7 +482,6 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
     final TextEditingController descriptionController = TextEditingController();
     final TextEditingController priceController = TextEditingController();
     final TextEditingController quantityController = TextEditingController();
-
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -460,16 +497,12 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
               } else if (!snapshot.hasData) {
                 return const Center(child: Text('Producto no encontrado'));
               }
-
               final productData = snapshot.data!;
-
-              // Inicializamos los controladores con los datos del producto
               titleController.text = productData['nombreProducto'] ?? '';
               descriptionController.text = productData['descripcion'] ?? '';
               priceController.text = productData['precio']?.toString() ?? '';
               quantityController.text =
                   productData['cantidad']?.toString() ?? '';
-
               return SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,

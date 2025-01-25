@@ -35,13 +35,13 @@ class CustomTabButton extends StatelessWidget {
           Icon(
             icon,
             color: Colors.white,
-            size: 18,
+            size: 20,
           ),
           AutoSizeText(
             label,
             style: textTheme.bodyMedium!.copyWith(color: Colors.white),
             maxLines: 1,
-            minFontSize: 14,
+            minFontSize: 12,
             maxFontSize: 16,
             overflow: TextOverflow.ellipsis,
           ),

@@ -2,6 +2,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProductService {
   final SupabaseClient supabaseClient;
+  final supabase = Supabase.instance.client;
 
   ProductService(this.supabaseClient);
 
@@ -28,6 +29,18 @@ class ProductService {
       return response.isNotEmpty;
     } catch (e) {
       print('Error actualizando los detalles del producto: $e');
+      return false;
+    }
+  }
+
+  //Elimina el producto seleccionado
+  Future<bool> deleteProduct(String productId) async {
+    try {
+      final response =
+          await supabase.from('productos').delete().eq('idProducto', productId);
+      return response;
+    } catch (e) {
+      print('Error al eliminar el producto: $e');
       return false;
     }
   }
@@ -64,6 +77,38 @@ class ProductService {
     } catch (e) {
       print('Error verificando propiedad del producto: $e');
       return false;
+    }
+  }
+
+  /// Obtiene todos los productos que pertenecen al productor autenticado
+  Future<List<Map<String, dynamic>>> fetchProductsByProducer() async {
+    try {
+      // Obtener al usuario autenticado
+      final authUser = supabaseClient.auth.currentUser;
+
+      if (authUser == null) {
+        throw Exception('Usuario no autenticado.');
+      }
+
+      // Obtener el `idUsuario` correspondiente al `idAuth` desde la tabla `usuarios`
+      final usuarioResponse = await supabaseClient
+          .from('usuarios')
+          .select('idUsuario')
+          .eq('idAuth', authUser.id)
+          .single();
+
+      final int idUsuario = usuarioResponse['idUsuario'];
+
+      // Consultar los productos que pertenecen al productor (`idUsuario`)
+      final productosResponse = await supabaseClient
+          .from('productos')
+          .select('*')
+          .eq('idUsuario', idUsuario); // Ordenar por los más recientes
+
+      return List<Map<String, dynamic>>.from(productosResponse);
+    } catch (e) {
+      print('Error al obtener los productos del productor: $e');
+      return [];
     }
   }
 }

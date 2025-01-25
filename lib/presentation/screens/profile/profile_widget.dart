@@ -1,6 +1,7 @@
 import 'package:apptomaticos/core/constants/colors.dart';
 import 'package:apptomaticos/core/widgets/avatar.dart';
 import 'package:apptomaticos/core/widgets/custom_button.dart';
+import 'package:apptomaticos/presentation/screens/products/products_of_producer.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -114,13 +115,37 @@ class _ProfileWidgetState extends State<ProfileWidget> {
         child: Column(
           spacing: 16,
           children: [
-            Avatar(
-              imageUrl: _imageUrl,
-              onUpLoad: (imageUrl) {
-                setState(() {
-                  _imageUrl = imageUrl;
-                });
-              },
+            Stack(
+              children: [
+                Avatar(
+                  imageUrl: _imageUrl,
+                  onUpLoad: (imageUrl) {
+                    setState(() {
+                      _imageUrl = imageUrl;
+                    });
+                  },
+                ),
+                if (userRole == null)
+                  const Center(child: CircularProgressIndicator())
+                else if (userRole == 'Productor') ...[
+                  Container(
+                    // padding: EdgeInsets.only(top: size.height * 0.01),
+                    alignment: const Alignment(1, 0),
+                    child: IconButton(
+                      onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const ProductsOfProducer())),
+                      icon: Icon(
+                        Icons.list,
+                        size: 50,
+                        color: redApp,
+                      ),
+                    ),
+                  ),
+                ]
+              ],
             ),
             Container(
               margin: EdgeInsets.symmetric(horizontal: size.width * 0.07),
