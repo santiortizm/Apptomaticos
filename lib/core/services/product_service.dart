@@ -33,12 +33,20 @@ class ProductService {
     }
   }
 
-  //Elimina el producto seleccionado
+  /// Elimina un producto dado su ID
   Future<bool> deleteProduct(String productId) async {
     try {
-      final response =
-          await supabase.from('productos').delete().eq('idProducto', productId);
-      return response;
+      final response = await supabaseClient
+          .from('productos')
+          .delete()
+          .eq('idProducto', productId)
+          .select();
+
+      if (response.isNotEmpty) {
+        return true;
+      } else {
+        return false;
+      }
     } catch (e) {
       print('Error al eliminar el producto: $e');
       return false;
@@ -52,17 +60,15 @@ class ProductService {
       if (authUser == null) {
         return false;
       }
-      // Obtener el idUsuario correspondiente al authUser.id desde la tabla 'usuarios'
       final usuarioResponse = await supabaseClient
           .from('usuarios')
           .select('idUsuario')
           .eq('idAuth', authUser.id)
           .single();
       if (usuarioResponse['idUsuario'] == null) {
-        return false; // Si no se encuentra el usuario en la tabla 'usuarios'
+        return false;
       }
       final int idUsuario = usuarioResponse['idUsuario'];
-      // Consulta para verificar si el producto pertenece al usuario autenticado
       final productoResponse = await supabaseClient
           .from('productos')
           .select('idUsuario')
@@ -83,14 +89,11 @@ class ProductService {
   /// Obtiene todos los productos que pertenecen al productor autenticado
   Future<List<Map<String, dynamic>>> fetchProductsByProducer() async {
     try {
-      // Obtener al usuario autenticado
       final authUser = supabaseClient.auth.currentUser;
 
       if (authUser == null) {
         throw Exception('Usuario no autenticado.');
       }
-
-      // Obtener el `idUsuario` correspondiente al `idAuth` desde la tabla `usuarios`
       final usuarioResponse = await supabaseClient
           .from('usuarios')
           .select('idUsuario')
@@ -99,11 +102,10 @@ class ProductService {
 
       final int idUsuario = usuarioResponse['idUsuario'];
 
-      // Consultar los productos que pertenecen al productor (`idUsuario`)
       final productosResponse = await supabaseClient
           .from('productos')
           .select('*')
-          .eq('idUsuario', idUsuario); // Ordenar por los más recientes
+          .eq('idUsuario', idUsuario);
 
       return List<Map<String, dynamic>>.from(productosResponse);
     } catch (e) {

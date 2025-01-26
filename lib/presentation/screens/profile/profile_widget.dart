@@ -15,102 +15,58 @@ class ProfileWidget extends StatefulWidget {
 }
 
 class _ProfileWidgetState extends State<ProfileWidget> {
-  String? userRole;
+  final supabase = Supabase.instance.client;
 
   String? _imageUrl;
   Map<String, dynamic>? _userInfo;
-  Map<String, dynamic>? _authInfo;
-  final SupabaseClient supabase = Supabase.instance.client;
+  String? userRole;
 
   @override
   void initState() {
     super.initState();
-    _loadUserProfileImage();
-    _loadUserInfo();
-    _loadAuthUserInfo();
-    _fetchUserRole();
+    _loadUserProfileData();
   }
 
-  Future<void> _fetchUserRole() async {
+  /// Carga los datos del perfil: información del usuario y rol
+  Future<void> _loadUserProfileData() async {
+    final user = supabase.auth.currentUser;
+    if (user == null) return;
+
     try {
-      final user = supabase.auth.currentUser;
+      // Carga el rol del usuario
+      final roleResponse = await supabase
+          .from('usuarios')
+          .select('rol, nombre, apellido, celular')
+          .eq('idAuth', user.id)
+          .single();
 
-      if (user != null) {
-        final response = await supabase
-            .from('usuarios')
-            .select('rol')
-            .eq('idAuth', user.id)
-            .single();
+      // Carga la imagen de perfil
+      final imagePath = '${user.id}/profile';
+      final publicUrl =
+          supabase.storage.from('profiles').getPublicUrl(imagePath);
 
-        setState(() {
-          userRole = response['rol'];
-        });
-      }
+      setState(() {
+        _userInfo = roleResponse;
+        userRole = roleResponse['rol'];
+        _imageUrl = publicUrl;
+      });
     } catch (e) {
-      print('Error al obtener el rol del usuario: $e');
-    }
-  }
-
-  Future<void> _loadUserProfileImage() async {
-    try {
-      final userId = supabase.auth.currentUser?.id;
-      if (userId != null) {
-        final imagePath = '$userId/profile';
-        final publicUrl =
-            supabase.storage.from('profiles').getPublicUrl(imagePath);
-        await supabase.storage.from('profiles').download(imagePath);
-
-        setState(() {
-          _imageUrl = publicUrl;
-        });
-      }
-    } catch (e) {}
-  }
-
-  Future<void> _loadUserInfo() async {
-    try {
-      final userId = supabase.auth.currentUser?.id;
-      if (userId != null) {
-        final response = await supabase
-            .from('usuarios')
-            .select()
-            .eq('idAuth', userId)
-            .single();
-
-        setState(() {
-          _userInfo = response;
-        });
-      }
-    } catch (e) {
-      print('Error al cargar información del usuario: $e');
-    }
-  }
-
-  Future<void> _loadAuthUserInfo() async {
-    try {
-      final user = supabase.auth.currentUser;
-      if (user != null) {
-        setState(() {
-          _authInfo = {
-            'email': user.email,
-          };
-        });
-      }
-    } catch (e) {
-      print('Error al cargar información de auth.users: $e');
+      print('Error al cargar los datos del perfil: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
+
     return Container(
       padding: EdgeInsets.symmetric(vertical: size.width * 0.05),
       width: size.width,
       height: size.height,
       decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.6),
-          borderRadius: BorderRadius.circular(20)),
+        color: Colors.white.withOpacity(0.6),
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: SingleChildScrollView(
         child: Column(
           spacing: 16,
@@ -125,18 +81,17 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                     });
                   },
                 ),
-                if (userRole == null)
-                  const Center(child: CircularProgressIndicator())
-                else if (userRole == 'Productor') ...[
-                  Container(
-                    // padding: EdgeInsets.only(top: size.height * 0.01),
-                    alignment: const Alignment(1, 0),
+                if (userRole == 'Productor')
+                  Positioned(
+                    top: 10,
+                    right: 10,
                     child: IconButton(
                       onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const ProductsOfProducer())),
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ProductsOfProducer(),
+                        ),
+                      ),
                       icon: Icon(
                         Icons.list,
                         size: 50,
@@ -144,84 +99,13 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                       ),
                     ),
                   ),
-                ]
               ],
             ),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: size.width * 0.07),
-              alignment: Alignment.center,
-              child: AutoSizeText(
-                'Nombre',
-                maxFontSize: 16,
-                minFontSize: 16,
-                maxLines: 1,
-                style: temaApp.textTheme.titleSmall!.copyWith(
-                  fontSize: 16,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-            Text('${_userInfo?['nombre']}'),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: size.width * 0.07),
-              alignment: Alignment.center,
-              child: AutoSizeText(
-                'Apellido',
-                maxFontSize: 16,
-                minFontSize: 16,
-                maxLines: 1,
-                style: temaApp.textTheme.titleSmall!.copyWith(
-                  fontSize: 16,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-            Text('${_userInfo?['apellido']}'),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: size.width * 0.07),
-              alignment: Alignment.center,
-              child: AutoSizeText(
-                'Rol',
-                maxFontSize: 16,
-                minFontSize: 16,
-                maxLines: 1,
-                style: temaApp.textTheme.titleSmall!.copyWith(
-                  fontSize: 16,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-            Text('${_userInfo?['rol']}'),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: size.width * 0.07),
-              alignment: Alignment.center,
-              child: AutoSizeText(
-                'Celular',
-                maxFontSize: 16,
-                minFontSize: 16,
-                maxLines: 1,
-                style: temaApp.textTheme.titleSmall!.copyWith(
-                  fontSize: 16,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-            Text('${_userInfo?['celular']}'),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: size.width * 0.07),
-              alignment: Alignment.center,
-              child: AutoSizeText(
-                'Correo ',
-                maxFontSize: 16,
-                minFontSize: 16,
-                maxLines: 1,
-                style: temaApp.textTheme.titleSmall!.copyWith(
-                  fontSize: 16,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-            Text('${_authInfo?['email']}'),
+            _buildUserInfoSection('Nombre', _userInfo?['nombre']),
+            _buildUserInfoSection('Apellido', _userInfo?['apellido']),
+            _buildUserInfoSection('Rol', _userInfo?['rol']),
+            _buildUserInfoSection('Celular', _userInfo?['celular']),
+            _buildUserInfoSection('Correo', supabase.auth.currentUser?.email),
             CustomButton(
               onPressed: () async {
                 await supabase.auth.signOut();
@@ -245,6 +129,33 @@ class _ProfileWidgetState extends State<ProfileWidget> {
           ],
         ),
       ),
+    );
+  }
+
+  /// Construye una fila con la información del usuario
+  Widget _buildUserInfoSection(String title, String? value) {
+    final size = MediaQuery.of(context).size;
+    return Column(
+      children: [
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: size.width * 0.07),
+          alignment: Alignment.center,
+          child: AutoSizeText(
+            title,
+            maxFontSize: 16,
+            minFontSize: 16,
+            maxLines: 1,
+            style: temaApp.textTheme.titleSmall!.copyWith(
+              fontSize: 16,
+              color: Colors.black,
+            ),
+          ),
+        ),
+        Text(
+          value ?? 'No disponible',
+          style: temaApp.textTheme.bodyMedium!.copyWith(fontSize: 14),
+        ),
+      ],
     );
   }
 }

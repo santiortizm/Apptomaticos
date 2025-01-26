@@ -14,14 +14,65 @@ class ProductsOfProducer extends StatefulWidget {
 }
 
 class _ProductsOfProducerState extends State<ProductsOfProducer> {
+  final supabase = Supabase.instance.client;
+
   late Future<List<Map<String, dynamic>>> producerProductsFuture;
   final ProductService productService =
       ProductService(Supabase.instance.client);
+  int? idUsuario; // Guardará el idUsuario del productor autenticado
+  late RealtimeChannel _channel;
 
   @override
   void initState() {
     super.initState();
+    _fetchIdUsuario();
     producerProductsFuture = productService.fetchProductsByProducer();
+
+    // Suscripción a los cambios en la tabla 'productos'
+    _subscribeToProductChanges();
+  }
+
+  @override
+  void dispose() {
+    // Cancela la suscripción al canal cuando el widget se desmonte
+    _channel.unsubscribe();
+    super.dispose();
+  }
+
+  /// Obtiene el `idUsuario` correspondiente al usuario autenticado
+  Future<void> _fetchIdUsuario() async {
+    final user = supabase.auth.currentUser;
+
+    if (user == null) return;
+
+    try {
+      final response = await supabase
+          .from('usuarios')
+          .select('idUsuario')
+          .eq('idAuth', user.id)
+          .single();
+
+      setState(() {
+        idUsuario = response['idUsuario'];
+      });
+    } catch (e) {
+      print('Error al obtener idUsuario: $e');
+    }
+  }
+
+  void _subscribeToProductChanges() {
+    _channel = supabase
+        .channel('public:productos')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'productos',
+          callback: (payload, [ref]) {
+            print('Cambio detectado en productos: ${payload.toString()}');
+            _refreshProducts();
+          },
+        )
+        .subscribe();
   }
 
   Future<void> _refreshProducts() async {
@@ -33,6 +84,13 @@ class _ProductsOfProducerState extends State<ProductsOfProducer> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+
+    if (idUsuario == null) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
     return SafeArea(
       child: Scaffold(
         body: Stack(
@@ -71,7 +129,7 @@ class _ProductsOfProducerState extends State<ProductsOfProducer> {
                             onPressed: () {
                               Navigator.pop(context);
                             },
-                            color: Colors.white.withValues(alpha: 0.1),
+                            color: Colors.white.withValues(alpha: 0.05),
                             border: 20,
                             width: 0.2,
                             height: 0.1,
@@ -138,12 +196,13 @@ class _ProductsOfProducerState extends State<ProductsOfProducer> {
                                 itemBuilder: (context, index) {
                                   final producto = productos[index];
                                   return CustomCardProductsProducer(
+                                    isDelete: _refreshProducts,
                                     productId:
                                         producto['idProducto'].toString(),
                                     title: producto['nombreProducto'],
                                     date: producto['created_at'],
                                     imageUrl: producto['idImagen'] ??
-                                        'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp', // Imagen por defecto
+                                        'https://via.placeholder.com/150', // Imagen por defecto
                                   );
                                 },
                               ),

@@ -138,6 +138,7 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                   // Nombre del producto
                   TextFormFieldWidget(
                     labelText: 'Nombre Producto',
+                    keyboardType: TextInputType.name,
                     controller: _model.nameController,
                     icon: Icons.shopping_cart,
                   ),
@@ -145,6 +146,7 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                   // Cantidad (Canasta)
                   TextFormFieldWidget(
                     labelText: 'Cantidad (CANASTA)',
+                    keyboardType: TextInputType.number,
                     controller: _model.quantityController,
                     icon: Icons.shopping_basket,
                   ),
@@ -152,6 +154,7 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                   // Descripción (Opcional)
                   TextFormFieldWidget(
                     labelText: 'Descripción (OPCIONAL)',
+                    keyboardType: TextInputType.text,
                     controller: _model.descriptionController,
                     icon: Icons.description,
                   ),
@@ -186,6 +189,7 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                   TextFormFieldWidget(
                     labelText: 'Fecha de Cosecha',
                     controller: _model.harvestDateController,
+                    keyboardType: TextInputType.datetime,
                     icon: Icons.calendar_today,
                     readOnly: true,
                     onTap: () => _model.selectHarvestDate(context),
@@ -195,6 +199,7 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                   TextFormFieldWidget(
                     labelText: 'Fecha de Caducidad',
                     controller: _model.expirationDateController,
+                    keyboardType: TextInputType.datetime,
                     icon: Icons.calendar_today,
                     readOnly: true,
                   ),
@@ -202,6 +207,7 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                   // Precio Canasta
                   TextFormFieldWidget(
                     labelText: 'Precio Canasta',
+                    keyboardType: TextInputType.number,
                     controller: _model.priceController,
                     icon: Icons.attach_money,
                   ),

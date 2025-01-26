@@ -11,12 +11,15 @@ class CustomCardProductsProducer extends StatefulWidget {
   final String title;
   final String date;
   final String imageUrl;
-  const CustomCardProductsProducer(
-      {super.key,
-      required this.productId,
-      required this.title,
-      required this.date,
-      required this.imageUrl});
+  final VoidCallback isDelete;
+  const CustomCardProductsProducer({
+    super.key,
+    required this.productId,
+    required this.title,
+    required this.date,
+    required this.imageUrl,
+    required this.isDelete,
+  });
 
   @override
   State<CustomCardProductsProducer> createState() =>
@@ -27,13 +30,13 @@ class _CustomCardProductsProducerState
     extends State<CustomCardProductsProducer> {
   late final ProductService productService =
       ProductService(Supabase.instance.client);
-  late Future<Map<String, dynamic>> productDetails;
+  late Future<List<Map<String, dynamic>>> productDetails;
   final dataProduct = ProductService(Supabase.instance.client);
 
   @override
   void initState() {
     super.initState();
-    productDetails = dataProduct.fetchProductDetails(widget.productId);
+    productDetails = dataProduct.fetchProductsByProducer();
   }
 
   @override
@@ -117,34 +120,65 @@ class _CustomCardProductsProducerState
               ],
             ),
             IconButton(
-                onPressed: () async {
-                  final success =
-                      await productService.deleteProduct(widget.productId);
-
-                  if (success) {
-                    setState(() {
-                      productDetails =
-                          productService.fetchProductDetails(widget.productId);
-                    });
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Producto eliminado exitosamente')),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Error al eliminar el producto')),
-                    );
-                  }
-                },
-                icon: Icon(
-                  Icons.delete,
-                  color: redApp,
-                  size: 26,
-                ))
+              onPressed: () async {
+                _dialog(context);
+              },
+              icon: Icon(
+                Icons.delete,
+                color: redApp,
+                size: 26,
+              ),
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _dialog(BuildContext parentContext) {
+    return showDialog<void>(
+      context: parentContext,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Advertencia'),
+          content: const Text('¿Estás seguro de eliminar el producto?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Aceptar'),
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+                final success =
+                    await productService.deleteProduct(widget.productId);
+
+                if (success) {
+                  setState(() {
+                    productDetails = productService.fetchProductsByProducer();
+                    widget.isDelete;
+                  });
+
+                  ScaffoldMessenger.of(parentContext).showSnackBar(
+                    const SnackBar(
+                      content: Text('Producto eliminado exitosamente'),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(parentContext).showSnackBar(
+                    const SnackBar(
+                      content: Text('Error al eliminar el producto'),
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

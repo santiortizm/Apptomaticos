@@ -90,8 +90,54 @@ class _CustomListviewState extends State<CustomListview> {
           }
           if (snapshot.hasData) {
             if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(
-                child: Text('Datos no disponibles'),
+              return Stack(
+                children: [
+                  const Center(
+                    child: Text('Datos no disponibles'),
+                  ),
+                  if (userRole == null)
+                    const CircularProgressIndicator()
+                  else if (userRole == 'Productor') ...[
+                    Center(
+                      child: Container(
+                        width: size.width * 0.4,
+                        alignment: const Alignment(0.0, 0.95),
+                        child: CustomButton(
+                          onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const AddProductWidget())),
+                          color: buttonGreen,
+                          border: 18,
+                          width: 0.4,
+                          height: 0.07,
+                          elevation: 4,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.sell,
+                                color: redApp,
+                                size: 26,
+                              ),
+                              AutoSizeText(
+                                'Vender',
+                                maxFontSize: 32,
+                                minFontSize: 14,
+                                maxLines: 1,
+                                style: temaApp.textTheme.titleSmall!.copyWith(
+                                    fontSize: 18,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ]
+                ],
               );
             }
             return Stack(
