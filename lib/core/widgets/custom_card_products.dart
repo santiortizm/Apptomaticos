@@ -33,9 +33,9 @@ class CustomCardProducts extends StatelessWidget {
         margin: EdgeInsets.symmetric(vertical: size.height * 0.01),
         alignment: Alignment.center,
         padding: EdgeInsets.symmetric(
-            vertical: size.height * 0.015, horizontal: size.width * 0.025),
+            vertical: size.height * 0.0025, horizontal: size.width * 0.005),
         width: size.width * 1,
-        height: size.height * 0.4,
+        height: size.height * 0.38,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -46,6 +46,9 @@ class CustomCardProducts extends StatelessWidget {
               width: size.width * 1,
               height: size.height * 0.28,
               decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16)),
                 image: DecorationImage(
                   image: NetworkImage(imageUrl),
                   fit: BoxFit.cover,
@@ -53,7 +56,10 @@ class CustomCardProducts extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: size.height * 0.015),
+              padding: EdgeInsets.only(
+                  top: size.height * 0.015,
+                  left: size.width * 0.025,
+                  right: size.width * 0.025),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -61,28 +67,32 @@ class CustomCardProducts extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
-                        width: size.width * 0.45,
+                        width: size.width * 0.4,
                         child: AutoSizeText(
                           title,
                           minFontSize: 12,
                           maxFontSize: 18,
                           maxLines: 1,
+                          style: temaApp.textTheme.titleSmall!.copyWith(
+                              fontWeight: FontWeight.w700, fontSize: 18),
                         ),
                       ),
                       Row(
                         children: [
                           SizedBox(
-                            width: size.width * 0.16,
-                            child: const AutoSizeText(
+                            width: size.width * 0.17,
+                            child: AutoSizeText(
                               'Estado :',
                               minFontSize: 12,
-                              maxFontSize: 16,
+                              maxFontSize: 18,
                               maxLines: 1,
+                              style: temaApp.textTheme.titleSmall!.copyWith(
+                                  fontWeight: FontWeight.w700, fontSize: 18),
                             ),
                           ),
                           Container(
                             alignment: Alignment.centerLeft,
-                            width: size.width * 0.28,
+                            width: size.width * 0.27,
                             child: AutoSizeText(
                               state,
                               minFontSize: 12,
