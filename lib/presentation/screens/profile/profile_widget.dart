@@ -64,7 +64,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
       width: size.width,
       height: size.height,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.6),
+        color: Colors.white.withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(20),
       ),
       child: SingleChildScrollView(
@@ -101,11 +101,11 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                   ),
               ],
             ),
-            _buildUserInfoSection('Nombre', _userInfo?['nombre']),
-            _buildUserInfoSection('Apellido', _userInfo?['apellido']),
-            _buildUserInfoSection('Rol', _userInfo?['rol']),
-            _buildUserInfoSection('Celular', _userInfo?['celular']),
-            _buildUserInfoSection('Correo', supabase.auth.currentUser?.email),
+            _cardInfo('Nombre', _userInfo?['nombre']),
+            _cardInfo('Apellido', _userInfo?['apellido']),
+            _cardInfo('Rol', _userInfo?['rol']),
+            _cardInfo('Celular', _userInfo?['celular']),
+            _cardInfo('Correo', supabase.auth.currentUser?.email),
             CustomButton(
               onPressed: () async {
                 await supabase.auth.signOut();
@@ -115,6 +115,8 @@ class _ProfileWidgetState extends State<ProfileWidget> {
               width: 0.3,
               height: 0.07,
               elevation: 0,
+              colorBorder: Colors.transparent,
+              sizeBorder: 0,
               child: AutoSizeText(
                 'Cerrar Sesión',
                 maxFontSize: 18,
@@ -132,30 +134,51 @@ class _ProfileWidgetState extends State<ProfileWidget> {
     );
   }
 
-  /// Construye una fila con la información del usuario
-  Widget _buildUserInfoSection(String title, String? value) {
+  Widget _cardInfo(
+    String titleInfo,
+    String? subTitle,
+  ) {
     final size = MediaQuery.of(context).size;
-    return Column(
-      children: [
-        Container(
-          margin: EdgeInsets.symmetric(horizontal: size.width * 0.07),
-          alignment: Alignment.center,
-          child: AutoSizeText(
-            title,
-            maxFontSize: 16,
-            minFontSize: 16,
-            maxLines: 1,
-            style: temaApp.textTheme.titleSmall!.copyWith(
-              fontSize: 16,
-              color: Colors.black,
-            ),
+    return Container(
+      padding: EdgeInsets.symmetric(
+          horizontal: size.width * 0.025, vertical: size.height * 0.015),
+      height: size.height * 0.105,
+      width: size.width * 0.75,
+      decoration: BoxDecoration(
+        color: cardInfo,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 4,
+            children: [
+              AutoSizeText(
+                titleInfo,
+                maxFontSize: 18,
+                minFontSize: 16,
+                maxLines: 1,
+                style: temaApp.textTheme.titleSmall!.copyWith(
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700),
+              ),
+              AutoSizeText(
+                subTitle ?? 'No disponible',
+                maxFontSize: 16,
+                minFontSize: 12,
+                maxLines: 1,
+                style: temaApp.textTheme.titleSmall!.copyWith(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.normal),
+              ),
+            ],
           ),
-        ),
-        Text(
-          value ?? 'No disponible',
-          style: temaApp.textTheme.bodyMedium!.copyWith(fontSize: 14),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

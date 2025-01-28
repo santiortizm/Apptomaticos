@@ -94,381 +94,290 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
                   color: Colors.black.withValues(alpha: 0.5),
                 ),
               ),
-              ListView(
+              Padding(
                 padding: EdgeInsets.symmetric(
                     horizontal: size.width * 0.05,
                     vertical: size.height * 0.05),
-                children: [
-                  Container(
-                    width: size.width * 1,
-                    height: size.height * 1,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      spacing: size.height * 0.02,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
+                child: Container(
+                  width: size.width * 1,
+                  height: size.height * 1,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CustomButton(
+                            onPressed: () => Navigator.pop(context),
+                            color: Colors.white,
+                            border: 16,
+                            width: 0.1,
+                            height: 0.1,
+                            elevation: 0,
+                            colorBorder: Colors.transparent,
+                            sizeBorder: 0,
+                            child: Row(
+                              spacing: size.width * 0.02,
+                              children: const [
+                                Icon(
+                                  Icons.arrow_back,
+                                  color: Colors.black,
+                                ),
+                                Text('Atras'),
+                              ],
+                            ),
+                          ),
+                          if (isOwner)
                             CustomButton(
-                              onPressed: () => Navigator.pop(context),
+                              onPressed: () {
+                                _dialogBuilder(context);
+                              },
                               color: Colors.white,
                               border: 0,
                               width: 0.1,
                               height: 0.1,
                               elevation: 0,
-                              child: Row(
-                                spacing: size.width * 0.02,
-                                children: const [
-                                  Icon(
-                                    Icons.arrow_back,
-                                    color: Colors.black,
-                                  ),
-                                  Text('Atras'),
-                                ],
+                              colorBorder: Colors.transparent,
+                              sizeBorder: 0,
+                              child: Icon(
+                                size: 32,
+                                Icons.edit,
+                                color: redApp,
                               ),
                             ),
-                            if (isOwner)
-                              CustomButton(
-                                onPressed: () {
-                                  _dialogBuilder(context);
-                                },
-                                color: Colors.white,
-                                border: 0,
-                                width: 0.1,
-                                height: 0.1,
-                                elevation: 0,
-                                child: Icon(
-                                  size: 32,
-                                  Icons.edit,
+                        ],
+                      ),
+                      Container(
+                        alignment: Alignment.topCenter,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: size.width * 0.05),
+                        width: size.width * 1,
+                        height: size.height * 0.8,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            spacing: 12,
+                            children: [
+                              AutoSizeText(
+                                productData['nombreProducto'] ??
+                                    'Nombre no disponible',
+                                style: temaApp.textTheme.titleMedium!.copyWith(
+                                    fontSize: 26,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              Container(
+                                width: size.width * 0.85,
+                                height: size.height * 0.28,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(16),
+                                  image: DecorationImage(
+                                    image: NetworkImage(productData[
+                                            'idImage'] ??
+                                        'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp'),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              _cardInfo(
+                                'Cantidad disponible:',
+                                productData['cantidad'].toString(),
+                                Icon(
+                                  Icons.production_quantity_limits,
                                   color: redApp,
                                 ),
                               ),
-                          ],
-                        ),
-                        AutoSizeText(
-                          productData['nombreProducto'] ??
-                              'Nombre no disponible',
-                          style: temaApp.textTheme.titleMedium!.copyWith(
-                              fontSize: 18,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600),
-                        ),
-                        Container(
-                          alignment: Alignment.center,
-                          margin: EdgeInsets.symmetric(
-                              horizontal: size.width * 0.05),
-                          padding: EdgeInsets.symmetric(
-                              vertical: size.height * 0.025,
-                              horizontal: size.width * 0.05),
-                          width: size.width * 1,
-                          height: size.height * 0.30,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: redApp),
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            spacing: 10,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  SizedBox(
-                                    width: size.width * 0.45,
-                                    child: AutoSizeText(
-                                      'Cantidad disponible:',
-                                      maxLines: 1,
-                                      maxFontSize: 16,
-                                      minFontSize: 12,
-                                      style: temaApp.textTheme.titleSmall!
-                                          .copyWith(
-                                              fontSize: 14,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: size.width * 0.24,
-                                    child: AutoSizeText(
-                                      productData['cantidad'].toString(),
-                                      maxLines: 1,
-                                      maxFontSize: 16,
-                                      minFontSize: 12,
-                                      style: temaApp.textTheme.titleSmall!
-                                          .copyWith(
-                                              fontSize: 16,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w500),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  SizedBox(
-                                    width: size.width * 0.45,
-                                    child: AutoSizeText(
-                                      'Fecha de cosecha:',
-                                      maxLines: 1,
-                                      maxFontSize: 16,
-                                      minFontSize: 12,
-                                      style: temaApp.textTheme.titleSmall!
-                                          .copyWith(
-                                              fontSize: 14,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: size.width * 0.24,
-                                    child: AutoSizeText(
-                                      productData['fechaCosecha'],
-                                      maxLines: 1,
-                                      maxFontSize: 16,
-                                      minFontSize: 12,
-                                      style: temaApp.textTheme.titleSmall!
-                                          .copyWith(
-                                              fontSize: 16,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w500),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  SizedBox(
-                                    width: size.width * 0.45,
-                                    child: AutoSizeText(
-                                      'Fecha de caducidad:',
-                                      maxLines: 1,
-                                      maxFontSize: 16,
-                                      minFontSize: 12,
-                                      style: temaApp.textTheme.titleSmall!
-                                          .copyWith(
-                                              fontSize: 16,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: size.width * 0.24,
-                                    child: AutoSizeText(
-                                      productData['fechaCaducidad'],
-                                      maxLines: 1,
-                                      maxFontSize: 16,
-                                      minFontSize: 12,
-                                      style: temaApp.textTheme.titleSmall!
-                                          .copyWith(
-                                              fontSize: 16,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w500),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  SizedBox(
-                                    width: size.width * 0.45,
-                                    child: AutoSizeText(
-                                      'Estado de maduración:',
-                                      maxLines: 1,
-                                      maxFontSize: 16,
-                                      minFontSize: 12,
-                                      style: temaApp.textTheme.titleSmall!
-                                          .copyWith(
-                                              fontSize: 16,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: size.width * 0.24,
-                                    child: AutoSizeText(
-                                      productData['maduracion'],
-                                      maxLines: 1,
-                                      maxFontSize: 16,
-                                      minFontSize: 12,
-                                      style: temaApp.textTheme.titleSmall!
-                                          .copyWith(
-                                              fontSize: 16,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w500),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  SizedBox(
-                                    width: size.width * 0.45,
-                                    child: AutoSizeText(
-                                      'Precio canasta:',
-                                      maxLines: 1,
-                                      maxFontSize: 14,
-                                      minFontSize: 12,
-                                      style: temaApp.textTheme.titleSmall!
-                                          .copyWith(
-                                              fontSize: 14,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: size.width * 0.24,
-                                    child: AutoSizeText(
-                                      productData['precio'].toString(),
-                                      maxLines: 1,
-                                      maxFontSize: 16,
-                                      minFontSize: 12,
-                                      style: temaApp.textTheme.titleSmall!
-                                          .copyWith(
-                                              fontSize: 16,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w500),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.symmetric(
-                              horizontal: size.width * 0.07),
-                          alignment: Alignment.centerLeft,
-                          child: AutoSizeText(
-                            'Descripción',
-                            maxFontSize: 22,
-                            minFontSize: 16,
-                            maxLines: 1,
-                            style: temaApp.textTheme.titleMedium!.copyWith(
-                                fontSize: 22,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w100),
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.symmetric(
-                              horizontal: size.width * 0.05),
-                          alignment: Alignment.topLeft,
-                          child: AutoSizeText(
-                            productData['descripcion'] ??
-                                'Descripció no disponible',
-                            maxFontSize: 18,
-                            minFontSize: 14,
-                            maxLines: 10,
-                            textAlign: TextAlign.justify,
-                            style: temaApp.textTheme.titleSmall!.copyWith(
-                              fontSize: 20,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w100,
-                            ),
-                          ),
-                        ),
-                        if (userRole == null)
-                          const CircularProgressIndicator()
-                        else if (userRole == 'Comerciante') ...[
-                          Row(
-                            spacing: 10,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              CustomButton(
-                                onPressed: () {},
-                                color: buttonGreen,
-                                border: 8,
-                                width: 0.2,
-                                height: 0.06,
-                                elevation: 1,
-                                child: AutoSizeText(
-                                  'COMPRAR',
-                                  maxLines: 1,
-                                  maxFontSize: 18,
-                                  minFontSize: 14,
-                                  style: temaApp.textTheme.titleSmall!.copyWith(
-                                      color: Colors.white,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
+                              _cardInfo(
+                                'Fecha de cosecha:',
+                                productData['fechaCosecha'],
+                                Icon(
+                                  Icons.calendar_month,
+                                  color: redApp,
                                 ),
                               ),
-                              CustomButton(
-                                onPressed: () {},
-                                color: buttonGreen,
-                                border: 8,
-                                width: 0.2,
-                                height: 0.06,
-                                elevation: 1,
-                                child: AutoSizeText(
-                                  'OFERTAR',
-                                  maxLines: 1,
-                                  maxFontSize: 18,
-                                  minFontSize: 14,
-                                  style: temaApp.textTheme.titleSmall!.copyWith(
-                                      color: Colors.white,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
+                              _cardInfo(
+                                'Fecha de caducidad:',
+                                productData['fechaCaducidad'],
+                                Icon(
+                                  Icons.date_range,
+                                  color: redApp,
                                 ),
                               ),
-                            ],
-                          ),
-                        ] else if (userRole == 'Productor') ...[
-                          CustomButton(
-                              onPressed: () async {
-                                final success = await productService
-                                    .deleteProduct(widget.productId);
+                              _cardInfo(
+                                'Estado de maduración:',
+                                productData['maduracion'],
+                                Icon(
+                                  Icons.timelapse,
+                                  color: redApp,
+                                ),
+                              ),
+                              _cardInfo(
+                                'Precio canasta:',
+                                productData['precio'].toString(),
+                                Icon(
+                                  Icons.attach_money,
+                                  color: redApp,
+                                ),
+                              ),
+                              Container(
+                                width: size.width * 1,
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: size.width * 0.07),
+                                alignment: Alignment.center,
+                                child: AutoSizeText(
+                                  'Descripción',
+                                  maxFontSize: 22,
+                                  minFontSize: 16,
+                                  maxLines: 1,
+                                  style: temaApp.textTheme.titleMedium!
+                                      .copyWith(
+                                          fontSize: 22,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w100),
+                                ),
+                              ),
+                              Container(
+                                width: size.width * 0.8,
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: size.width * 0.05,
+                                    vertical: size.height * 0.015),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(color: Colors.grey)),
+                                height: size.height * 0.2,
+                                alignment: Alignment.topLeft,
+                                child: SingleChildScrollView(
+                                  child: AutoSizeText(
+                                    productData['descripcion'] ??
+                                        'Descripció no disponible',
+                                    maxFontSize: 16,
+                                    minFontSize: 14,
+                                    maxLines: 10,
+                                    textAlign: TextAlign.justify,
+                                    style:
+                                        temaApp.textTheme.titleSmall!.copyWith(
+                                      fontSize: 16,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w100,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              if (userRole == null)
+                                const CircularProgressIndicator()
+                              else if (userRole == 'Comerciante') ...[
+                                Container(
+                                  margin: const EdgeInsets.only(
+                                      top: 20, bottom: 40),
+                                  child: Row(
+                                    spacing: 10,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      CustomButton(
+                                        onPressed: () {},
+                                        color: buttonGreen,
+                                        border: 8,
+                                        width: 0.2,
+                                        height: 0.06,
+                                        elevation: 1,
+                                        colorBorder: Colors.transparent,
+                                        sizeBorder: 0,
+                                        child: AutoSizeText(
+                                          'COMPRAR',
+                                          maxLines: 1,
+                                          maxFontSize: 18,
+                                          minFontSize: 14,
+                                          style: temaApp.textTheme.titleSmall!
+                                              .copyWith(
+                                                  color: Colors.white,
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      CustomButton(
+                                        onPressed: () {},
+                                        color: Colors.white,
+                                        border: 8,
+                                        width: 0.2,
+                                        height: 0.06,
+                                        elevation: 1,
+                                        colorBorder: buttonGreen,
+                                        sizeBorder: 2,
+                                        child: AutoSizeText(
+                                          'OFERTAR',
+                                          maxLines: 1,
+                                          maxFontSize: 18,
+                                          minFontSize: 14,
+                                          style: temaApp.textTheme.titleSmall!
+                                              .copyWith(
+                                                  color: buttonGreen,
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ] else if (userRole == 'Productor') ...[
+                                Container(
+                                  margin: const EdgeInsets.only(
+                                      top: 20, bottom: 20),
+                                  child: CustomButton(
+                                      onPressed: () async {
+                                        final success = await productService
+                                            .deleteProduct(widget.productId);
 
-                                if (success) {
-                                  setState(() {
-                                    productDetails = productService
-                                        .fetchProductDetails(widget.productId);
-                                  });
-                                  Navigator.of(context).pop();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text(
-                                            'Producto eliminado exitosamente')),
-                                  );
-                                } else {
-                                  Navigator.of(context).pop();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text(
-                                            'Error al eliminar el producto')),
-                                  );
-                                }
-                              },
-                              color: redApp,
-                              border: 12,
-                              width: 0.2,
-                              height: 0.08,
-                              elevation: 0,
-                              child: AutoSizeText(
-                                'Eliminar',
-                                minFontSize: 12,
-                                maxFontSize: 18,
-                                maxLines: 1,
-                                style: temaApp.textTheme.titleSmall!.copyWith(
-                                    fontSize: 18, color: Colors.white),
-                              ))
-                        ],
-                      ],
-                    ),
+                                        if (success) {
+                                          setState(() {
+                                            productDetails = productService
+                                                .fetchProductDetails(
+                                                    widget.productId);
+                                          });
+                                          Navigator.of(context).pop();
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                                content: Text(
+                                                    'Producto eliminado exitosamente')),
+                                          );
+                                        } else {
+                                          Navigator.of(context).pop();
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                                content: Text(
+                                                    'Error al eliminar el producto')),
+                                          );
+                                        }
+                                      },
+                                      color: redApp,
+                                      border: 12,
+                                      width: 0.2,
+                                      height: 0.08,
+                                      elevation: 0,
+                                      colorBorder: Colors.transparent,
+                                      sizeBorder: 0,
+                                      child: AutoSizeText(
+                                        'Eliminar',
+                                        minFontSize: 12,
+                                        maxFontSize: 18,
+                                        maxLines: 1,
+                                        style: temaApp.textTheme.titleSmall!
+                                            .copyWith(
+                                                fontSize: 18,
+                                                color: Colors.white),
+                                      )),
+                                )
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               )
             ],
           );
@@ -574,6 +483,56 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
           ],
         );
       },
+    );
+  }
+
+  Widget _cardInfo(
+    String titleInfo,
+    String subTitle,
+    Icon icon,
+  ) {
+    final size = MediaQuery.of(context).size;
+    return Container(
+      padding: EdgeInsets.symmetric(
+          horizontal: size.width * 0.025, vertical: size.height * 0.015),
+      height: size.height * 0.105,
+      width: size.width * 1,
+      decoration: BoxDecoration(
+        color: cardInfo,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 4,
+            children: [
+              AutoSizeText(
+                titleInfo,
+                maxFontSize: 18,
+                minFontSize: 16,
+                maxLines: 1,
+                style: temaApp.textTheme.titleSmall!.copyWith(
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700),
+              ),
+              AutoSizeText(
+                subTitle,
+                maxFontSize: 16,
+                minFontSize: 12,
+                maxLines: 1,
+                style: temaApp.textTheme.titleSmall!.copyWith(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.normal),
+              ),
+            ],
+          ),
+          icon
+        ],
+      ),
     );
   }
 }

@@ -1,7 +1,5 @@
-import 'dart:io';
-
 import 'package:apptomaticos/core/constants/colors.dart';
-
+import 'package:apptomaticos/core/widgets/avatar_product.dart';
 import 'package:apptomaticos/core/widgets/custom_button.dart';
 import 'package:apptomaticos/core/widgets/custom_dialog_confimation.dart';
 import 'package:apptomaticos/core/widgets/text_form_field_widget.dart';
@@ -10,12 +8,10 @@ import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AddProductWidget extends StatefulWidget {
   const AddProductWidget({super.key});
-
   @override
   // ignore: library_private_types_in_public_api
   _AddProductWidgetState createState() => _AddProductWidgetState();
@@ -24,31 +20,7 @@ class AddProductWidget extends StatefulWidget {
 class _AddProductWidgetState extends State<AddProductWidget> {
   final AddProductModel _model = AddProductModel();
   final SupabaseClient supabase = Supabase.instance.client;
-  File? _imageFile;
-  Future pickImage() async {
-    final ImagePicker picker = ImagePicker();
-
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-
-    if (image != null) {
-      setState(() {
-        _imageFile = File(image.path);
-      });
-    }
-  }
-
-  Future upLoadImage() async {
-    if (_imageFile == null) {
-      return;
-    }
-
-    final fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    final path = 'product/$fileName';
-
-    await supabase.storage.from('products').upload(path, _imageFile!).then(
-        (value) => ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Imagen subida correctamente'))));
-  }
+  String? _imageUrl;
 
   @override
   void dispose() {
@@ -59,7 +31,13 @@ class _AddProductWidgetState extends State<AddProductWidget> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    // Altura máxima de una pantalla pequeña (por ejemplo, iPhone SE)
+    const double smallScreenHeight = 667.0; // Altura en píxeles de iPhone SE
 
+    // Condicional para ajustar la altura del contenedor
+    final containerHeight = size.height <= smallScreenHeight
+        ? size.height * 1.28
+        : size.height * 1.15;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Agregar Producto'),
@@ -80,7 +58,8 @@ class _AddProductWidgetState extends State<AddProductWidget> {
           Container(
             width: size.width,
             height: size.height,
-            decoration: BoxDecoration(color: Colors.black.withOpacity(0.5)),
+            decoration:
+                BoxDecoration(color: Colors.black.withValues(alpha: 0.3)),
           ),
           SingleChildScrollView(
             padding: EdgeInsets.symmetric(
@@ -89,7 +68,7 @@ class _AddProductWidgetState extends State<AddProductWidget> {
               padding: EdgeInsets.symmetric(
                   horizontal: size.width * 0.05, vertical: 15),
               width: size.width,
-              height: size.height * 1.1,
+              height: containerHeight,
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.all(
@@ -100,40 +79,16 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                 children: [
                   Padding(
                     padding: EdgeInsets.only(left: size.width * 0.08),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundImage: _imageFile != null
-                              ? FileImage(File(_imageFile!.path))
-                              : const AssetImage('assets/images/fondo1.jpg')
-                                  as ImageProvider,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: size.height * 0.075,
-                          ),
-                          child: IconButton(
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    WidgetStatePropertyAll(redApp)),
-                            color: redApp,
-                            onPressed: pickImage,
-                            icon: const Icon(
-                              size: 26,
-                              Icons.camera_alt_rounded,
-                              color: Colors.black,
-                            ),
-                          ),
-                        )
-                      ],
+                    child: AvatarProduct(
+                      imageUrl: _imageUrl,
+                      onUpLoad: (imageUrl) {
+                        setState(() {
+                          _imageUrl = imageUrl;
+                        });
+                      },
                     ),
                   ),
-                  MaterialButton(
-                    onPressed: upLoadImage,
-                    child: const Text('subir imagen'),
-                  ),
+
                   const SizedBox(height: 16),
                   // Nombre del producto
                   TextFormFieldWidget(
@@ -235,6 +190,8 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                         width: 0.2,
                         height: 0.07,
                         elevation: 0,
+                        colorBorder: Colors.transparent,
+                        sizeBorder: 0,
                         child: AutoSizeText(
                           'Cancelar',
                           style: temaApp.textTheme.titleSmall!
@@ -302,7 +259,6 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                                 _model.selectedMaturity = null;
                                 _model.selectedFertilizer = null;
                               });
-                              upLoadImage;
 
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -331,6 +287,8 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                         width: 0.2,
                         height: 0.07,
                         elevation: 0,
+                        colorBorder: Colors.transparent,
+                        sizeBorder: 0,
                         child: AutoSizeText(
                           'Publicar',
                           style: temaApp.textTheme.titleSmall!

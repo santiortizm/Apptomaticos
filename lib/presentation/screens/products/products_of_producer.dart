@@ -134,6 +134,8 @@ class _ProductsOfProducerState extends State<ProductsOfProducer> {
                             width: 0.2,
                             height: 0.1,
                             elevation: 0,
+                            colorBorder: Colors.transparent,
+                            sizeBorder: 0,
                             child: Row(
                               spacing: size.width * 0.02,
                               children: [

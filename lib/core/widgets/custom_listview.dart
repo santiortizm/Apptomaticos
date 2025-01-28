@@ -113,6 +113,8 @@ class _CustomListviewState extends State<CustomListview> {
                           width: 0.4,
                           height: 0.07,
                           elevation: 4,
+                          colorBorder: Colors.transparent,
+                          sizeBorder: 0,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -184,6 +186,8 @@ class _CustomListviewState extends State<CustomListview> {
                         width: 0.4,
                         height: 0.07,
                         elevation: 4,
+                        colorBorder: Colors.transparent,
+                        sizeBorder: 0,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
