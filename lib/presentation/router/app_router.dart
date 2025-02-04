@@ -25,7 +25,13 @@ class AppRouter {
             GoRoute(
               path: '/registerProduct',
               builder: (context, state) => const AddProductWidget(),
-            )
+            ),
+            // GoRoute(
+            //   path: '/buyProduct',
+            //   builder: (context, state) => const BuyProductWidget(
+            //     productId: '',
+            //   ),
+            // )
           ],
         );
   GoRouter get router => _router;

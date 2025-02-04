@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class TextFormFieldWidget extends StatelessWidget {
   final String labelText;
+  final TextInputType keyboardType;
   final TextEditingController controller;
   final IconData icon;
   final bool readOnly;
@@ -14,11 +15,13 @@ class TextFormFieldWidget extends StatelessWidget {
     required this.icon,
     this.readOnly = false,
     this.onTap,
+    required this.keyboardType,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      keyboardType: keyboardType,
       controller: controller,
       readOnly: readOnly,
       decoration: InputDecoration(

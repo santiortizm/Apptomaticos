@@ -9,7 +9,6 @@ Future<bool> storagePermission() async {
   final int androidVersion = int.parse(androidInfo.version.release);
   bool havePermission = false;
 
-  // Here you can use android api level
   // like android api level 33 = android 13
   // This way you can also find out how to request storage permission
 
