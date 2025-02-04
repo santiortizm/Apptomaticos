@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "570309195523",
+    "project_id": "tomaticos-tesis",
+    "storage_bucket": "tomaticos-tesis.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:570309195523:android:adc1972dd233e7832e9b36",
+        "android_client_info": {
+          "package_name": "com.example.apptomaticos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCE9WXxVHmvTEQemaXk7rxxleZdB3RhgWk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:570309195523:android:4632d3209856073e2e9b36",
+        "android_client_info": {
+          "package_name": "com.example.tomaticos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCE9WXxVHmvTEQemaXk7rxxleZdB3RhgWk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

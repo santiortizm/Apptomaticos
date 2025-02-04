@@ -21,7 +21,6 @@ class _AddProductWidgetState extends State<AddProductWidget> {
   final AddProductModel _model = AddProductModel();
   final SupabaseClient supabase = Supabase.instance.client;
   // String? _imageUrl;
-
   @override
   void dispose() {
     _model.dispose();
