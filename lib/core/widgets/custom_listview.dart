@@ -176,11 +176,10 @@ class _CustomListviewState extends State<CustomListview> {
                       width: size.width * 0.4,
                       alignment: const Alignment(0.0, 0.95),
                       child: CustomButton(
-                        onPressed: () => Navigator.push(
-                            context,
+                        onPressed: () => Navigator.of(context).push(
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    const AddProductWidget())),
+                                      const AddProductWidget())),
                         color: buttonGreen,
                         border: 18,
                         width: 0.4,

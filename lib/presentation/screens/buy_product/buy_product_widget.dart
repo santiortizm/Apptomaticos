@@ -1,6 +1,7 @@
 import 'package:apptomaticos/core/constants/colors.dart';
 import 'package:apptomaticos/core/services/product_service.dart';
 import 'package:apptomaticos/core/widgets/custom_button.dart';
+import 'package:apptomaticos/presentation/screens/second_pages/second_pages_merchant/purchase_page.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -110,24 +111,35 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CustomButton(
-                            onPressed: () => Navigator.pop(context),
-                            color: Colors.white,
-                            border: 16,
-                            width: 0.1,
-                            height: 0.1,
-                            elevation: 0,
-                            colorBorder: Colors.transparent,
-                            sizeBorder: 0,
-                            child: Row(
-                              spacing: size.width * 0.02,
-                              children: const [
-                                Icon(
-                                  Icons.arrow_back,
-                                  color: Colors.black,
-                                ),
-                                Text('Atras'),
-                              ],
+                          Container(
+                            margin: EdgeInsets.only(top: size.height * 0.025),
+                            alignment: Alignment.centerLeft,
+                            width: size.width * .3,
+                            child: TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Row(
+                                spacing: size.width * 0.02,
+                                children: [
+                                  const Icon(
+                                    size: 24,
+                                    Icons.arrow_back,
+                                    color: Colors.black,
+                                  ),
+                                  AutoSizeText(
+                                    'Atras',
+                                    maxLines: 1,
+                                    minFontSize: 16,
+                                    maxFontSize: 18,
+                                    style: temaApp.textTheme.titleSmall!
+                                        .copyWith(
+                                            fontWeight: FontWeight.normal,
+                                            color: Colors.black,
+                                            fontSize: 28),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           if (isOwner)
@@ -297,7 +309,15 @@ class _BuyProductWidgetState extends State<BuyProductWidget> {
                                         ),
                                       ),
                                       CustomButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const PurchasePage(),
+                                            ),
+                                          );
+                                        },
                                         color: Colors.white,
                                         border: 8,
                                         width: 0.2,

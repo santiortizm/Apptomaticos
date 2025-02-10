@@ -1,7 +1,5 @@
 import 'package:apptomaticos/core/constants/colors.dart';
-// import 'package:apptomaticos/core/widgets/avatar_product.dart';
 import 'package:apptomaticos/core/widgets/custom_button.dart';
-import 'package:apptomaticos/core/widgets/custom_dialog_confimation.dart';
 import 'package:apptomaticos/core/widgets/text_form_field_widget.dart';
 import 'package:apptomaticos/core/models/add_product_model.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
@@ -120,17 +118,7 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                               fontSize: 22, fontWeight: FontWeight.w600),
                         ),
                       ),
-                      //   Padding(
-                      //   padding: EdgeInsets.only(left: size.width * 0.08),
-                      //   child: AvatarProduct(
-                      //     imageUrl: _imageUrl,
-                      //     onUpLoad: (imageUrl) {
-                      //       setState(() {
-                      //         _imageUrl = imageUrl;
-                      //       });
-                      //     },
-                      //   ),
-                      // ),
+
                       const SizedBox(height: 16),
                       // Nombre del producto
                       TextFormFieldWidget(
@@ -215,18 +203,7 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                         children: [
                           CustomButton(
                             onPressed: () {
-                              CustomDialogConfirmation.showConfirmationDialog(
-                                context: context,
-                                title: 'Advertencia',
-                                content:
-                                    'Está seguro de cancelar la publicación?',
-                                confirmText: 'Aceptar',
-                                cancelText: 'Cancelar',
-                                onConfirm: () => context.go('/menu'),
-                                onCancel: () {
-                                  Navigator.pop(context);
-                                },
-                              );
+                              _alertForCancelAction(context);
                             },
                             color: redApp,
                             border: 18,
@@ -381,5 +358,30 @@ class _AddProductWidgetState extends State<AddProductWidget> {
           .toList(),
       onChanged: onChanged,
     );
+  }
+
+  Future<void> _alertForCancelAction(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Alerta'),
+            content: Text('Estás seguro de cancelar esta operacion?'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Cancelar'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: const Text('Aceptar'),
+                onPressed: () {
+                  context.go('/menu');
+                },
+              ),
+            ],
+          );
+        });
   }
 }
