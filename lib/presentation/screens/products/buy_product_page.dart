@@ -7,15 +7,15 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class BuyProductWidget extends StatefulWidget {
+class BuyProductPage extends StatefulWidget {
   final String productId;
-  const BuyProductWidget({super.key, required this.productId});
+  const BuyProductPage({super.key, required this.productId});
 
   @override
-  State<BuyProductWidget> createState() => _BuyProductWidgetState();
+  State<BuyProductPage> createState() => _BuyProductPageState();
 }
 
-class _BuyProductWidgetState extends State<BuyProductWidget> {
+class _BuyProductPageState extends State<BuyProductPage> {
   String? userRole;
   bool isOwner = false;
   final supabase = Supabase.instance.client;

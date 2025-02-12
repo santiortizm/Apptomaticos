@@ -101,24 +101,25 @@ class _PaymentMethodState extends State<PaymentMethod> {
                       Padding(
                         padding: EdgeInsets.only(top: size.height * 0.05),
                         child: CustomButton(
-                            onPressed: () {},
-                            color: buttonGreen,
-                            colorBorder: Colors.transparent,
-                            border: 12,
-                            width: 0.4,
-                            height: 0.07,
-                            elevation: 2,
-                            sizeBorder: 0,
-                            child: AutoSizeText(
-                              'CONTINUAR CON LA COMPRA',
-                              maxLines: 1,
-                              maxFontSize: 17,
-                              minFontSize: 14,
-                              style: temaApp.textTheme.titleSmall!.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 30),
-                            )),
+                          onPressed: () {},
+                          color: buttonGreen,
+                          colorBorder: Colors.transparent,
+                          border: 12,
+                          width: 0.4,
+                          height: 0.07,
+                          elevation: 2,
+                          sizeBorder: 0,
+                          child: AutoSizeText(
+                            'CONTINUAR CON LA COMPRA',
+                            maxLines: 1,
+                            maxFontSize: 17,
+                            minFontSize: 14,
+                            style: temaApp.textTheme.titleSmall!.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 30),
+                          ),
+                        ),
                       )
                     ],
                   ),

@@ -3,21 +3,21 @@ import 'dart:async';
 import 'package:apptomaticos/core/constants/colors.dart';
 import 'package:apptomaticos/core/widgets/custom_button.dart';
 import 'package:apptomaticos/data/repositories/product_repository.dart';
-import 'package:apptomaticos/core/widgets/custom_card_products.dart';
-import 'package:apptomaticos/presentation/screens/products/add_product_widget.dart';
+import 'package:apptomaticos/core/widgets/cards/custom_card_products.dart';
+import 'package:apptomaticos/presentation/screens/products/add_product_page.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class CustomListview extends StatefulWidget {
-  const CustomListview({super.key});
+class ListViewProducts extends StatefulWidget {
+  const ListViewProducts({super.key});
 
   @override
-  State<CustomListview> createState() => _CustomListviewState();
+  State<ListViewProducts> createState() => _ListViewProductsState();
 }
 
-class _CustomListviewState extends State<CustomListview> {
+class _ListViewProductsState extends State<ListViewProducts> {
   String? userRole;
   final supabase = Supabase.instance.client;
   final ProductRepository productRepository = ProductRepository();
@@ -75,8 +75,9 @@ class _CustomListviewState extends State<CustomListview> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
       decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.6),
-          borderRadius: BorderRadius.circular(20)),
+        color: Colors.white.withValues(alpha: 0.6),
+        borderRadius: BorderRadius.circular(20),
+      ),
       width: size.width * 1,
       height: size.height * 1,
       child: StreamBuilder<List<Map<String, dynamic>>>(
@@ -107,7 +108,7 @@ class _CustomListviewState extends State<CustomListview> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      const AddProductWidget())),
+                                      const AddProductPage())),
                           color: buttonGreen,
                           border: 18,
                           width: 0.4,
@@ -178,8 +179,7 @@ class _CustomListviewState extends State<CustomListview> {
                       child: CustomButton(
                         onPressed: () => Navigator.of(context).push(
                             MaterialPageRoute(
-                                builder: (context) =>
-                                      const AddProductWidget())),
+                                builder: (context) => const AddProductPage())),
                         color: buttonGreen,
                         border: 18,
                         width: 0.4,

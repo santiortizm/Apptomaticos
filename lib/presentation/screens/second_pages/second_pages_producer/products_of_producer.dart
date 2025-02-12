@@ -1,6 +1,6 @@
 import 'package:apptomaticos/core/services/product_service.dart';
 import 'package:apptomaticos/core/widgets/custom_button.dart';
-import 'package:apptomaticos/core/widgets/custom_card_products_producer.dart';
+import 'package:apptomaticos/core/widgets/cards/custom_card_products_producer.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -91,9 +91,9 @@ class _ProductsOfProducerState extends State<ProductsOfProducer> {
       );
     }
 
-    return SafeArea(
-      child: Scaffold(
-        body: Stack(
+    return Scaffold(
+      body: SafeArea(
+        child: Stack(
           children: [
             Container(
               width: size.width * 1,

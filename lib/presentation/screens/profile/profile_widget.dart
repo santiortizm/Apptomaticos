@@ -1,7 +1,8 @@
 import 'package:apptomaticos/core/constants/colors.dart';
 import 'package:apptomaticos/core/widgets/avatar.dart';
 import 'package:apptomaticos/core/widgets/custom_button.dart';
-import 'package:apptomaticos/presentation/screens/products/products_of_producer.dart';
+import 'package:apptomaticos/presentation/screens/second_pages/second_pages_merchant/my_counter_offers.dart';
+import 'package:apptomaticos/presentation/screens/second_pages/second_pages_producer/products_of_producer.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -80,6 +81,20 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                       _imageUrl = imageUrl;
                     });
                   },
+                ),
+                Positioned(
+                  top: 10,
+                  right: 10,
+                  child: IconButton(
+                    onPressed: () {
+                      Scaffold.of(context).openDrawer();
+                    },
+                    icon: Icon(
+                      Icons.list,
+                      size: 50,
+                      color: redApp,
+                    ),
+                  ),
                 ),
                 if (userRole == 'Productor')
                   Positioned(

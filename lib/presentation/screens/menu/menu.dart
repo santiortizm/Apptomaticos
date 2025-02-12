@@ -1,18 +1,18 @@
-import 'package:apptomaticos/core/widgets/custom_listview.dart';
+import 'package:apptomaticos/core/widgets/drawer/drawer_producer_widget.dart';
+import 'package:apptomaticos/presentation/screens/products/listview_products.dart';
 import 'package:apptomaticos/presentation/screens/profile/profile_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:apptomaticos/core/widgets/custom_tabbar_button.dart';
 
-class MenuProductsWidget extends StatefulWidget {
-  const MenuProductsWidget({super.key});
+class Menu extends StatefulWidget {
+  const Menu({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
-  _MenuProductsWidgetState createState() => _MenuProductsWidgetState();
+  _MenuState createState() => _MenuState();
 }
 
-class _MenuProductsWidgetState extends State<MenuProductsWidget>
-    with SingleTickerProviderStateMixin {
+class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _selectedIndex = 0;
   @override
@@ -37,49 +37,51 @@ class _MenuProductsWidgetState extends State<MenuProductsWidget>
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: Stack(
-        children: [
-          // Fondo con opacidad
-          Container(
-            width: size.width,
-            height: size.height,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/fondo1.jpg'),
-                fit: BoxFit.cover,
+      drawer: const DrawerProducerWidget(),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            // Fondo con opacidad
+            Container(
+              width: size.width,
+              height: size.height,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/fondo1.jpg'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Container(
+                color: Colors.black.withValues(alpha: 0.5),
               ),
             ),
-            child: Container(
-              color: Colors.black.withValues(alpha: 0.5),
-            ),
-          ),
-          // Contenido principal
-          Column(
-            children: [
-              SizedBox(height: size.height * 0.05),
-              _buildTabBar(context, size),
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: size.width * 0.05,
-                          vertical: size.height * 0.025),
-                      child: const CustomListview(),
-                    ),
-                    _buildPricesTab(context, size),
-                    Padding(
+            // Contenido principal
+            Column(
+              children: [
+                _buildTabBar(context, size),
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: size.width * 0.05,
                             vertical: size.height * 0.025),
-                        child: const ProfileWidget()),
-                  ],
+                        child: const ListViewProducts(),
+                      ),
+                      _buildPricesTab(context, size),
+                      Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * 0.05,
+                              vertical: size.height * 0.025),
+                          child: const ProfileWidget()),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

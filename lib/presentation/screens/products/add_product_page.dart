@@ -8,17 +8,16 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class AddProductWidget extends StatefulWidget {
-  const AddProductWidget({super.key});
+class AddProductPage extends StatefulWidget {
+  const AddProductPage({super.key});
   @override
   // ignore: library_private_types_in_public_api
-  _AddProductWidgetState createState() => _AddProductWidgetState();
+  _AddProductPageState createState() => _AddProductPageState();
 }
 
-class _AddProductWidgetState extends State<AddProductWidget> {
+class _AddProductPageState extends State<AddProductPage> {
   final AddProductModel _model = AddProductModel();
   final SupabaseClient supabase = Supabase.instance.client;
-  // String? _imageUrl;
   @override
   void dispose() {
     _model.dispose();
@@ -365,8 +364,8 @@ class _AddProductWidgetState extends State<AddProductWidget> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Alerta'),
-            content: Text('Estás seguro de cancelar esta operacion?'),
+            title: const Text('Alerta'),
+            content: const Text('Estás seguro de cancelar esta operacion?'),
             actions: <Widget>[
               TextButton(
                 child: const Text('Cancelar'),

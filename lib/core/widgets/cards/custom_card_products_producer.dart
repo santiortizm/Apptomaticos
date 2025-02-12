@@ -1,6 +1,6 @@
 import 'package:apptomaticos/core/constants/colors.dart';
 import 'package:apptomaticos/core/services/product_service.dart';
-import 'package:apptomaticos/presentation/screens/buy_product/buy_product_widget.dart';
+import 'package:apptomaticos/presentation/screens/products/buy_product_page.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +46,7 @@ class _CustomCardProductsProducerState
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => BuyProductWidget(productId: widget.productId),
+            builder: (context) => BuyProductPage(productId: widget.productId),
           ),
         );
       },

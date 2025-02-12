@@ -1,5 +1,5 @@
 import 'package:apptomaticos/presentation/screens/login/login_widget.dart';
-import 'package:apptomaticos/presentation/screens/products/menu_products_widget.dart';
+import 'package:apptomaticos/presentation/screens/menu/menu.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -40,6 +40,6 @@ class _AuthAppState extends State<AuthApp> {
 
   @override
   Widget build(BuildContext context) {
-    return user == null ? const LoginWidget() : const MenuProductsWidget();
+    return user == null ? const LoginWidget() : const Menu();
   }
 }
