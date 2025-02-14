@@ -42,3 +42,7 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 .env
+
+/supabase/functions/service-account.json
+
+/node_modules/*

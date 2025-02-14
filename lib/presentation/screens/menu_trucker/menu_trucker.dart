@@ -1,14 +1,14 @@
 import 'package:apptomaticos/core/widgets/custom_tabbar_button.dart';
 import 'package:flutter/material.dart';
 
-class MenuTruker extends StatefulWidget {
-  const MenuTruker({super.key});
+class MenuTrucker extends StatefulWidget {
+  const MenuTrucker({super.key});
 
   @override
-  State<MenuTruker> createState() => _MenuTrukerState();
+  State<MenuTrucker> createState() => _MenuTruckerState();
 }
 
-class _MenuTrukerState extends State<MenuTruker>
+class _MenuTruckerState extends State<MenuTrucker>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _selectedIndex = 0;

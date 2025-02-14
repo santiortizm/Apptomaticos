@@ -5,6 +5,17 @@ class ProductService {
   final supabase = Supabase.instance.client;
 
   ProductService(this.supabaseClient);
+  Future<bool> registerProduct(Map<String, dynamic> productData) async {
+    try {
+      final response =
+          await supabaseClient.from('productos').insert(productData);
+      return response
+          .isNotEmpty; // Si la respuesta no está vacía, el producto se insertó.
+    } catch (e) {
+      print('Error registrando producto: $e');
+      return false;
+    }
+  }
 
   /// Obtiene los detalles de un producto por ID
   Future<Map<String, dynamic>> fetchProductDetails(String productId) async {

@@ -1,8 +1,10 @@
 import 'package:apptomaticos/core/widgets/drawer/drawer_producer_widget.dart';
 import 'package:apptomaticos/presentation/screens/products/listview_products.dart';
 import 'package:apptomaticos/presentation/screens/profile/profile_widget.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:apptomaticos/core/widgets/custom_tabbar_button.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Menu extends StatefulWidget {
   const Menu({super.key});
@@ -15,15 +17,74 @@ class Menu extends StatefulWidget {
 class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _selectedIndex = 0;
+  final supabase = Supabase.instance.client;
+
   @override
   void initState() {
     super.initState();
+    _handleAuthStateChange();
+
+    FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
+      _setFcmToken(fcmToken);
+    });
+
+    FirebaseMessaging.onMessage.listen((payload) {
+      final notification = payload.notification;
+      if (notification != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${notification.title} ${notification.body}'),
+          ),
+        );
+      }
+    });
+
     _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(() {
       setState(() {
         _selectedIndex = _tabController.index;
       });
     });
+  }
+
+  void _handleAuthStateChange() {
+    supabase.auth.onAuthStateChange.listen((event) async {
+      if (event.event == AuthChangeEvent.signedIn) {
+        await _requestPushPermission();
+        final fcmToken = await FirebaseMessaging.instance.getToken();
+
+        if (fcmToken != null) {
+          _setFcmToken(fcmToken);
+        }
+      }
+    });
+  }
+
+  bool _isRequestingPermission =
+      false; // Variable para evitar llamadas múltiples
+
+  Future<void> _requestPushPermission() async {
+    if (_isRequestingPermission) return; // Evita solicitudes simultáneas
+    _isRequestingPermission = true;
+
+    try {
+      await FirebaseMessaging.instance.requestPermission();
+      await FirebaseMessaging.instance.getAPNSToken();
+    } catch (e) {
+      print("Error solicitando permisos: $e");
+    } finally {
+      _isRequestingPermission =
+          false; // Restablece la variable después de la solicitud
+    }
+  }
+
+  Future<void> _setFcmToken(String fcmToken) async {
+    final userId = supabase.auth.currentUser?.id;
+    if (userId != null) {
+      await supabase.from('usuarios').update({
+        'fcm_token': fcmToken,
+      }).eq('idAuth', userId);
+    }
   }
 
   @override
