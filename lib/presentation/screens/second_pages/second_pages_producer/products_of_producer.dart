@@ -1,3 +1,4 @@
+import 'package:apptomaticos/core/models/product_model.dart';
 import 'package:apptomaticos/core/services/product_service.dart';
 import 'package:apptomaticos/core/widgets/custom_button.dart';
 import 'package:apptomaticos/core/widgets/cards/custom_card_products_producer.dart';
@@ -15,51 +16,52 @@ class ProductsOfProducer extends StatefulWidget {
 
 class _ProductsOfProducerState extends State<ProductsOfProducer> {
   final supabase = Supabase.instance.client;
-
-  late Future<List<Map<String, dynamic>>> producerProductsFuture;
   final ProductService productService =
       ProductService(Supabase.instance.client);
-  int? idUsuario; // Guardará el idUsuario del productor autenticado
+  late Future<List<Product>> producerProductsFuture;
+  String? idUsuario;
   late RealtimeChannel _channel;
 
   @override
   void initState() {
     super.initState();
-    _fetchIdUsuario();
-    producerProductsFuture = productService.fetchProductsByProducer();
+    _initialize();
+  }
 
-    // Suscripción a los cambios en la tabla 'productos'
+  Future<void> _initialize() async {
+    await _fetchIdUsuario();
     _subscribeToProductChanges();
+    _refreshProducts();
   }
 
   @override
   void dispose() {
-    // Cancela la suscripción al canal cuando el widget se desmonte
     _channel.unsubscribe();
     super.dispose();
   }
 
-  /// Obtiene el `idUsuario` correspondiente al usuario autenticado
+  /// Obtiene el `idUsuario` del usuario autenticado
   Future<void> _fetchIdUsuario() async {
     final user = supabase.auth.currentUser;
-
     if (user == null) return;
 
     try {
       final response = await supabase
           .from('usuarios')
           .select('idUsuario')
-          .eq('idAuth', user.id)
+          .eq('idUsuario',
+              user.id) // Corregido: Usa 'idAuth' en lugar de 'idUsuario'
           .single();
 
       setState(() {
-        idUsuario = response['idUsuario'];
+        idUsuario = response['idUsuario'].toString();
       });
     } catch (e) {
       print('Error al obtener idUsuario: $e');
     }
   }
 
+  /// Suscripción en tiempo real a los cambios en `productos`
   void _subscribeToProductChanges() {
     _channel = supabase
         .channel('public:productos')
@@ -76,9 +78,11 @@ class _ProductsOfProducerState extends State<ProductsOfProducer> {
   }
 
   Future<void> _refreshProducts() async {
-    setState(() {
-      producerProductsFuture = productService.fetchProductsByProducer();
-    });
+    if (idUsuario != null) {
+      setState(() {
+        producerProductsFuture = productService.fetchProductsByProducer();
+      });
+    }
   }
 
   @override
@@ -86,27 +90,24 @@ class _ProductsOfProducerState extends State<ProductsOfProducer> {
     final size = MediaQuery.of(context).size;
 
     if (idUsuario == null) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     return Scaffold(
       body: SafeArea(
         child: Stack(
           children: [
+            // Fondo de pantalla
             Container(
-              width: size.width * 1,
-              height: size.height * 1,
+              width: size.width,
+              height: size.height,
               decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('assets/images/fondo_2.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),
-              child: Container(
-                color: Colors.black.withValues(alpha: 0.2),
-              ),
+              child: Container(color: Colors.black.withOpacity(0.2)),
             ),
             Padding(
               padding: EdgeInsets.symmetric(
@@ -116,11 +117,12 @@ class _ProductsOfProducerState extends State<ProductsOfProducer> {
                   width: size.width,
                   height: size.height * 0.9,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.7),
+                    color: Colors.white.withOpacity(0.7),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Column(
                     children: [
+                      // Botón Atrás
                       Align(
                         alignment: const Alignment(-0.9, 0),
                         child: SizedBox(
@@ -129,7 +131,7 @@ class _ProductsOfProducerState extends State<ProductsOfProducer> {
                             onPressed: () {
                               Navigator.pop(context);
                             },
-                            color: Colors.white.withValues(alpha: 0.05),
+                            color: Colors.white.withOpacity(0.05),
                             border: 20,
                             width: 0.2,
                             height: 0.1,
@@ -139,17 +141,17 @@ class _ProductsOfProducerState extends State<ProductsOfProducer> {
                             child: Row(
                               spacing: size.width * 0.02,
                               children: [
-                                const Icon(
-                                  Icons.arrow_back,
-                                  color: Colors.black,
-                                ),
+                                const Icon(Icons.arrow_back,
+                                    color: Colors.black),
                                 AutoSizeText(
                                   'Atrás',
                                   maxFontSize: 18,
                                   minFontSize: 14,
                                   maxLines: 1,
                                   style: temaApp.textTheme.titleSmall!.copyWith(
-                                      fontSize: 18, color: Colors.black),
+                                    fontSize: 18,
+                                    color: Colors.black,
+                                  ),
                                 ),
                               ],
                             ),
@@ -162,14 +164,13 @@ class _ProductsOfProducerState extends State<ProductsOfProducer> {
                         minFontSize: 18,
                         maxLines: 1,
                         style: temaApp.textTheme.titleSmall!.copyWith(
-                            fontSize: 26,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w700),
+                          fontSize: 26,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                      SizedBox(
-                        height: size.height * 0.7,
-                        width: size.width * 1,
-                        child: FutureBuilder<List<Map<String, dynamic>>>(
+                      Expanded(
+                        child: FutureBuilder<List<Product>>(
                           future: producerProductsFuture,
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
@@ -179,15 +180,15 @@ class _ProductsOfProducerState extends State<ProductsOfProducer> {
                             }
                             if (snapshot.hasError) {
                               return Center(
-                                child: Text('Error: ${snapshot.error}'),
-                              );
+                                  child: Text('Error: ${snapshot.error}'));
                             }
                             if (snapshot.data == null ||
                                 snapshot.data!.isEmpty) {
                               return const Center(
-                                child: Text('No tienes productos disponibles.'),
-                              );
+                                  child:
+                                      Text('No tienes productos disponibles.'));
                             }
+
                             final productos = snapshot.data!;
                             return RefreshIndicator(
                               onRefresh: _refreshProducts,
@@ -199,12 +200,12 @@ class _ProductsOfProducerState extends State<ProductsOfProducer> {
                                   final producto = productos[index];
                                   return CustomCardProductsProducer(
                                     isDelete: _refreshProducts,
-                                    productId:
-                                        producto['idProducto'].toString(),
-                                    title: producto['nombreProducto'],
-                                    date: producto['created_at'],
-                                    imageUrl: producto['idImagen'] ??
-                                        'https://via.placeholder.com/150', // Imagen por defecto
+                                    productId: producto.idProducto,
+                                    title: producto.nombreProducto,
+                                    date: producto.createdAt.toIso8601String(),
+                                    imageUrl: producto.descripcion.isNotEmpty
+                                        ? producto.descripcion
+                                        : 'https://via.placeholder.com/150', // Imagen por defecto
                                   );
                                 },
                               ),

@@ -244,7 +244,8 @@ class _AddProductPageState extends State<AddProductPage> {
                                 final userIdResponse = await supabase
                                     .from('usuarios')
                                     .select('idUsuario')
-                                    .eq('idAuth', supabase.auth.currentUser!.id)
+                                    .eq('idUsuario',
+                                        supabase.auth.currentUser!.id)
                                     .single();
 
                                 final idUsuario = userIdResponse['idUsuario'];
@@ -265,7 +266,7 @@ class _AddProductPageState extends State<AddProductPage> {
                                       _model.expirationDateController.text,
                                   'precio':
                                       double.parse(_model.priceController.text),
-                                  'idUsuario': idUsuario,
+                                  'idPropietario': idUsuario,
                                 }).select();
 
                                 // Verificar si response contiene datos

@@ -62,14 +62,14 @@ void main() {
 
       // Datos del producto a registrar
       final productData = {
-        'nombreProducto': 'Manzana',
+        'nombreProducto': 'Tomate',
         'cantidad': 10,
-        'descripcion': 'Manzanas rojas frescas',
+        'descripcion': 'Tomate fresco',
         'maduracion': 'Verde',
         'fertilizantes': 'Orgánico',
         'fechaCosecha': '2024-02-10',
         'fechaCaducidad': '2024-03-10',
-        'precio': 15.0,
+        'precio': 1500.0,
         'idUsuario': 1,
       };
 

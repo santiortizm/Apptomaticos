@@ -57,7 +57,7 @@ class _ListViewProductsState extends State<ListViewProducts> {
         final response = await supabase
             .from('usuarios')
             .select('rol')
-            .eq('idAuth', user.id)
+            .eq('idUsuario', user.id)
             .single();
 
         setState(() {
@@ -159,7 +159,7 @@ class _ListViewProductsState extends State<ListViewProducts> {
                     itemBuilder: (context, int index) {
                       var data = snapshot.data![index];
                       return CustomCardProducts(
-                        productId: data['idProducto'].toString(),
+                        productId: data['idProducto'],
                         title: data['nombreProducto'],
                         state: data['maduracion'],
                         price: data['precio'].toString(),

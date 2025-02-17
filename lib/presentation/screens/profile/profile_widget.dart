@@ -37,7 +37,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
       final roleResponse = await supabase
           .from('usuarios')
           .select('rol, nombre, apellido, celular')
-          .eq('idAuth', user.id)
+          .eq('idUsuario', user.id)
           .single();
 
       // Carga la imagen de perfil

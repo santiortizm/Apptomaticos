@@ -6,11 +6,12 @@ class Product {
   final String descripcion;
   final String maduracion;
   final String fertilizantes;
-  final DateTime fechaCosecha;
-  final DateTime fechaCaducidad;
+  final String fechaCosecha;
+  final String fechaCaducidad;
   final double precio;
+  final String? idImagen;
+  final String idPropietario;
 
-  // Constructor
   Product({
     required this.idProducto,
     required this.createdAt,
@@ -22,20 +23,24 @@ class Product {
     required this.fechaCosecha,
     required this.fechaCaducidad,
     required this.precio,
+    this.idImagen,
+    required this.idPropietario,
   });
 
   factory Product.fromMap(Map<String, dynamic> map) {
     return Product(
-      idProducto: map['idProducto'] as int,
+      idProducto: map['idProducto'],
       createdAt: DateTime.parse(map['created_at'] as String),
-      nombreProducto: map['nombreProducto'] as String,
-      cantidad: map['cantidad'] as int,
-      descripcion: map['descripcion'] as String,
-      maduracion: map['maduracion'] as String,
-      fertilizantes: map['fertilizantes'] as String,
-      fechaCosecha: DateTime.parse(map['fechaCosecha'] as String),
-      fechaCaducidad: DateTime.parse(map['fechaCaducidad'] as String),
-      precio: map['precio'] as double,
+      nombreProducto: map['nombreProducto'],
+      cantidad: map['cantidad'],
+      descripcion: map['descripcion'],
+      maduracion: map['maduracion'],
+      fertilizantes: map['fertilizantes'],
+      fechaCosecha: map['fechaCosecha'],
+      fechaCaducidad: map['fechaCaducidad'],
+      precio: map['precio'].toDouble(),
+      idImagen: map['idImage'],
+      idPropietario: map['idPropietario'],
     );
   }
 
@@ -48,9 +53,11 @@ class Product {
       'descripcion': descripcion,
       'maduracion': maduracion,
       'fertilizantes': fertilizantes,
-      'fechaCosecha': fechaCosecha.toIso8601String(),
-      'fechaCaducidad': fechaCaducidad.toIso8601String(),
+      'fechaCosecha': fechaCosecha.toString(),
+      'fechaCaducidad': fechaCaducidad.toString(),
       'precio': precio,
+      'idImagen': idImagen,
+      'idPropietario': idPropietario,
     };
   }
 }

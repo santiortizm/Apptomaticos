@@ -1,17 +1,20 @@
 import 'package:apptomaticos/core/constants/colors.dart';
+import 'package:apptomaticos/core/models/product_model.dart';
 import 'package:apptomaticos/core/services/product_service.dart';
 import 'package:apptomaticos/presentation/screens/products/buy_product_page.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:intl/intl.dart';
 
 class CustomCardProductsProducer extends StatefulWidget {
-  final String productId;
+  final int productId;
   final String title;
   final String date;
   final String imageUrl;
   final VoidCallback isDelete;
+
   const CustomCardProductsProducer({
     super.key,
     required this.productId,
@@ -30,7 +33,7 @@ class _CustomCardProductsProducerState
     extends State<CustomCardProductsProducer> {
   late final ProductService productService =
       ProductService(Supabase.instance.client);
-  late Future<List<Map<String, dynamic>>> productDetails;
+  late Future<List<Product>> productDetails;
   final dataProduct = ProductService(Supabase.instance.client);
 
   @override
@@ -62,7 +65,6 @@ class _CustomCardProductsProducerState
           borderRadius: BorderRadius.circular(24),
         ),
         child: Row(
-          spacing: 4,
           children: [
             Container(
               width: size.width * .3,
@@ -93,32 +95,28 @@ class _CustomCardProductsProducerState
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
-                      width: size.width * 0.3,
-                      child: AutoSizeText(
-                        'Publicado',
-                        maxFontSize: 14,
-                        minFontSize: 12,
-                        maxLines: 1,
-                        style: temaApp.textTheme.titleSmall!
-                            .copyWith(fontSize: 14, color: buttoGreenSelected),
-                      ),
+                    AutoSizeText(
+                      'Publicado',
+                      maxFontSize: 14,
+                      minFontSize: 12,
+                      maxLines: 1,
+                      style: temaApp.textTheme.titleSmall!
+                          .copyWith(fontSize: 14, color: buttoGreenSelected),
                     ),
-                    SizedBox(
-                      width: size.width * 0.3,
-                      child: AutoSizeText(
-                        widget.date,
-                        maxFontSize: 14,
-                        minFontSize: 12,
-                        maxLines: 1,
-                        style: temaApp.textTheme.titleSmall!
-                            .copyWith(fontSize: 14, color: buttoGreenSelected),
-                      ),
+                    AutoSizeText(
+                      DateFormat('dd/MM/yyyy').format(
+                          DateTime.parse(widget.date)), // Formato día/mes/año
+                      maxFontSize: 14,
+                      minFontSize: 12,
+                      maxLines: 1,
+                      style: temaApp.textTheme.titleSmall!
+                          .copyWith(fontSize: 14, color: buttoGreenSelected),
                     ),
                   ],
                 ),
               ],
             ),
+            const Spacer(),
             IconButton(
               onPressed: () async {
                 _dialog(context);
@@ -159,8 +157,9 @@ class _CustomCardProductsProducerState
                 if (success) {
                   setState(() {
                     productDetails = productService.fetchProductsByProducer();
-                    widget.isDelete;
                   });
+
+                  widget.isDelete();
 
                   ScaffoldMessenger.of(parentContext).showSnackBar(
                     const SnackBar(

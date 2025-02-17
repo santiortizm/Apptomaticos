@@ -83,7 +83,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
     if (userId != null) {
       await supabase.from('usuarios').update({
         'fcm_token': fcmToken,
-      }).eq('idAuth', userId);
+      }).eq('idUsuario', userId);
     }
   }
 

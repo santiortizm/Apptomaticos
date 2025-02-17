@@ -1,6 +1,8 @@
 import 'package:apptomaticos/core/constants/colors.dart';
+import 'package:apptomaticos/core/models/product_model.dart';
 import 'package:apptomaticos/core/services/product_service.dart';
 import 'package:apptomaticos/core/widgets/custom_button.dart';
+import 'package:apptomaticos/presentation/screens/second_pages/second_pages_merchant/offert_page.dart';
 import 'package:apptomaticos/presentation/screens/second_pages/second_pages_merchant/purchase_page.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -8,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class BuyProductPage extends StatefulWidget {
-  final String productId;
+  final int productId;
   const BuyProductPage({super.key, required this.productId});
 
   @override
@@ -23,7 +25,8 @@ class _BuyProductPageState extends State<BuyProductPage> {
       ProductService(Supabase.instance.client);
 
   final dataProduct = ProductService(Supabase.instance.client);
-  late Future<Map<String, dynamic>> productDetails;
+  // late Future<Map<String, dynamic>> productDetails;
+  late Future<Product?> productDetails;
 
   @override
   void initState() {
@@ -43,7 +46,7 @@ class _BuyProductPageState extends State<BuyProductPage> {
         final response = await supabase
             .from('usuarios')
             .select('rol')
-            .eq('idAuth', user.id)
+            .eq('idUsuario', user.id)
             .single();
 
         setState(() {
@@ -67,7 +70,7 @@ class _BuyProductPageState extends State<BuyProductPage> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: FutureBuilder<Map<String, dynamic>>(
+      body: FutureBuilder<Product?>(
         future: productDetails,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -173,8 +176,7 @@ class _BuyProductPageState extends State<BuyProductPage> {
                             spacing: 12,
                             children: [
                               AutoSizeText(
-                                productData['nombreProducto'] ??
-                                    'Nombre no disponible',
+                                productData.nombreProducto,
                                 style: temaApp.textTheme.titleMedium!.copyWith(
                                     fontSize: 26,
                                     color: Colors.black,
@@ -186,8 +188,7 @@ class _BuyProductPageState extends State<BuyProductPage> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(16),
                                   image: DecorationImage(
-                                    image: NetworkImage(productData[
-                                            'idImage'] ??
+                                    image: NetworkImage(productData.idImagen ??
                                         'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp'),
                                     fit: BoxFit.cover,
                                   ),
@@ -195,7 +196,7 @@ class _BuyProductPageState extends State<BuyProductPage> {
                               ),
                               _cardInfo(
                                 'Cantidad disponible:',
-                                productData['cantidad'].toString(),
+                                productData.cantidad.toString(),
                                 Icon(
                                   Icons.production_quantity_limits,
                                   color: redApp,
@@ -203,7 +204,7 @@ class _BuyProductPageState extends State<BuyProductPage> {
                               ),
                               _cardInfo(
                                 'Fecha de cosecha:',
-                                productData['fechaCosecha'],
+                                productData.fechaCosecha,
                                 Icon(
                                   Icons.calendar_month,
                                   color: redApp,
@@ -211,7 +212,7 @@ class _BuyProductPageState extends State<BuyProductPage> {
                               ),
                               _cardInfo(
                                 'Fecha de caducidad:',
-                                productData['fechaCaducidad'],
+                                productData.fechaCaducidad,
                                 Icon(
                                   Icons.date_range,
                                   color: redApp,
@@ -219,7 +220,7 @@ class _BuyProductPageState extends State<BuyProductPage> {
                               ),
                               _cardInfo(
                                 'Estado de maduración:',
-                                productData['maduracion'],
+                                productData.maduracion,
                                 Icon(
                                   Icons.timelapse,
                                   color: redApp,
@@ -227,7 +228,7 @@ class _BuyProductPageState extends State<BuyProductPage> {
                               ),
                               _cardInfo(
                                 'Precio canasta:',
-                                productData['precio'].toString(),
+                                productData.precio.toString(),
                                 Icon(
                                   Icons.attach_money,
                                   color: redApp,
@@ -262,8 +263,7 @@ class _BuyProductPageState extends State<BuyProductPage> {
                                 alignment: Alignment.topLeft,
                                 child: SingleChildScrollView(
                                   child: AutoSizeText(
-                                    productData['descripcion'] ??
-                                        'Descripció no disponible',
+                                    productData.descripcion,
                                     maxFontSize: 16,
                                     minFontSize: 14,
                                     maxLines: 10,
@@ -288,7 +288,15 @@ class _BuyProductPageState extends State<BuyProductPage> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       CustomButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const PurchasePage(),
+                                            ),
+                                          );
+                                        },
                                         color: buttonGreen,
                                         border: 8,
                                         width: 0.2,
@@ -314,7 +322,7 @@ class _BuyProductPageState extends State<BuyProductPage> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  const PurchasePage(),
+                                                  const OffertPage(),
                                             ),
                                           );
                                         },
@@ -416,7 +424,7 @@ class _BuyProductPageState extends State<BuyProductPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Actualizar Datos'),
-          content: FutureBuilder<Map<String, dynamic>>(
+          content: FutureBuilder<Product?>(
             future: productDetails,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -427,11 +435,10 @@ class _BuyProductPageState extends State<BuyProductPage> {
                 return const Center(child: Text('Producto no encontrado'));
               }
               final productData = snapshot.data!;
-              titleController.text = productData['nombreProducto'] ?? '';
-              descriptionController.text = productData['descripcion'] ?? '';
-              priceController.text = productData['precio']?.toString() ?? '';
-              quantityController.text =
-                  productData['cantidad']?.toString() ?? '';
+              titleController.text = productData.nombreProducto;
+              descriptionController.text = productData.descripcion;
+              priceController.text = productData.precio.toString();
+              quantityController.text = productData.cantidad.toString();
               return SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,

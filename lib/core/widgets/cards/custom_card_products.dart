@@ -5,7 +5,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 class CustomCardProducts extends StatelessWidget {
-  final String productId;
+  final int productId;
   final String title;
   final String state;
   final String price;

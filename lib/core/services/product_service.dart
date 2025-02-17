@@ -1,16 +1,18 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../models/product_model.dart';
 
 class ProductService {
   final SupabaseClient supabaseClient;
   final supabase = Supabase.instance.client;
 
   ProductService(this.supabaseClient);
-  Future<bool> registerProduct(Map<String, dynamic> productData) async {
+
+  /// Registra un nuevo producto
+  Future<bool> registerProduct(Product product) async {
     try {
       final response =
-          await supabaseClient.from('productos').insert(productData);
-      return response
-          .isNotEmpty; // Si la respuesta no está vacía, el producto se insertó.
+          await supabaseClient.from('productos').insert(product.toMap());
+      return response.isNotEmpty;
     } catch (e) {
       print('Error registrando producto: $e');
       return false;
@@ -18,18 +20,24 @@ class ProductService {
   }
 
   /// Obtiene los detalles de un producto por ID
-  Future<Map<String, dynamic>> fetchProductDetails(String productId) async {
-    final response = await supabaseClient
-        .from('productos')
-        .select('*')
-        .eq('idProducto', productId)
-        .single();
-    return response;
+  Future<Product?> fetchProductDetails(int productId) async {
+    try {
+      final response = await supabaseClient
+          .from('productos')
+          .select('*')
+          .eq('idProducto', productId)
+          .single();
+
+      return Product.fromMap(response);
+    } catch (e) {
+      print('Error obteniendo detalles del producto: $e');
+      return null;
+    }
   }
 
   /// Actualiza los detalles de un producto
   Future<bool> updateProductDetails(
-      String productId, Map<String, dynamic> updates) async {
+      int productId, Map<String, dynamic> updates) async {
     try {
       final response = await supabaseClient
           .from('productos')
@@ -45,7 +53,7 @@ class ProductService {
   }
 
   /// Elimina un producto dado su ID
-  Future<bool> deleteProduct(String productId) async {
+  Future<bool> deleteProduct(int productId) async {
     try {
       final response = await supabaseClient
           .from('productos')
@@ -53,11 +61,7 @@ class ProductService {
           .eq('idProducto', productId)
           .select();
 
-      if (response.isNotEmpty) {
-        return true;
-      } else {
-        return false;
-      }
+      return response.isNotEmpty;
     } catch (e) {
       print('Error al eliminar el producto: $e');
       return false;
@@ -65,32 +69,27 @@ class ProductService {
   }
 
   /// Verifica si el producto pertenece al usuario actual
-  Future<bool> isProductOwner(String productId) async {
+  Future<bool> isProductOwner(int productId) async {
     try {
       final authUser = supabaseClient.auth.currentUser;
       if (authUser == null) {
         return false;
       }
-      final usuarioResponse = await supabaseClient
-          .from('usuarios')
-          .select('idUsuario')
-          .eq('idAuth', authUser.id)
-          .single();
-      if (usuarioResponse['idUsuario'] == null) {
-        return false;
-      }
-      final int idUsuario = usuarioResponse['idUsuario'];
+
+      // Obtener `idPropietario` del producto
       final productoResponse = await supabaseClient
           .from('productos')
-          .select('idUsuario')
+          .select('idPropietario')
           .eq('idProducto', productId)
           .single();
 
-      if (productoResponse['idUsuario'] == null) {
+      if (productoResponse.isEmpty) {
         return false;
       }
 
-      return productoResponse['idUsuario'] == idUsuario;
+      final String idUsuarioProducto = productoResponse['idPropietario'];
+
+      return idUsuarioProducto == authUser.id; // Comparar como String
     } catch (e) {
       print('Error verificando propiedad del producto: $e');
       return false;
@@ -98,27 +97,21 @@ class ProductService {
   }
 
   /// Obtiene todos los productos que pertenecen al productor autenticado
-  Future<List<Map<String, dynamic>>> fetchProductsByProducer() async {
+  Future<List<Product>> fetchProductsByProducer() async {
     try {
       final authUser = supabaseClient.auth.currentUser;
-
       if (authUser == null) {
         throw Exception('Usuario no autenticado.');
       }
-      final usuarioResponse = await supabaseClient
-          .from('usuarios')
-          .select('idUsuario')
-          .eq('idAuth', authUser.id)
-          .single();
-
-      final int idUsuario = usuarioResponse['idUsuario'];
 
       final productosResponse = await supabaseClient
           .from('productos')
           .select('*')
-          .eq('idUsuario', idUsuario);
+          .eq('idPropietario', authUser.id); // Usar `authUser.id` directamente
 
-      return List<Map<String, dynamic>>.from(productosResponse);
+      return productosResponse
+          .map<Product>((data) => Product.fromMap(data))
+          .toList();
     } catch (e) {
       print('Error al obtener los productos del productor: $e');
       return [];
