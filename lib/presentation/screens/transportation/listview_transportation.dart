@@ -1,4 +1,4 @@
-import 'package:apptomaticos/core/widgets/cards/custom_card_transportation.dart';
+import 'package:apptomaticos/core/widgets/cards/custom_card_transport.dart';
 import 'package:flutter/material.dart';
 
 class ListviewTransportation extends StatefulWidget {
@@ -22,7 +22,7 @@ class _ListviewTransportationState extends State<ListviewTransportation> {
       width: size.width * 1,
       height: size.height * 1,
       child: const SingleChildScrollView(
-        child: CustomCardTransportation(),
+        child: CustomCardTransport(),
       ),
     );
   }

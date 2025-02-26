@@ -32,9 +32,9 @@ Deno.serve(async (req) => {
     const payload: WebhookPayload = await req.json();
     const { idProducto, idComprador, cantidad, valorOferta, idPropietario, nombreProducto, imagenProducto } = payload.record;
 
-    console.log(`📢 Nueva contraoferta recibida para el producto ${idProducto}`);
+    console.log(` Nueva contraoferta recibida para el producto ${idProducto}`);
 
-    // 🔹 Obtener el `fcm_token` del propietario
+    //  Obtener el `fcm_token` del propietario
     const { data: propietario, error: ownerError } = await supabase
       .from("usuarios")
       .select("fcm_token")
@@ -42,19 +42,19 @@ Deno.serve(async (req) => {
       .single();
 
     if (ownerError || !propietario || !propietario.fcm_token) {
-      console.error("❌ Error obteniendo token del propietario:", ownerError);
+      console.error(" Error obteniendo token del propietario:", ownerError);
       return new Response("No se pudo obtener token del propietario", { status: 500 });
     }
 
     const fcmToken = propietario.fcm_token as string;
 
-    // ✅ Obtener token de acceso a Firebase
+    //  Obtener token de acceso a Firebase
     const accessToken = await getAccessToken({
       clientEmail: serviceAccount.client_email,
       privateKey: serviceAccount.private_key,
     });
 
-    // ✅ Enviar notificación SOLO al propietario
+    //  Enviar notificación SOLO al propietario
     const notificationResponse = await fetch(
       `https://fcm.googleapis.com/v1/projects/${serviceAccount.project_id}/messages:send`,
       {
@@ -67,7 +67,7 @@ Deno.serve(async (req) => {
           message: {
             token: fcmToken,
             notification: {
-              title: "📩 Nueva Oferta Recibida",
+              title: "📩 Nueva Oferta Recibida 📩",
               body: `Tienes una nueva oferta de ${cantidad} unidades por \$${valorOferta} en ${nombreProducto}.`,
               image: imagenProducto,
             },
@@ -77,15 +77,15 @@ Deno.serve(async (req) => {
     );
 
     if (!notificationResponse.ok) {
-      console.error("❌ Error enviando notificación:", await notificationResponse.text());
+      console.error(" Error enviando notificación:", await notificationResponse.text());
       return new Response("Error enviando notificación", { status: 500 });
     }
 
-    console.log(`✅ Notificación enviada al propietario ${idPropietario}`);
+    console.log(` Notificación enviada al propietario ${idPropietario}`);
     return new Response("Notificación enviada con éxito", { status: 200 });
 
   } catch (error) {
-    console.error("❌ Error en la Edge Function:", error);
+    console.error(" Error en la Edge Function:", error);
     return new Response("Error interno en la Edge Function", { status: 500 });
   }
 });

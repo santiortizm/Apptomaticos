@@ -31,7 +31,6 @@ class _AvatarProductState extends State<AvatarProduct> {
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
     if (image == null) {
-      print('No se seleccionó ninguna imagen.');
       return;
     }
 
@@ -46,8 +45,6 @@ class _AvatarProductState extends State<AvatarProduct> {
     final String path = 'product/$fileName';
 
     try {
-      print('Imagen seleccionada: ${image.path}');
-
       // 🔥 Comprimir la imagen antes de subirla
       _imageFile = await ImageService.compressImage(image, quality: 50);
 
@@ -55,37 +52,24 @@ class _AvatarProductState extends State<AvatarProduct> {
         throw 'Error al comprimir la imagen';
       }
 
-      print('Imagen comprimida: ${_imageFile!.path}');
-
       // 1️⃣ **Subir la nueva imagen con `upsert: true` para sobrescribir si ya existe**
-      print('Subiendo nueva imagen...');
       await supabase.storage.from('products').upload(
             path,
             _imageFile!,
             fileOptions: const FileOptions(upsert: true),
           );
 
-      // 2️⃣ **Obtener la URL pública de la imagen**
       final String imageUrl =
           supabase.storage.from('products').getPublicUrl(path);
-      print('Imagen subida con éxito: $imageUrl');
-
-      // 3️⃣ **Actualizar la URL de la imagen en la tabla `productos`**
-      final response = await supabase
-          .from('productos')
-          .update({'imagen': imageUrl})
-          .eq('idProducto', widget.productId)
-          .select(); // 🔥 Agregar .select() para obtener la fila actualizada
-
-      print('Respuesta de actualización en DB: $response');
 
       // 4️⃣ **Actualizar la UI**
       widget.onUpLoad(imageUrl);
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Imagen actualizada correctamente')),
       );
     } catch (e) {
-      print('Error al subir la imagen: $e');
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error al subir la imagen: $e')),
       );

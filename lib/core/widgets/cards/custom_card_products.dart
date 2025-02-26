@@ -48,20 +48,6 @@ class CustomCardProducts extends StatelessWidget {
         ),
         child: Column(
           children: [
-            // Container(
-            //   width: size.width * 1,
-            //   height: size.height * 0.28,
-            //   decoration: BoxDecoration(
-            //     borderRadius: const BorderRadius.only(
-            //         topLeft: Radius.circular(16),
-            //         topRight: Radius.circular(16)),
-            //     image: DecorationImage(
-
-            //       image: NetworkImage(imageUrl),
-            //       fit: BoxFit.cover,
-            //     ),
-            //   ),
-            // ),
             Container(
               width: size.width * 1,
               height: size.height * 0.28,
@@ -76,8 +62,8 @@ class CustomCardProducts extends StatelessWidget {
                 fit: BoxFit.scaleDown,
                 placeholder: (context, url) =>
                     const Center(child: CircularProgressIndicator()),
-                errorWidget: (context, url, error) =>
-                    Image.network('https://.../img_portada.webp'),
+                errorWidget: (context, url, error) => Image.network(
+                    'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp'),
               ),
             ),
             Padding(

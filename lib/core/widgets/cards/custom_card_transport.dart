@@ -4,15 +4,14 @@ import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
-class CustomCardTransportation extends StatefulWidget {
-  const CustomCardTransportation({super.key});
+class CustomCardTransport extends StatefulWidget {
+  const CustomCardTransport({super.key});
 
   @override
-  State<CustomCardTransportation> createState() =>
-      _CustomCardTransportationState();
+  State<CustomCardTransport> createState() => _CustomCardTransportState();
 }
 
-class _CustomCardTransportationState extends State<CustomCardTransportation> {
+class _CustomCardTransportState extends State<CustomCardTransport> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;

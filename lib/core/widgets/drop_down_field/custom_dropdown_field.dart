@@ -34,7 +34,7 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
       decoration: InputDecoration(
         labelText: widget.labelText,
         filled: true,
-        fillColor: Colors.white.withOpacity(0.9),
+        fillColor: Colors.white.withValues(alpha: 0.9),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
         ),

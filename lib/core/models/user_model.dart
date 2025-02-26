@@ -17,7 +17,6 @@ class UserModel {
     required this.imagenUrl,
   });
 
-  /// Convierte un `Map<String, dynamic>` a un objeto `UserModel`
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
       idUsuario: map['idUsuario'],
@@ -30,7 +29,6 @@ class UserModel {
     );
   }
 
-  /// Convierte un objeto `UserModel` a un `Map<String, dynamic>`
   Map<String, dynamic> toMap() {
     return {
       'idUsuario': idUsuario,

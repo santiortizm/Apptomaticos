@@ -1,6 +1,7 @@
 import 'package:apptomaticos/core/constants/colors.dart';
 import 'package:apptomaticos/core/models/buy_model.dart';
 import 'package:apptomaticos/core/services/buy_service.dart';
+import 'package:apptomaticos/core/services/product_service.dart';
 import 'package:apptomaticos/core/widgets/custom_button.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -26,7 +27,8 @@ class PaymentAlternatives extends StatefulWidget {
 
 class _PaymentAlternativesState extends State<PaymentAlternatives> {
   final supabase = Supabase.instance.client;
-  final BuyService buyService = BuyService();
+  final BuyService buyService =
+      BuyService(ProductService(Supabase.instance.client));
 
   Future<void> _handleCashOnDelivery() async {
     try {
@@ -43,22 +45,22 @@ class _PaymentAlternativesState extends State<PaymentAlternatives> {
       // Obtener detalles del producto antes de la compra
       final productResponse = await supabase
           .from('productos')
-          .select('idPropietario, idImagen, nombreProducto')
+          .select('idPropietario, imagen, nombreProducto')
           .eq('idProducto', widget.productId)
           .maybeSingle(); // 🔹 Evita errores si no encuentra el producto
 
       if (productResponse == null) {
-        print('❌ Producto no encontrado.');
         return;
       }
 
       final String nombreProducto = productResponse['nombreProducto'];
       final String idPropietario = productResponse['idPropietario'];
-      final String? idImagen = productResponse['idImagen'];
+      final String? idImagen = productResponse['imagen'];
 
       // Crear el modelo de compra con todos los parámetros
-      final BuyModel compra = BuyModel(
+      final Buy compra = Buy(
         idProducto: widget.productId,
+        createdAt: DateTime.now(),
         cantidad: widget.quantity,
         alternativaPago: 'PAGO CONTRA ENTREGA',
         idComprador: userId,
@@ -83,7 +85,6 @@ class _PaymentAlternativesState extends State<PaymentAlternatives> {
         throw Exception('No se pudo completar la compra.');
       }
     } catch (e) {
-      print('❌ Error en la compra: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
@@ -108,7 +109,7 @@ class _PaymentAlternativesState extends State<PaymentAlternatives> {
                 ),
               ),
               child: Container(
-                color: Colors.black.withOpacity(0.5),
+                color: Colors.black.withValues(alpha: 0.5),
               ),
             ),
             Padding(

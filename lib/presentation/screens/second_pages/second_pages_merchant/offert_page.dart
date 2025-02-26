@@ -78,7 +78,7 @@ class _OffertPageState extends State<OffertPage> {
                 ),
               ),
               child: Container(
-                color: Colors.black.withOpacity(0.5),
+                color: Colors.black.withValues(alpha: 0.5),
               ),
             ),
             Padding(
@@ -208,13 +208,15 @@ class _OffertPageState extends State<OffertPage> {
                                 .createContraOferta(nuevaOferta);
 
                             if (success) {
+                              // ignore: use_build_context_synchronously
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                     content: Text('Oferta enviada con éxito')),
                               );
+                              // ignore: use_build_context_synchronously
                               context.pop();
                             } else {
-                              print(nuevaOferta);
+                              // ignore: use_build_context_synchronously
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                     content: Text('Error al enviar la oferta')),

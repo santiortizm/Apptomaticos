@@ -1,5 +1,6 @@
-class BuyModel {
-  final int? id; // ID opcional, Supabase lo genera automáticamente
+class Buy {
+  final int? id;
+  final DateTime createdAt;
   final String alternativaPago;
   final String nombreProducto;
   final int cantidad;
@@ -10,9 +11,10 @@ class BuyModel {
   final String idComprador;
   final String imagenProducto;
 
-  BuyModel({
+  Buy({
     this.id,
     required this.alternativaPago,
+    required this.createdAt,
     required this.nombreProducto,
     required this.cantidad,
     required this.total,
@@ -27,6 +29,7 @@ class BuyModel {
   Map<String, dynamic> toMap() {
     return {
       'idProducto': idProducto,
+      'created_at': createdAt.toIso8601String(),
       'nombreProducto': nombreProducto,
       'cantidad': cantidad,
       'total': total,
@@ -39,9 +42,10 @@ class BuyModel {
   }
 
   /// Crea una instancia de `BuyModel` desde un JSON (consulta de Supabase)
-  factory BuyModel.fromJson(Map<String, dynamic> json) {
-    return BuyModel(
-      id: json['id'], // Puede ser nulo si es una nueva compra
+  factory Buy.fromJson(Map<String, dynamic> json) {
+    return Buy(
+      id: json['id'],
+      createdAt: DateTime.parse(json['created_at'] as String),
       alternativaPago: json['alternativaPago'],
       nombreProducto: json['nombreProducto'],
       cantidad: json['cantidad'],
@@ -50,7 +54,7 @@ class BuyModel {
       idPropietario: json['idPropietario'],
       idProducto: json['idProducto'],
       idComprador: json['idComprador'],
-      imagenProducto: json['imagenProducto'] ?? '', // Evita nulos
+      imagenProducto: json['imagenProducto'] ?? '',
     );
   }
 }

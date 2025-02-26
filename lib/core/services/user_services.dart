@@ -19,7 +19,6 @@ class UserService {
 
       return response['rol'];
     } catch (e) {
-      print('Error obteniendo rol del usuario: $e');
       return null;
     }
   }

@@ -1,11 +1,8 @@
 import 'package:apptomaticos/core/constants/colors.dart';
 import 'package:apptomaticos/core/widgets/avatar.dart';
-import 'package:apptomaticos/core/widgets/custom_button.dart';
-import 'package:apptomaticos/presentation/screens/second_pages/second_pages_producer/products_of_producer.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileWidget extends StatefulWidget {
@@ -52,7 +49,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
         _imageUrl = publicUrl;
       });
     } catch (e) {
-      print('Error al cargar los datos del perfil: $e');
+      return;
     }
   }
 
@@ -102,24 +99,6 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                     ),
                   ),
                 ),
-                if (userRole == 'Productor')
-                  Positioned(
-                    top: 10,
-                    right: 10,
-                    child: IconButton(
-                      onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ProductsOfProducer(),
-                        ),
-                      ),
-                      icon: Icon(
-                        Icons.list,
-                        size: 50,
-                        color: redApp,
-                      ),
-                    ),
-                  ),
               ],
             ),
             _cardInfo('Nombre', _userInfo?['nombre']),
@@ -127,31 +106,6 @@ class _ProfileWidgetState extends State<ProfileWidget> {
             _cardInfo('Rol', _userInfo?['rol']),
             _cardInfo('Celular', _userInfo?['celular']),
             _cardInfo('Correo', supabase.auth.currentUser?.email),
-            CustomButton(
-              onPressed: () async {
-                await supabase.auth.signOut();
-                if (mounted) {
-                  context.go('/');
-                }
-              },
-              color: redApp,
-              border: 18,
-              width: 0.3,
-              height: 0.07,
-              elevation: 0,
-              colorBorder: Colors.transparent,
-              sizeBorder: 0,
-              child: AutoSizeText(
-                'Cerrar Sesión',
-                maxFontSize: 18,
-                minFontSize: 16,
-                maxLines: 1,
-                style: temaApp.textTheme.titleSmall!.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
-            ),
           ],
         ),
       ),

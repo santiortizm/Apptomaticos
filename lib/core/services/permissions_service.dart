@@ -16,8 +16,7 @@ Future<bool> storagePermission() async {
     final request = await [
       Permission.videos,
       Permission.photos,
-      //..... as needed
-    ].request(); //import 'package:permission_handler/permission_handler.dart';
+    ].request();
 
     havePermission =
         request.values.every((status) => status == PermissionStatus.granted);

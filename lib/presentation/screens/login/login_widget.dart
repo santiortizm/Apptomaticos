@@ -1,3 +1,4 @@
+import 'package:apptomaticos/core/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +7,7 @@ class LoginWidget extends StatefulWidget {
   const LoginWidget({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _LoginWidgetState createState() => _LoginWidgetState();
 }
 
@@ -42,7 +44,7 @@ class _LoginWidgetState extends State<LoginWidget> {
               ),
             ),
             child: Container(
-              color: Colors.black.withOpacity(0.4),
+              color: Colors.black.withValues(alpha: 0.4),
             ),
           ),
           Center(
@@ -87,7 +89,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                 _rememberMe = value ?? false;
                               });
                             },
-                            activeColor: Colors.red, // Color del checkbox
+                            activeColor: redApp, // Color del checkbox
                           ),
                           const Text(
                             'Recuérdame',
@@ -117,17 +119,19 @@ class _LoginWidgetState extends State<LoginWidget> {
                                     password: passwordController.text,
                                   );
 
-                                  // 🟢 Si el inicio de sesión es exitoso, navegar al menú
+                                  //  Si el inicio de sesión es exitoso, navegar al menú
                                   if (mounted) {
-                                    context.go(
-                                        '/menu'); // ⚡ GoRouter navega a la pantalla de inicio
+                                    // ignore: use_build_context_synchronously
+                                    GoRouter.of(context).go('/menu');
+                                    //  GoRouter navega a la pantalla de inicio
                                   }
                                 } catch (e) {
+                                  // ignore: use_build_context_synchronously
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: const Text(
                                           'Inicio de sesión fallido. Verifique sus credenciales.'),
-                                      backgroundColor: Colors.red[300],
+                                      backgroundColor: redApp,
                                     ),
                                   );
                                 } finally {
@@ -141,14 +145,15 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   vertical: size.height * 0.02,
                                   horizontal: size.width * 0.2,
                                 ),
-                                backgroundColor: const Color(0xFF00796B),
+                                backgroundColor: buttonGreen,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
                               child: const Text(
                                 'Iniciar Sesión',
-                                style: TextStyle(fontSize: 18),
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.white),
                               ),
                             ),
                       SizedBox(height: size.height * 0.02),
@@ -172,9 +177,9 @@ class _LoginWidgetState extends State<LoginWidget> {
       decoration: InputDecoration(
         labelText: 'Usuario',
         labelStyle: const TextStyle(color: Colors.white70),
-        prefixIcon: const Icon(Icons.person, color: Colors.red),
+        prefixIcon: Icon(Icons.person, color: redApp),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.9),
+        fillColor: Colors.white.withValues(alpha: 0.9),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
         ),
@@ -196,11 +201,11 @@ class _LoginWidgetState extends State<LoginWidget> {
       decoration: InputDecoration(
         labelText: 'Contraseña',
         labelStyle: const TextStyle(color: Colors.white70),
-        prefixIcon: const Icon(Icons.lock, color: Colors.red),
+        prefixIcon: Icon(Icons.lock, color: redApp),
         suffixIcon: IconButton(
           icon: Icon(
             _isObscure ? Icons.visibility : Icons.visibility_off,
-            color: Colors.red,
+            color: redApp,
           ),
           onPressed: () {
             setState(() {
@@ -209,7 +214,7 @@ class _LoginWidgetState extends State<LoginWidget> {
           },
         ),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.9),
+        fillColor: Colors.white.withValues(alpha: 0.9),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
         ),

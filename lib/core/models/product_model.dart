@@ -39,8 +39,7 @@ class Product {
       fechaCosecha: map['fechaCosecha'],
       fechaCaducidad: map['fechaCaducidad'],
       precio: map['precio'].toDouble(),
-      imagen: map['imagen'] ??
-          'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp',
+      imagen: map['imagen'],
       idPropietario: map['idPropietario'],
     );
   }

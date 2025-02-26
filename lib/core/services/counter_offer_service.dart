@@ -20,7 +20,6 @@ class CounterOfferService {
 
       return true;
     } catch (e) {
-      print('Error creando contraoferta: $e');
       return false;
     }
   }
@@ -49,7 +48,6 @@ class CounterOfferService {
 
       return true;
     } catch (e) {
-      print('Error actualizando estado de contraoferta: $e');
       return false;
     }
   }
@@ -72,7 +70,7 @@ class CounterOfferService {
             contraOferta.idContraOferta!, "Rechazado");
       }
     } catch (e) {
-      print('Error verificando ofertas expiradas: $e');
+      return;
     }
   }
 }

@@ -161,12 +161,14 @@ class _CustomCardProductsProducerState
 
                   widget.isDelete();
 
+                  // ignore: use_build_context_synchronously
                   ScaffoldMessenger.of(parentContext).showSnackBar(
                     const SnackBar(
                       content: Text('Producto eliminado exitosamente'),
                     ),
                   );
                 } else {
+                  // ignore: use_build_context_synchronously
                   ScaffoldMessenger.of(parentContext).showSnackBar(
                     const SnackBar(
                       content: Text('Error al eliminar el producto'),

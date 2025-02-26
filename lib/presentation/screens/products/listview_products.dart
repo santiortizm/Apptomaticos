@@ -69,7 +69,7 @@ class _ListviewProductsState extends State<ListviewProducts> {
     return Container(
       width: size.width * 0.9,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.55),
+        color: Colors.white.withValues(alpha: 0.55),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Stack(
@@ -98,8 +98,9 @@ class _ListviewProductsState extends State<ListviewProducts> {
                         final product = products[index];
 
                         // Ocultar productos con cantidad 0
-                        if (product.cantidad == 0)
+                        if (product.cantidad == 0) {
                           return const SizedBox.shrink();
+                        }
 
                         return CustomCardProducts(
                           title: product.nombreProducto,

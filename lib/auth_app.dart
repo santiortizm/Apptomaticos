@@ -28,7 +28,7 @@ class _AuthAppState extends State<AuthApp> {
       });
     }
 
-    // 🔹 Se guarda el token al iniciar sesión
+    // Se guarda el token al iniciar sesión
     supabase.auth.onAuthStateChange.listen((event) async {
       if (event.session?.user != null) {
         await FirebaseMessaging.instance.requestPermission();
@@ -49,7 +49,7 @@ class _AuthAppState extends State<AuthApp> {
   }
 }
 
-/// 🔹 Guarda el token de FCM en Supabase
+///  Guarda el token de FCM en Supabase
 Future<void> saveFcmToken() async {
   final user = Supabase.instance.client.auth.currentUser;
   if (user == null) return;

@@ -1,4 +1,3 @@
-import 'package:apptomaticos/core/widgets/cards/custom_card_buys_merchant.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -89,9 +88,8 @@ class _MyCounterOffersState extends State<MyCounterOffers> {
                         SizedBox(
                           height: size.height * 0.7,
                           width: size.width * 1,
-                          child: const SingleChildScrollView(
-                            child: CustomCardBuysMerchant(),
-                          ),
+                          child:
+                              const SingleChildScrollView(child: Text('data')),
                         ),
                       ],
                     ),

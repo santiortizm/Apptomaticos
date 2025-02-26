@@ -32,13 +32,13 @@ const supabase = createClient(
 Deno.serve(async (req) => {
   const payload: WebhookPayload = await req.json();
 
-  // ✅ Obtener SOLO los comerciantes con fcm_token válido
+  //  Obtener SOLO los comerciantes con fcm_token válido
   const { data: merchants, error } = await supabase
     .from('usuarios')
     .select('fcm_token')
-    .eq('rol', 'Comerciante')  // 🔹 Filtra SOLO comerciantes
-    .not('fcm_token', 'is', null)  // 🔹 Excluye usuarios sin token
-    .neq('fcm_token', '')  // 🔹 Excluye tokens vacíos
+    .eq('rol', 'Comerciante')  //  Filtra SOLO comerciantes
+    .not('fcm_token', 'is', null)  //  Excluye usuarios sin token
+    .neq('fcm_token', '')  //  Excluye tokens vacíos
 
   if (error) {
     console.error('Error al obtener comerciantes:', error);
@@ -56,13 +56,13 @@ Deno.serve(async (req) => {
     );
   }
 
-  // ✅ Obtener token de acceso a Firebase
+  //  Obtener token de acceso a Firebase
   const accessToken = await getAccessToken({
     clientEmail: serviceAccount.client_email,
     privateKey: serviceAccount.private_key,
   });
 
-  // ✅ Enviar notificación a CADA comerciante
+  //  Enviar notificación a CADA comerciante
   const notifications = merchants.map(async (merchant) => {
     const fcmToken = merchant.fcm_token as string;
 
@@ -87,10 +87,10 @@ Deno.serve(async (req) => {
     );
   });
 
-  // ✅ Ejecutar todas las notificaciones en paralelo
+  //  Ejecutar todas las notificaciones en paralelo
   const results = await Promise.allSettled(notifications);
 
-  // ✅ Filtrar errores
+  //  Filtrar errores
   const failed = results.filter((result) => result.status === "rejected");
 
   if (failed.length > 0) {
@@ -108,7 +108,7 @@ Deno.serve(async (req) => {
 });
 
 
-// 🔹 **Función para obtener el token de acceso de Firebase**
+//  **Función para obtener el token de acceso de Firebase**
 const getAccessToken = ({
   clientEmail,
   privateKey,

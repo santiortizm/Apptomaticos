@@ -1,25 +1,25 @@
-import 'package:apptomaticos/core/models/product_model.dart';
+import 'package:apptomaticos/core/models/buy_model.dart';
+import 'package:apptomaticos/core/services/buy_service.dart';
 import 'package:apptomaticos/core/services/product_service.dart';
+import 'package:apptomaticos/core/widgets/cards/custom_card_purchases_merchant.dart';
 import 'package:apptomaticos/core/widgets/custom_button.dart';
-import 'package:apptomaticos/core/widgets/cards/custom_card_products_producer.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class ProductsOfProducer extends StatefulWidget {
-  const ProductsOfProducer({super.key});
+class ShoppingMerchant extends StatefulWidget {
+  const ShoppingMerchant({super.key});
 
   @override
-  State<ProductsOfProducer> createState() => _ProductsOfProducerState();
+  State<ShoppingMerchant> createState() => _ShoppingMerchantState();
 }
 
-class _ProductsOfProducerState extends State<ProductsOfProducer> {
+class _ShoppingMerchantState extends State<ShoppingMerchant> {
   final supabase = Supabase.instance.client;
-  final ProductService productService =
-      ProductService(Supabase.instance.client);
-  late Future<List<Product>> producerProductsFuture;
+  final BuyService purchasetService =
+      BuyService(ProductService(Supabase.instance.client));
+  late Future<List<Buy>> purchaseMerchantFuture;
   String? idUsuario;
   late RealtimeChannel _channel;
 
@@ -62,6 +62,7 @@ class _ProductsOfProducerState extends State<ProductsOfProducer> {
     }
   }
 
+  /// Suscripción en tiempo real a los cambios en `productos`
   void _subscribeToProductChanges() {
     _channel = supabase
         .channel('public:productos')
@@ -79,7 +80,7 @@ class _ProductsOfProducerState extends State<ProductsOfProducer> {
   Future<void> _refreshProducts() async {
     if (idUsuario != null) {
       setState(() {
-        producerProductsFuture = productService.fetchProductsByProducer();
+        purchaseMerchantFuture = purchasetService.fetchPurchasesByUser();
       });
     }
   }
@@ -128,7 +129,7 @@ class _ProductsOfProducerState extends State<ProductsOfProducer> {
                           width: size.width * 0.35,
                           child: CustomButton(
                             onPressed: () {
-                              GoRouter.of(context).go('/menu');
+                              Navigator.pop(context);
                             },
                             color: Colors.white.withValues(alpha: 0.05),
                             border: 20,
@@ -158,7 +159,7 @@ class _ProductsOfProducerState extends State<ProductsOfProducer> {
                         ),
                       ),
                       AutoSizeText(
-                        'Mis productos',
+                        'Mis Compras',
                         maxFontSize: 26,
                         minFontSize: 18,
                         maxLines: 1,
@@ -169,8 +170,8 @@ class _ProductsOfProducerState extends State<ProductsOfProducer> {
                         ),
                       ),
                       Expanded(
-                        child: FutureBuilder<List<Product>>(
-                          future: producerProductsFuture,
+                        child: FutureBuilder<List<Buy>>(
+                          future: purchaseMerchantFuture,
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
@@ -184,27 +185,28 @@ class _ProductsOfProducerState extends State<ProductsOfProducer> {
                             if (snapshot.data == null ||
                                 snapshot.data!.isEmpty) {
                               return const Center(
-                                  child:
-                                      Text('No tienes productos disponibles.'));
+                                  child: Text('No hay compras realizadas'));
                             }
 
-                            final productos = snapshot.data!;
+                            final purchase = snapshot.data!;
                             return RefreshIndicator(
                               onRefresh: _refreshProducts,
                               child: ListView.builder(
                                 padding: EdgeInsets.symmetric(
                                     horizontal: size.width * 0.05),
-                                itemCount: productos.length,
+                                itemCount: purchase.length,
                                 itemBuilder: (context, index) {
-                                  final producto = productos[index];
-                                  return CustomCardProductsProducer(
-                                    isDelete: _refreshProducts,
-                                    productId: producto.idProducto,
-                                    title: producto.nombreProducto,
-                                    date: producto.createdAt.toIso8601String(),
-                                    imageUrl: producto.descripcion.isNotEmpty
-                                        ? producto.descripcion
-                                        : 'https://via.placeholder.com/150', // Imagen por defecto
+                                  final buy = purchase[index];
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 10),
+                                    child: CustomCardPurchasesMerchant(
+                                        imagen: buy.imagenProducto.isNotEmpty
+                                            ? '${buy.imagenProducto}?v=${DateTime.now().millisecondsSinceEpoch}'
+                                            : 'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp',
+                                        nombreProducto: buy.nombreProducto,
+                                        fecha: buy.createdAt.toIso8601String(),
+                                        cantidad: buy.cantidad.toString(),
+                                        precio: buy.total.toString()),
                                   );
                                 },
                               ),

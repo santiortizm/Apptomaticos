@@ -1,15 +1,21 @@
-import 'package:apptomaticos/core/widgets/drawer/drawer_producer_widget.dart';
+import 'package:apptomaticos/core/constants/colors.dart';
+import 'package:apptomaticos/core/widgets/custom_button.dart';
+import 'package:apptomaticos/core/widgets/drawer/custom_drawer.dart';
 import 'package:apptomaticos/presentation/screens/products/listview_products.dart';
 import 'package:apptomaticos/presentation/screens/profile/profile_widget.dart';
+import 'package:apptomaticos/presentation/themes/app_theme.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:apptomaticos/core/widgets/custom_tabbar_button.dart';
+import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Menu extends StatefulWidget {
   const Menu({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _MenuState createState() => _MenuState();
 }
 
@@ -17,10 +23,12 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _selectedIndex = 0;
   final supabase = Supabase.instance.client;
+  String? userRole;
 
   @override
   void initState() {
     super.initState();
+    _fetchUserRole();
 
     FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
       _setFcmToken(fcmToken);
@@ -34,6 +42,25 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
         });
       }
     });
+  }
+
+  Future<void> _fetchUserRole() async {
+    final user = supabase.auth.currentUser;
+    if (user == null) return;
+
+    try {
+      final response = await supabase
+          .from('usuarios')
+          .select('rol')
+          .eq('idUsuario', user.id)
+          .maybeSingle();
+
+      setState(() {
+        userRole = response?['rol'];
+      });
+    } catch (e) {
+      return;
+    }
   }
 
   Future<void> _setFcmToken(String fcmToken) async {
@@ -56,7 +83,44 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      drawer: const DrawerProducerWidget(),
+      drawer: userRole == null
+          ? const Drawer(child: Center(child: CircularProgressIndicator()))
+          : CustomDrawer(
+              userRole: userRole!,
+              cerrarSesion: Padding(
+                padding: EdgeInsets.only(
+                  left: size.width * 0.1,
+                  right: size.width * 0.1,
+                  top: size.height * 0.10,
+                ),
+                child: CustomButton(
+                  onPressed: () async {
+                    await supabase.auth.signOut();
+                    if (mounted) {
+                      // ignore: use_build_context_synchronously
+                      GoRouter.of(context).go('/');
+                    }
+                  },
+                  color: redApp,
+                  border: 18,
+                  width: 0.2,
+                  height: 0.07,
+                  elevation: 0,
+                  colorBorder: Colors.transparent,
+                  sizeBorder: 0,
+                  child: AutoSizeText(
+                    'Cerrar Sesión',
+                    maxFontSize: 20,
+                    minFontSize: 16,
+                    maxLines: 1,
+                    style: temaApp.textTheme.titleSmall!.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                        fontSize: 30),
+                  ),
+                ),
+              ),
+            ),
       body: SafeArea(
         child: Stack(
           children: [
@@ -70,7 +134,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                   fit: BoxFit.cover,
                 ),
               ),
-              child: Container(color: Colors.black.withOpacity(0.5)),
+              child: Container(color: Colors.black.withValues(alpha: 0.5)),
             ),
             // Contenido principal
             Column(

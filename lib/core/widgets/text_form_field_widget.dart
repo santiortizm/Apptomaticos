@@ -1,3 +1,4 @@
+import 'package:apptomaticos/core/constants/colors.dart';
 import 'package:flutter/material.dart';
 
 class TextFormFieldWidget extends StatelessWidget {
@@ -24,11 +25,13 @@ class TextFormFieldWidget extends StatelessWidget {
       keyboardType: keyboardType,
       controller: controller,
       readOnly: readOnly,
+      cursorColor: buttonGreen,
+      cursorErrorColor: redApp,
       decoration: InputDecoration(
         labelText: labelText,
-        prefixIcon: Icon(icon, color: Colors.red),
+        prefixIcon: Icon(icon, color: redApp),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.9),
+        fillColor: Colors.white.withValues(alpha: 0.9),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
         ),

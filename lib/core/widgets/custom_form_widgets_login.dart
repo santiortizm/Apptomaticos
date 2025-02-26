@@ -12,7 +12,7 @@ class BuildUsernameField extends StatelessWidget {
         labelStyle: const TextStyle(color: Colors.white70),
         prefixIcon: const Icon(Icons.person, color: Colors.red),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.9),
+        fillColor: Colors.white.withValues(alpha: 0.9),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
         ),
@@ -58,7 +58,7 @@ class _BuildPasswordFieldState extends State<BuildPasswordField> {
           },
         ),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.9),
+        fillColor: Colors.white.withValues(alpha: 0.9),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
         ),

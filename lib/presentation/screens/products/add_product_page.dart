@@ -95,8 +95,20 @@ class _AddProductPageState extends State<AddProductPage> {
                     ),
                     width: size.width * 1,
                     child: Column(
-                      spacing: 12,
+                      spacing: 20,
                       children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            IconButton(
+                              iconSize: 36,
+                              icon: const Icon(Icons.arrow_back),
+                              onPressed: () {
+                                GoRouter.of(context).go('/menu');
+                              },
+                            ),
+                          ],
+                        ),
                         Padding(
                           padding: EdgeInsets.only(bottom: size.height * 0.025),
                           child: AutoSizeText(
@@ -247,16 +259,17 @@ class _AddProductPageState extends State<AddProductPage> {
                                       _model.selectedFertilizer = null;
                                     });
 
+                                    // ignore: use_build_context_synchronously
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                           content: Text(
                                               'Producto agregado correctamente')),
                                     );
 
-                                    // Redirigir al menú
-                                    // ✅ Redirigir a /menu
-                                    context.go('/menu');
+                                    // ignore: use_build_context_synchronously
+                                    GoRouter.of(context).go('/menu');
                                   } else {
+                                    // ignore: use_build_context_synchronously
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                           content: Text(
@@ -264,7 +277,7 @@ class _AddProductPageState extends State<AddProductPage> {
                                     );
                                   }
                                 } catch (e) {
-                                  print('Error inesperado: $e');
+                                  // ignore: use_build_context_synchronously
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                         content: Text('Error inesperado: $e')),
@@ -317,7 +330,7 @@ class _AddProductPageState extends State<AddProductPage> {
               TextButton(
                 child: const Text('Aceptar'),
                 onPressed: () {
-                  context.go('/menu');
+                  GoRouter.of(context).go('/menu');
                 },
               ),
             ],

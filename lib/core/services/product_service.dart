@@ -13,7 +13,6 @@ class ProductService {
       final response = await supabaseClient.from('productos').select('*');
       return response.map((data) => Product.fromMap(data)).toList();
     } catch (e) {
-      print('Error obteniendo productos: $e');
       return [];
     }
   }
@@ -25,7 +24,6 @@ class ProductService {
           await supabaseClient.from('productos').insert(product.toMap());
       return response.isNotEmpty;
     } catch (e) {
-      print('Error registrando producto: $e');
       return false;
     }
   }
@@ -41,7 +39,6 @@ class ProductService {
 
       return Product.fromMap(response);
     } catch (e) {
-      print('Error obteniendo detalles del producto: $e');
       return null;
     }
   }
@@ -58,7 +55,6 @@ class ProductService {
 
       return response.isNotEmpty;
     } catch (e) {
-      print('Error actualizando los detalles del producto: $e');
       return false;
     }
   }
@@ -74,7 +70,6 @@ class ProductService {
 
       return response.isNotEmpty;
     } catch (e) {
-      print('Error al eliminar el producto: $e');
       return false;
     }
   }
@@ -102,7 +97,6 @@ class ProductService {
 
       return idUsuarioProducto == authUser.id; // Comparar como String
     } catch (e) {
-      print('Error verificando propiedad del producto: $e');
       return false;
     }
   }
@@ -124,7 +118,6 @@ class ProductService {
           .map<Product>((data) => Product.fromMap(data))
           .toList();
     } catch (e) {
-      print('Error al obtener los productos del productor: $e');
       return [];
     }
   }
@@ -141,7 +134,7 @@ class ProductService {
           .from('productos')
           .update({'cantidad': newQuantity}).eq('idProducto', productId);
     } catch (e) {
-      print('Error actualizando cantidad del producto: $e');
+      return;
     }
   }
 }

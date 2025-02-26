@@ -19,12 +19,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    print("📩 Notificación recibida: ${message.notification?.title}");
-
-    // Aquí puedes manejar la notificación como un diálogo o snackbar
-    // Dependiendo de tu lógica, puedes llamar a un servicio de notificaciones
-  });
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {});
   // Inicializar Supabase
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL'] ?? '',
@@ -37,8 +32,7 @@ Future<void> main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  runApp(
-      const MyApp()); // 🔹 Sin `const` porque estamos inicializando una instancia
+  runApp(const MyApp());
 }
 
 final cloudinary =
@@ -51,7 +45,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       theme: temaApp,
-      routerConfig: AppRouter.router, // ✅ Se usa la instancia creada
+      routerConfig: AppRouter.router,
     );
   }
 }
