@@ -1,16 +1,21 @@
 import 'dart:io';
-
 import 'package:apptomaticos/core/constants/colors.dart';
+import 'package:apptomaticos/core/services/image_service.dart'; // 🔥 Importar servicio de compresión
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AvatarProduct extends StatefulWidget {
-  const AvatarProduct(
-      {super.key, required this.imageUrl, required this.onUpLoad});
-
   final String? imageUrl;
   final void Function(String imageUrl) onUpLoad;
+  final int productId;
+
+  const AvatarProduct({
+    super.key,
+    required this.imageUrl,
+    required this.onUpLoad,
+    required this.productId,
+  });
 
   @override
   State<AvatarProduct> createState() => _AvatarProductState();
@@ -18,34 +23,123 @@ class AvatarProduct extends StatefulWidget {
 
 class _AvatarProductState extends State<AvatarProduct> {
   File? _imageFile;
+  final supabase = Supabase.instance.client;
+  bool isLoading = false; // Para feedback visual
+
+  Future<void> _pickAndUploadImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image == null) {
+      print('No se seleccionó ninguna imagen.');
+      return;
+    }
+
+    final bool confirm = await _confirmImageChange();
+    if (!confirm) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
+    final String fileName = '${widget.productId}';
+    final String path = 'product/$fileName';
+
+    try {
+      print('Imagen seleccionada: ${image.path}');
+
+      // 🔥 Comprimir la imagen antes de subirla
+      _imageFile = await ImageService.compressImage(image, quality: 50);
+
+      if (_imageFile == null) {
+        throw 'Error al comprimir la imagen';
+      }
+
+      print('Imagen comprimida: ${_imageFile!.path}');
+
+      // 1️⃣ **Subir la nueva imagen con `upsert: true` para sobrescribir si ya existe**
+      print('Subiendo nueva imagen...');
+      await supabase.storage.from('products').upload(
+            path,
+            _imageFile!,
+            fileOptions: const FileOptions(upsert: true),
+          );
+
+      // 2️⃣ **Obtener la URL pública de la imagen**
+      final String imageUrl =
+          supabase.storage.from('products').getPublicUrl(path);
+      print('Imagen subida con éxito: $imageUrl');
+
+      // 3️⃣ **Actualizar la URL de la imagen en la tabla `productos`**
+      final response = await supabase
+          .from('productos')
+          .update({'imagen': imageUrl})
+          .eq('idProducto', widget.productId)
+          .select(); // 🔥 Agregar .select() para obtener la fila actualizada
+
+      print('Respuesta de actualización en DB: $response');
+
+      // 4️⃣ **Actualizar la UI**
+      widget.onUpLoad(imageUrl);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Imagen actualizada correctamente')),
+      );
+    } catch (e) {
+      print('Error al subir la imagen: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al subir la imagen: $e')),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  /// Muestra un diálogo de confirmación antes de cambiar la imagen.
+  Future<bool> _confirmImageChange() async {
+    return await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Confirmar cambio'),
+            content:
+                const Text('¿Estás seguro de que quieres cambiar la imagen?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancelar'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Editar'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-    final supabase = Supabase.instance.client;
+    final size = MediaQuery.of(context).size;
 
     return Stack(
       children: [
-        if (widget.imageUrl != null)
-          Center(
-            child: CircleAvatar(
-              backgroundImage: NetworkImage(widget.imageUrl!),
-              radius: 70,
-            ),
-          )
-        else
+        Center(
+          child: CircleAvatar(
+            backgroundImage:
+                (widget.imageUrl != null && widget.imageUrl!.isNotEmpty)
+                    ? NetworkImage(widget.imageUrl!)
+                    : null,
+            radius: 70,
+            child: (widget.imageUrl == null || widget.imageUrl!.isEmpty)
+                ? const Icon(Icons.image, size: 50, color: Colors.grey)
+                : null,
+          ),
+        ),
+        if (isLoading)
           const Center(
-            child: CircleAvatar(
-              radius: 70,
-              backgroundColor: Colors.grey,
-              child: Center(
-                child: Icon(
-                  Icons.person,
-                  color: Color.fromARGB(255, 55, 53, 53),
-                  size: 100,
-                ),
-              ),
-            ),
+            child: CircularProgressIndicator(),
           ),
         Container(
           padding: EdgeInsets.only(top: size.height * 0.14),
@@ -54,28 +148,7 @@ class _AvatarProductState extends State<AvatarProduct> {
             icon: const Icon(Icons.camera_alt),
             iconSize: 32,
             color: redApp,
-            onPressed: () async {
-              final ImagePicker picker = ImagePicker();
-              final XFile? image =
-                  await picker.pickImage(source: ImageSource.gallery);
-
-              if (image != null) {
-                setState(() {
-                  _imageFile = File(image.path);
-                });
-              }
-              final fileName = DateTime.now().millisecondsSinceEpoch.toString();
-              final path = 'product/$fileName';
-              await supabase.storage
-                  .from('products')
-                  .upload(path, _imageFile!)
-                  .then((value) => ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Imagen subida correctamente'))));
-              final imageUrl =
-                  supabase.storage.from('products').getPublicUrl(path);
-              widget.onUpLoad(imageUrl);
-            },
+            onPressed: isLoading ? null : _pickAndUploadImage,
           ),
         ),
       ],

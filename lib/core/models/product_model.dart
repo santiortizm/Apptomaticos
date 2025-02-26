@@ -9,7 +9,7 @@ class Product {
   final String fechaCosecha;
   final String fechaCaducidad;
   final double precio;
-  final String? idImagen;
+  final String imagen;
   final String idPropietario;
 
   Product({
@@ -23,7 +23,7 @@ class Product {
     required this.fechaCosecha,
     required this.fechaCaducidad,
     required this.precio,
-    this.idImagen,
+    required this.imagen,
     required this.idPropietario,
   });
 
@@ -39,7 +39,8 @@ class Product {
       fechaCosecha: map['fechaCosecha'],
       fechaCaducidad: map['fechaCaducidad'],
       precio: map['precio'].toDouble(),
-      idImagen: map['idImage'],
+      imagen: map['imagen'] ??
+          'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp',
       idPropietario: map['idPropietario'],
     );
   }
@@ -56,7 +57,7 @@ class Product {
       'fechaCosecha': fechaCosecha.toString(),
       'fechaCaducidad': fechaCaducidad.toString(),
       'precio': precio,
-      'idImagen': idImagen,
+      'imagen': imagen,
       'idPropietario': idPropietario,
     };
   }

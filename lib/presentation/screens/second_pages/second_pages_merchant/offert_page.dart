@@ -1,17 +1,66 @@
 import 'package:apptomaticos/core/constants/colors.dart';
+import 'package:apptomaticos/core/models/counter_offer_model.dart';
+import 'package:apptomaticos/core/services/counter_offer_service.dart';
+import 'package:apptomaticos/core/services/product_service.dart';
 import 'package:apptomaticos/core/widgets/custom_button.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class OffertPage extends StatefulWidget {
-  const OffertPage({super.key});
+  final int productId;
+  final double price;
+  final String imageUrl;
+  final int availableQuantity;
+  final String productName;
+  final String ownerId;
+  const OffertPage({
+    super.key,
+    required this.productId,
+    required this.imageUrl,
+    required this.price,
+    required this.availableQuantity,
+    required this.productName,
+    required this.ownerId,
+  });
 
   @override
   State<OffertPage> createState() => _OffertPageState();
 }
 
 class _OffertPageState extends State<OffertPage> {
+  final TextEditingController _quantityController = TextEditingController();
+  final TextEditingController _offerPriceController = TextEditingController();
+  double _totalPrice = 0;
+
+  void _updateTotalPrice() {
+    final int quantity = int.tryParse(_quantityController.text) ?? 0;
+    final double offerPrice =
+        double.tryParse(_offerPriceController.text) ?? widget.price;
+
+    setState(() {
+      _totalPrice = quantity * offerPrice;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _quantityController.addListener(_updateTotalPrice);
+    _offerPriceController.addListener(_updateTotalPrice);
+  }
+
+  @override
+  void dispose() {
+    _quantityController.removeListener(_updateTotalPrice);
+    _offerPriceController.removeListener(_updateTotalPrice);
+    _quantityController.dispose();
+    _offerPriceController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -29,15 +78,15 @@ class _OffertPageState extends State<OffertPage> {
                 ),
               ),
               child: Container(
-                color: Colors.black.withValues(alpha: 0.5),
+                color: Colors.black.withOpacity(0.5),
               ),
             ),
             Padding(
               padding: EdgeInsets.symmetric(
                   horizontal: size.width * 0.05, vertical: size.height * 0.03),
               child: Container(
-                width: size.width * 1,
-                height: size.height * 1,
+                width: size.width,
+                height: size.height,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
@@ -46,33 +95,33 @@ class _OffertPageState extends State<OffertPage> {
                   padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    spacing: 16,
                     children: [
                       Container(
                         margin: EdgeInsets.only(top: size.height * 0.025),
                         alignment: Alignment.centerLeft,
-                        width: size.width * 1,
+                        width: size.width,
                         child: TextButton(
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
                           child: Row(
-                            spacing: size.width * 0.02,
                             children: [
                               const Icon(
                                 size: 24,
                                 Icons.arrow_back,
                                 color: Colors.black,
                               ),
+                              SizedBox(width: size.width * 0.02),
                               AutoSizeText(
-                                'Atras',
+                                'Atrás',
                                 maxLines: 1,
                                 minFontSize: 16,
                                 maxFontSize: 18,
                                 style: temaApp.textTheme.titleSmall!.copyWith(
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.black,
-                                    fontSize: 28),
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.black,
+                                  fontSize: 28,
+                                ),
                               ),
                             ],
                           ),
@@ -80,36 +129,98 @@ class _OffertPageState extends State<OffertPage> {
                       ),
                       textWidget(context, 'Ofertar', 28),
                       Container(
-                        width: size.width * 1,
+                        width: size.width,
                         height: size.height * 0.25,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(14),
-                          image: const DecorationImage(
-                            image: NetworkImage(
-                                'https://blog.lexmed.com/images/librariesprovider80/blog-post-featured-images/shutterstock_1896755260.jpg?sfvrsn=52546e0a_0'),
+                          image: DecorationImage(
+                            image: NetworkImage(widget.imageUrl),
                             fit: BoxFit.cover,
                           ),
                         ),
                       ),
-                      containerPrice(context, 'Precio Canasta', '20.000', 16),
-                      textWidget(context, 'Cantidad a Comprar:', 18),
+                      containerPrice(context, 'Precio Actual',
+                          widget.price.toString(), 16),
+                      textWidget(context, 'Cantidad a Ofertar:', 18),
                       SizedBox(
                         width: size.width * 0.6,
                         child: textFormField(context, 'Cantidad en Canastas',
-                            TextInputType.number),
+                            TextInputType.number, _quantityController),
                       ),
-                      textWidget(context, 'Precio a ofertar (Por canasta)', 18),
+                      textWidget(context, 'Precio a Ofertar (Por Canasta)', 18),
                       SizedBox(
                         width: size.width * 0.6,
-                        child: textFormField(
-                            context, 'Precio a ofertar', TextInputType.number),
+                        child: textFormField(context, 'Precio a Ofertar',
+                            TextInputType.number, _offerPriceController),
                       ),
-                      containerPrice(context, 'Total a Pagar:', '0.0', 16),
+                      containerPrice(context, 'Total a Pagar:',
+                          _totalPrice.toStringAsFixed(2), 16),
                       Container(
                         margin:
                             EdgeInsets.symmetric(vertical: size.height * 0.025),
                         child: CustomButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            final quantity =
+                                int.tryParse(_quantityController.text) ?? 0;
+                            final offerPrice =
+                                double.tryParse(_offerPriceController.text) ??
+                                    widget.price;
+
+                            if (quantity <= 0 ||
+                                quantity > widget.availableQuantity ||
+                                offerPrice <= 0) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Oferta no válida')),
+                              );
+                              return;
+                            }
+
+                            final supabase = Supabase.instance.client;
+                            final userId = supabase.auth.currentUser
+                                ?.id; // ID del usuario autenticado
+
+                            if (userId == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Usuario no autenticado')),
+                              );
+                              return;
+                            }
+
+                            final CounterOffer nuevaOferta = CounterOffer(
+                              idProducto: widget.productId,
+                              cantidad: quantity,
+                              valorOferta: offerPrice,
+                              estadoOferta: 'En Espera',
+                              createdAt: DateTime.now(),
+                              imagenProducto: widget.imageUrl,
+                              nombreProducto: widget.productName,
+                              idComprador: userId,
+                              idPropietario: widget.ownerId,
+                            );
+
+                            final productService = ProductService(supabase);
+                            final counterOfferService =
+                                CounterOfferService(supabase, productService);
+
+                            bool success = await counterOfferService
+                                .createContraOferta(nuevaOferta);
+
+                            if (success) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Oferta enviada con éxito')),
+                              );
+                              context.pop();
+                            } else {
+                              print(nuevaOferta);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Error al enviar la oferta')),
+                              );
+                            }
+                          },
                           color: buttonGreen,
                           colorBorder: buttonGreen,
                           border: 12,
@@ -123,12 +234,13 @@ class _OffertPageState extends State<OffertPage> {
                             maxFontSize: 20,
                             minFontSize: 18,
                             style: temaApp.textTheme.titleSmall!.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 30),
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 30,
+                            ),
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -142,10 +254,9 @@ class _OffertPageState extends State<OffertPage> {
 
   Widget textWidget(BuildContext context, String text, double maxFontSize) {
     final size = MediaQuery.of(context).size;
-
     return Container(
       alignment: Alignment.center,
-      width: size.width * 1,
+      width: size.width,
       child: AutoSizeText(
         text,
         minFontSize: 14,
@@ -163,9 +274,8 @@ class _OffertPageState extends State<OffertPage> {
   Widget containerPrice(
       BuildContext context, String text1, String text2, double maxFontSize) {
     final size = MediaQuery.of(context).size;
-
     return Container(
-      width: size.width * 1,
+      width: size.width,
       height: size.height * 0.07,
       decoration: BoxDecoration(
         color: const Color(0xfff1f4f8),
@@ -202,24 +312,16 @@ class _OffertPageState extends State<OffertPage> {
               ),
             ),
           ),
-          Container(
-            width: size.width * 0.1,
-            alignment: Alignment.center,
-            child: Icon(
-              Icons.attach_money_sharp,
-              color: redApp,
-              size: 24,
-            ),
-          )
         ],
       ),
     );
   }
 
-  Widget textFormField(
-      BuildContext context, String label, TextInputType keynoardType) {
+  Widget textFormField(BuildContext context, String label,
+      TextInputType keyboardType, TextEditingController controller) {
     return TextFormField(
-      keyboardType: keynoardType,
+      controller: controller,
+      keyboardType: keyboardType,
       decoration: InputDecoration(
         focusColor: redApp,
         label: Text(label),

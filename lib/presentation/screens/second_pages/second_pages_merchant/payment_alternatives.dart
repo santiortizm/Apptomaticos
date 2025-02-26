@@ -1,17 +1,95 @@
 import 'package:apptomaticos/core/constants/colors.dart';
+import 'package:apptomaticos/core/models/buy_model.dart';
+import 'package:apptomaticos/core/services/buy_service.dart';
 import 'package:apptomaticos/core/widgets/custom_button.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:go_router/go_router.dart';
 
 class PaymentAlternatives extends StatefulWidget {
-  const PaymentAlternatives({super.key});
+  final int productId;
+  final int quantity;
+  final double totalPrice;
+
+  const PaymentAlternatives({
+    super.key,
+    required this.productId,
+    required this.quantity,
+    required this.totalPrice,
+  });
 
   @override
   State<PaymentAlternatives> createState() => _PaymentAlternativesState();
 }
 
 class _PaymentAlternativesState extends State<PaymentAlternatives> {
+  final supabase = Supabase.instance.client;
+  final BuyService buyService = BuyService();
+
+  Future<void> _handleCashOnDelivery() async {
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Debe iniciar sesión')),
+        );
+        return;
+      }
+
+      final now = DateTime.now();
+
+      // Obtener detalles del producto antes de la compra
+      final productResponse = await supabase
+          .from('productos')
+          .select('idPropietario, idImagen, nombreProducto')
+          .eq('idProducto', widget.productId)
+          .maybeSingle(); // 🔹 Evita errores si no encuentra el producto
+
+      if (productResponse == null) {
+        print('❌ Producto no encontrado.');
+        return;
+      }
+
+      final String nombreProducto = productResponse['nombreProducto'];
+      final String idPropietario = productResponse['idPropietario'];
+      final String? idImagen = productResponse['idImagen'];
+
+      // Crear el modelo de compra con todos los parámetros
+      final BuyModel compra = BuyModel(
+        idProducto: widget.productId,
+        cantidad: widget.quantity,
+        alternativaPago: 'PAGO CONTRA ENTREGA',
+        idComprador: userId,
+        fecha: now,
+        nombreProducto: nombreProducto,
+        total: widget.totalPrice,
+        idPropietario: idPropietario,
+        imagenProducto: idImagen ?? '',
+      );
+
+      // Usar el servicio de compra
+      bool success = await buyService.createPurchase(compra);
+
+      if (success) {
+        if (!mounted) return; // 🔹 Verificamos que el widget sigue activo
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Compra realizada con éxito')),
+        );
+        context.pushReplacement('/menu');
+      } else {
+        throw Exception('No se pudo completar la compra.');
+      }
+    } catch (e) {
+      print('❌ Error en la compra: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -30,42 +108,41 @@ class _PaymentAlternativesState extends State<PaymentAlternatives> {
                 ),
               ),
               child: Container(
-                color: Colors.black.withValues(alpha: 0.5),
+                color: Colors.black.withOpacity(0.5),
               ),
             ),
             Padding(
               padding: EdgeInsets.symmetric(
                   horizontal: size.width * 0.05, vertical: size.height * 0.03),
               child: Container(
-                width: size.width * 1,
-                height: size.height * 1,
+                width: size.width,
+                height: size.height,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: SingleChildScrollView(
                   child: Column(
-                    spacing: 16,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(
                         margin: EdgeInsets.only(top: size.height * 0.025),
                         alignment: Alignment.centerLeft,
-                        width: size.width * 1,
+                        width: size.width,
                         child: TextButton(
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
                           child: Row(
-                            spacing: size.width * 0.02,
                             children: [
                               const Icon(
                                 size: 24,
                                 Icons.arrow_back,
                                 color: Colors.black,
                               ),
+                              SizedBox(width: size.width * 0.02),
                               AutoSizeText(
-                                'Atras',
+                                'Atrás',
                                 maxLines: 1,
                                 minFontSize: 16,
                                 maxFontSize: 18,
@@ -83,31 +160,29 @@ class _PaymentAlternativesState extends State<PaymentAlternatives> {
                           context,
                           'Ofrecemos dos opciones para tu comodidad:\n\nPago Contra Entrega: Realiza el pago al recibir tus tomates, asegurando la calidad del producto antes de pagar.\n\nPago Inmediato: Paga al momento de hacer tu pedido y disfruta de un proceso de compra rápido y sencillo.',
                           16),
-                      Container(
-                        margin: EdgeInsets.only(top: size.height * 0.03),
-                        child: CustomButton(
-                          onPressed: () {},
-                          color: buttonGreen,
-                          colorBorder: buttonGreen,
-                          border: 12,
-                          width: 0.4,
-                          height: 0.07,
-                          elevation: 2,
-                          sizeBorder: 0,
-                          child: AutoSizeText(
-                            'PAGO INMEDIATO',
-                            maxLines: 1,
-                            maxFontSize: 18,
-                            minFontSize: 16,
-                            style: temaApp.textTheme.titleSmall!.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 30),
-                          ),
+                      SizedBox(height: size.height * 0.03),
+                      CustomButton(
+                        onPressed: () {},
+                        color: buttonGreen,
+                        colorBorder: buttonGreen,
+                        border: 12,
+                        width: 0.4,
+                        height: 0.07,
+                        elevation: 2,
+                        sizeBorder: 0,
+                        child: AutoSizeText(
+                          'PAGO INMEDIATO',
+                          maxLines: 1,
+                          maxFontSize: 18,
+                          minFontSize: 16,
+                          style: temaApp.textTheme.titleSmall!.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 30),
                         ),
                       ),
                       CustomButton(
-                        onPressed: () {},
+                        onPressed: _handleCashOnDelivery,
                         color: Colors.white,
                         colorBorder: buttonGreen,
                         border: 12,

@@ -2,12 +2,12 @@ import 'package:apptomaticos/core/constants/colors.dart';
 import 'package:apptomaticos/core/models/product_model.dart';
 import 'package:apptomaticos/core/services/product_service.dart';
 import 'package:apptomaticos/core/widgets/custom_button.dart';
-import 'package:apptomaticos/presentation/screens/second_pages/second_pages_merchant/offert_page.dart';
-import 'package:apptomaticos/presentation/screens/second_pages/second_pages_merchant/purchase_page.dart';
+import 'package:apptomaticos/presentation/screens/products/update_product.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:go_router/go_router.dart';
 
 class BuyProductPage extends StatefulWidget {
   final int productId;
@@ -188,8 +188,7 @@ class _BuyProductPageState extends State<BuyProductPage> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(16),
                                   image: DecorationImage(
-                                    image: NetworkImage(productData.idImagen ??
-                                        'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp'),
+                                    image: NetworkImage(productData.imagen),
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -288,15 +287,14 @@ class _BuyProductPageState extends State<BuyProductPage> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       CustomButton(
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const PurchasePage(),
-                                            ),
-                                          );
-                                        },
+                                        onPressed: () =>
+                                            context.push('/purchase', extra: {
+                                          'productId': widget.productId,
+                                          'imageUrl': productData.imagen,
+                                          'price': productData.precio,
+                                          'availableQuantify':
+                                              productData.cantidad,
+                                        }),
                                         color: buttonGreen,
                                         border: 8,
                                         width: 0.2,
@@ -317,15 +315,17 @@ class _BuyProductPageState extends State<BuyProductPage> {
                                         ),
                                       ),
                                       CustomButton(
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const OffertPage(),
-                                            ),
-                                          );
-                                        },
+                                        onPressed: () => context
+                                            .push('/offerProduct', extra: {
+                                          'productId': productData.idProducto,
+                                          'imageUrl': productData.imagen,
+                                          'price': productData.precio,
+                                          'availableQuantity':
+                                              productData.cantidad,
+                                          'productName':
+                                              productData.nombreProducto,
+                                          'ownerId': productData.idPropietario,
+                                        }),
                                         color: Colors.white,
                                         border: 8,
                                         width: 0.2,
@@ -419,10 +419,12 @@ class _BuyProductPageState extends State<BuyProductPage> {
     final TextEditingController descriptionController = TextEditingController();
     final TextEditingController priceController = TextEditingController();
     final TextEditingController quantityController = TextEditingController();
+
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Colors.white,
           title: const Text('Actualizar Datos'),
           content: FutureBuilder<Product?>(
             future: productDetails,
@@ -434,80 +436,88 @@ class _BuyProductPageState extends State<BuyProductPage> {
               } else if (!snapshot.hasData) {
                 return const Center(child: Text('Producto no encontrado'));
               }
+
               final productData = snapshot.data!;
               titleController.text = productData.nombreProducto;
               descriptionController.text = productData.descripcion;
               priceController.text = productData.precio.toString();
               quantityController.text = productData.cantidad.toString();
-              return SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextFormField(
-                      controller: titleController,
-                      decoration: const InputDecoration(labelText: 'Título'),
-                    ),
-                    TextFormField(
-                      controller: descriptionController,
-                      decoration:
-                          const InputDecoration(labelText: 'Descripción'),
-                      maxLines: 3,
-                    ),
-                    TextFormField(
-                      controller: priceController,
-                      decoration: const InputDecoration(labelText: 'Precio'),
-                      keyboardType: TextInputType.number,
-                    ),
-                    TextFormField(
-                      controller: quantityController,
-                      decoration: const InputDecoration(labelText: 'Cantidad'),
-                      keyboardType: TextInputType.number,
-                    ),
-                  ],
+
+              return SizedBox(
+                width: MediaQuery.of(context).size.width * 1,
+                child: UpdateProduct(
+                  titleController: titleController,
+                  descriptionController: descriptionController,
+                  priceController: priceController,
+                  quantityController: quantityController,
+                  productId: widget.productId,
+                  imageUrl: productData.imagen, // ✅ Pasar la imagen actual
+                  onUpLoad: (String imageUrl) async {
+                    // 🔹 **Actualizar en la base de datos**
+                    final success = await productService.updateProductDetails(
+                      widget.productId,
+                      {
+                        'imagen': imageUrl,
+                        'updated_at': DateTime.now()
+                            .toIso8601String(), // 🔥 Fuerza actualización en Supabase
+                      },
+                    );
+
+                    if (success) {
+                      setState(() {
+                        productDetails = productService
+                            .fetchProductDetails(widget.productId);
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Imagen actualizada')),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Error al actualizar la imagen')),
+                      );
+                    }
+                  },
+                  onPressedDecline: () {
+                    Navigator.of(context).pop();
+                  },
+                  onPressedAccept: () async {
+                    final updatedData = {
+                      'nombreProducto': titleController.text,
+                      'descripcion': descriptionController.text,
+                      'precio': double.tryParse(priceController.text),
+                      'cantidad': int.tryParse(quantityController.text),
+                      'updated_at': DateTime.now()
+                          .toIso8601String(), // 🔥 Fuerza actualización en Supabase
+                    };
+
+                    final success = await productService.updateProductDetails(
+                      widget.productId,
+                      updatedData,
+                    );
+
+                    if (success) {
+                      setState(() {
+                        productDetails = productService
+                            .fetchProductDetails(widget.productId);
+                      });
+                      Navigator.of(context).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Producto actualizado exitosamente')),
+                      );
+                    } else {
+                      Navigator.of(context).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Error al actualizar el producto')),
+                      );
+                    }
+                  },
                 ),
               );
             },
           ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancelar'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Actualizar'),
-              onPressed: () async {
-                final updatedData = {
-                  'nombreProducto': titleController.text,
-                  'descripcion': descriptionController.text,
-                  'precio': double.tryParse(priceController.text),
-                  'cantidad': int.tryParse(quantityController.text),
-                };
-
-                final success = await productService.updateProductDetails(
-                    widget.productId, updatedData);
-
-                if (success) {
-                  setState(() {
-                    productDetails =
-                        productService.fetchProductDetails(widget.productId);
-                  });
-                  Navigator.of(context).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text('Producto actualizado exitosamente')),
-                  );
-                } else {
-                  Navigator.of(context).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text('Error al actualizar el producto')),
-                  );
-                }
-              },
-            ),
-          ],
         );
       },
     );

@@ -1,0 +1,131 @@
+import 'package:apptomaticos/core/constants/colors.dart';
+import 'package:apptomaticos/core/widgets/avatar_product.dart';
+import 'package:apptomaticos/core/widgets/custom_button.dart';
+import 'package:apptomaticos/core/widgets/text_form_field_widget.dart';
+import 'package:apptomaticos/presentation/themes/app_theme.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/material.dart';
+
+class UpdateProduct extends StatefulWidget {
+  final TextEditingController titleController;
+  final TextEditingController descriptionController;
+  final TextEditingController priceController;
+  final TextEditingController quantityController;
+  final VoidCallback onPressedDecline;
+  final VoidCallback onPressedAccept;
+  final String? imageUrl;
+  final void Function(String imageUrl) onUpLoad;
+  final int productId;
+
+  const UpdateProduct({
+    super.key,
+    required this.titleController,
+    required this.descriptionController,
+    required this.priceController,
+    required this.quantityController,
+    required this.onPressedDecline,
+    required this.onPressedAccept,
+    required this.imageUrl,
+    required this.onUpLoad,
+    required this.productId,
+  });
+
+  @override
+  State<UpdateProduct> createState() => _UpdateProductState();
+}
+
+class _UpdateProductState extends State<UpdateProduct> {
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        spacing: 12,
+        children: [
+          AutoSizeText(
+            'Foto Producto',
+            maxLines: 1,
+            maxFontSize: 18,
+            minFontSize: 16,
+            style: temaApp.textTheme.titleSmall!.copyWith(
+              color: Colors.black,
+              fontSize: 18,
+            ),
+          ),
+          AvatarProduct(
+            imageUrl: widget.imageUrl,
+            onUpLoad: widget.onUpLoad,
+            productId: widget.productId,
+          ),
+          TextFormFieldWidget(
+            labelText: 'Titulo',
+            controller: widget.titleController,
+            icon: Icons.shopping_basket,
+            keyboardType: TextInputType.text,
+          ),
+          TextFormFieldWidget(
+            labelText: 'Descripción',
+            controller: widget.descriptionController,
+            icon: Icons.description_sharp,
+            keyboardType: TextInputType.text,
+          ),
+          TextFormFieldWidget(
+            labelText: 'Precio',
+            controller: widget.priceController,
+            icon: Icons.price_change,
+            keyboardType: TextInputType.number,
+          ),
+          TextFormFieldWidget(
+            labelText: 'Cantidad',
+            controller: widget.quantityController,
+            icon: Icons.shopping_cart,
+            keyboardType: TextInputType.number,
+          ),
+          Row(
+            spacing: 8,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CustomButton(
+                onPressed: widget.onPressedDecline,
+                color: Colors.white,
+                colorBorder: redApp,
+                border: 18,
+                width: 0.1,
+                height: 0.05,
+                elevation: 2,
+                sizeBorder: 2,
+                child: AutoSizeText(
+                  'CANCELAR',
+                  maxLines: 1,
+                  maxFontSize: 14,
+                  minFontSize: 8,
+                  style: temaApp.textTheme.titleSmall!.copyWith(
+                      color: redApp, fontWeight: FontWeight.w600, fontSize: 30),
+                ),
+              ),
+              CustomButton(
+                onPressed: widget.onPressedAccept,
+                color: buttonGreen,
+                colorBorder: Colors.transparent,
+                border: 18,
+                width: 0.1,
+                height: 0.05,
+                elevation: 2,
+                sizeBorder: 0,
+                child: AutoSizeText(
+                  'MODIFICAR',
+                  maxLines: 1,
+                  maxFontSize: 14,
+                  minFontSize: 8,
+                  style: temaApp.textTheme.titleSmall!.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 30),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}

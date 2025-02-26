@@ -1,0 +1,42 @@
+import 'package:flutter/material.dart';
+
+class DropDownFieldController extends StatefulWidget {
+  final String labelText;
+  final List<String> options;
+  final String? selectedValue;
+  final ValueChanged<String?> onChanged;
+  const DropDownFieldController(
+      {super.key,
+      required this.labelText,
+      required this.options,
+      this.selectedValue,
+      required this.onChanged});
+
+  @override
+  State<DropDownFieldController> createState() =>
+      _DropDownFieldControllerState();
+}
+
+class _DropDownFieldControllerState extends State<DropDownFieldController> {
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField<String>(
+      value: widget.selectedValue,
+      decoration: InputDecoration(
+        labelText: widget.labelText,
+        filled: true,
+        fillColor: Colors.white.withValues(alpha: 0.4),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+      items: widget.options
+          .map((option) => DropdownMenuItem(
+                value: option,
+                child: Text(option),
+              ))
+          .toList(),
+      onChanged: widget.onChanged,
+    );
+  }
+}

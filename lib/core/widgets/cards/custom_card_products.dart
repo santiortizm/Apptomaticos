@@ -1,8 +1,11 @@
 import 'package:apptomaticos/core/constants/colors.dart';
+import 'package:apptomaticos/core/services/cloudinary_service.dart';
 import 'package:apptomaticos/presentation/screens/products/buy_product_page.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class CustomCardProducts extends StatelessWidget {
   final int productId;
@@ -20,6 +23,9 @@ class CustomCardProducts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cloudinaryService =
+        CloudinaryService(cloudName: dotenv.env['CLOUD_NAME'] ?? '');
+
     var size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () {
@@ -42,17 +48,36 @@ class CustomCardProducts extends StatelessWidget {
         ),
         child: Column(
           children: [
+            // Container(
+            //   width: size.width * 1,
+            //   height: size.height * 0.28,
+            //   decoration: BoxDecoration(
+            //     borderRadius: const BorderRadius.only(
+            //         topLeft: Radius.circular(16),
+            //         topRight: Radius.circular(16)),
+            //     image: DecorationImage(
+
+            //       image: NetworkImage(imageUrl),
+            //       fit: BoxFit.cover,
+            //     ),
+            //   ),
+            // ),
             Container(
               width: size.width * 1,
               height: size.height * 0.28,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(16),
                     topRight: Radius.circular(16)),
-                image: DecorationImage(
-                  image: NetworkImage(imageUrl),
-                  fit: BoxFit.cover,
-                ),
+              ),
+              child: CachedNetworkImage(
+                imageUrl: cloudinaryService.getOptimizedImageUrl(imageUrl,
+                    width: 300, height: 300),
+                fit: BoxFit.scaleDown,
+                placeholder: (context, url) =>
+                    const Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) =>
+                    Image.network('https://.../img_portada.webp'),
               ),
             ),
             Padding(

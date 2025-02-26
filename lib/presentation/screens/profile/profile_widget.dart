@@ -5,6 +5,7 @@ import 'package:apptomaticos/presentation/screens/second_pages/second_pages_prod
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileWidget extends StatefulWidget {
@@ -53,6 +54,12 @@ class _ProfileWidgetState extends State<ProfileWidget> {
     } catch (e) {
       print('Error al cargar los datos del perfil: $e');
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _loadUserProfileData();
   }
 
   @override
@@ -123,6 +130,9 @@ class _ProfileWidgetState extends State<ProfileWidget> {
             CustomButton(
               onPressed: () async {
                 await supabase.auth.signOut();
+                if (mounted) {
+                  context.go('/');
+                }
               },
               color: redApp,
               border: 18,

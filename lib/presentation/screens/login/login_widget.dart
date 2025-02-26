@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginWidget extends StatefulWidget {
   const LoginWidget({super.key});
@@ -103,26 +104,33 @@ class _LoginWidgetState extends State<LoginWidget> {
                                 final isValid =
                                     _formKey.currentState?.validate();
                                 if (isValid != true) {
-                                  // Implementar la lógica de inicio de sesión
-                                  return;
+                                  return; // Detener si los campos son inválidos
                                 }
-                                setState(
-                                  () {
-                                    singInLoading = true;
-                                  },
-                                );
+
+                                setState(() {
+                                  singInLoading = true;
+                                });
+
                                 try {
                                   await supabase.auth.signInWithPassword(
-                                      email: userController.text,
-                                      password: passwordController.text);
+                                    email: userController.text,
+                                    password: passwordController.text,
+                                  );
+
+                                  // 🟢 Si el inicio de sesión es exitoso, navegar al menú
+                                  if (mounted) {
+                                    context.go(
+                                        '/menu'); // ⚡ GoRouter navega a la pantalla de inicio
+                                  }
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: const Text(
-                                          'Proceso fallido, el usuario no exite.'),
+                                          'Inicio de sesión fallido. Verifique sus credenciales.'),
                                       backgroundColor: Colors.red[300],
                                     ),
                                   );
+                                } finally {
                                   setState(() {
                                     singInLoading = false;
                                   });

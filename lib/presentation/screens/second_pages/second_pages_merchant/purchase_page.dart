@@ -3,15 +3,47 @@ import 'package:apptomaticos/core/widgets/custom_button.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class PurchasePage extends StatefulWidget {
-  const PurchasePage({super.key});
+  final int productId;
+  final double price;
+  final String imageUrl;
+  final int availableQuantify;
+  const PurchasePage(
+      {super.key,
+      required this.productId,
+      required this.imageUrl,
+      required this.price,
+      required this.availableQuantify});
 
   @override
   State<PurchasePage> createState() => _PurchasePageState();
 }
 
 class _PurchasePageState extends State<PurchasePage> {
+  final TextEditingController _quantityController = TextEditingController();
+  double _totalPrice = 0;
+  void _updateTotalPrice() {
+    final int quantity = int.tryParse(_quantityController.text) ?? 0;
+    setState(() {
+      _totalPrice = quantity * widget.price;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _quantityController.addListener(_updateTotalPrice);
+  }
+
+  @override
+  void dispose() {
+    _quantityController.removeListener(_updateTotalPrice);
+    _quantityController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -84,26 +116,49 @@ class _PurchasePageState extends State<PurchasePage> {
                         height: size.height * 0.25,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(14),
-                          image: const DecorationImage(
+                          image: DecorationImage(
                             image: NetworkImage(
-                                'https://blog.lexmed.com/images/librariesprovider80/blog-post-featured-images/shutterstock_1896755260.jpg?sfvrsn=52546e0a_0'),
+                                widget.imageUrl), // ✅ Imagen del producto
                             fit: BoxFit.cover,
                           ),
                         ),
                       ),
-                      containerPrice(context, 'Precio Canasta', '20.000', 16),
+                      containerPrice(context, 'Precio Canasta',
+                          widget.price.toString(), 16),
                       textWidget(context, 'Cantidad a Comprar:', 18),
                       SizedBox(
                         width: size.width * 0.6,
                         child: textFormField(context, 'Cantidad en Canastas',
-                            TextInputType.number),
+                            TextInputType.number, _quantityController),
                       ),
-                      containerPrice(context, 'Total a Pagar:', '0.0', 16),
+                      containerPrice(context, 'Total a Pagar:',
+                          _totalPrice.toStringAsFixed(2), 16),
                       Container(
                         margin:
                             EdgeInsets.symmetric(vertical: size.height * 0.025),
                         child: CustomButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            final quantity =
+                                int.tryParse(_quantityController.text) ?? 0;
+                            if (quantity <= 0 ||
+                                quantity > widget.availableQuantify) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Cantidad no válida')),
+                              );
+                              return;
+                            }
+
+                            // Navegar a la pantalla de métodos de pago con los datos de la compra
+                            context.push(
+                              '/paymentAlternatives',
+                              extra: {
+                                'productId': widget.productId,
+                                'quantity': quantity,
+                                'totalPrice': _totalPrice,
+                              },
+                            );
+                          },
                           color: buttonGreen,
                           colorBorder: buttonGreen,
                           border: 12,
@@ -117,12 +172,13 @@ class _PurchasePageState extends State<PurchasePage> {
                             maxFontSize: 20,
                             minFontSize: 18,
                             style: temaApp.textTheme.titleSmall!.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 30),
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 30,
+                            ),
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -210,9 +266,10 @@ class _PurchasePageState extends State<PurchasePage> {
     );
   }
 
-  Widget textFormField(
-      BuildContext context, String label, TextInputType keynoardType) {
+  Widget textFormField(BuildContext context, String label,
+      TextInputType keynoardType, TextEditingController controller) {
     return TextFormField(
+      controller: controller,
       keyboardType: keynoardType,
       decoration: InputDecoration(
         focusColor: redApp,

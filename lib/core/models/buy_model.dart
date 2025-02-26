@@ -1,42 +1,56 @@
 class BuyModel {
-  final int id;
+  final int? id; // ID opcional, Supabase lo genera automáticamente
   final String alternativaPago;
+  final String nombreProducto;
   final int cantidad;
   final double total;
   final DateTime fecha;
+  final String idPropietario;
   final int idProducto;
   final String idComprador;
+  final String imagenProducto;
 
   BuyModel({
-    required this.id,
+    this.id,
     required this.alternativaPago,
+    required this.nombreProducto,
     required this.cantidad,
     required this.total,
     required this.fecha,
     required this.idProducto,
     required this.idComprador,
+    required this.idPropietario,
+    required this.imagenProducto,
   });
 
-  factory BuyModel.fromJson(Map<String, dynamic> json) {
-    return BuyModel(
-      id: json['id'],
-      alternativaPago: json['alternativaPago'],
-      cantidad: json['cantidad'],
-      total: json['total'].toDouble(),
-      fecha: DateTime.parse(json['fecha']),
-      idProducto: json['idProducto'],
-      idComprador: json['idComprador'],
-    );
-  }
-
-  Map<String, dynamic> toJson() {
+  /// Convierte el modelo a un `Map<String, dynamic>` para insertarlo en Supabase
+  Map<String, dynamic> toMap() {
     return {
-      'alternativaPago': alternativaPago,
+      'idProducto': idProducto,
+      'nombreProducto': nombreProducto,
       'cantidad': cantidad,
       'total': total,
-      'fecha': fecha.toIso8601String(),
-      'idProducto': idProducto,
+      'alternativaPago': alternativaPago,
       'idComprador': idComprador,
+      'idPropietario': idPropietario,
+      'imagenProducto': imagenProducto,
+      'fecha': fecha.toIso8601String(),
     };
+  }
+
+  /// Crea una instancia de `BuyModel` desde un JSON (consulta de Supabase)
+  factory BuyModel.fromJson(Map<String, dynamic> json) {
+    return BuyModel(
+      id: json['id'], // Puede ser nulo si es una nueva compra
+      alternativaPago: json['alternativaPago'],
+      nombreProducto: json['nombreProducto'],
+      cantidad: json['cantidad'],
+      total: (json['total'] as num).toDouble(),
+      fecha: DateTime.parse(json['fecha']),
+      idPropietario: json['idPropietario'],
+      idProducto: json['idProducto'],
+      idComprador: json['idComprador'],
+      imagenProducto: json['imagenProducto'] ?? '', // Evita nulos
+    );
   }
 }

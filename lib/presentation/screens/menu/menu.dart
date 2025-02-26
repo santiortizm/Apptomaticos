@@ -10,7 +10,6 @@ class Menu extends StatefulWidget {
   const Menu({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _MenuState createState() => _MenuState();
 }
 
@@ -22,68 +21,27 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _handleAuthStateChange();
 
     FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
       _setFcmToken(fcmToken);
     });
 
-    FirebaseMessaging.onMessage.listen((payload) {
-      final notification = payload.notification;
-      if (notification != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${notification.title} ${notification.body}'),
-          ),
-        );
-      }
-    });
-
     _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(() {
-      setState(() {
-        _selectedIndex = _tabController.index;
-      });
-    });
-  }
-
-  void _handleAuthStateChange() {
-    supabase.auth.onAuthStateChange.listen((event) async {
-      if (event.event == AuthChangeEvent.signedIn) {
-        await _requestPushPermission();
-        final fcmToken = await FirebaseMessaging.instance.getToken();
-
-        if (fcmToken != null) {
-          _setFcmToken(fcmToken);
-        }
+      if (mounted) {
+        setState(() {
+          _selectedIndex = _tabController.index;
+        });
       }
     });
-  }
-
-  bool _isRequestingPermission =
-      false; // Variable para evitar llamadas múltiples
-
-  Future<void> _requestPushPermission() async {
-    if (_isRequestingPermission) return; // Evita solicitudes simultáneas
-    _isRequestingPermission = true;
-
-    try {
-      await FirebaseMessaging.instance.requestPermission();
-      await FirebaseMessaging.instance.getAPNSToken();
-    } catch (e) {
-      print("Error solicitando permisos: $e");
-    } finally {
-      _isRequestingPermission =
-          false; // Restablece la variable después de la solicitud
-    }
   }
 
   Future<void> _setFcmToken(String fcmToken) async {
     final userId = supabase.auth.currentUser?.id;
     if (userId != null) {
-      await supabase.from('usuarios').update({
-        'fcm_token': fcmToken,
-      }).eq('idUsuario', userId);
+      await supabase
+          .from('usuarios')
+          .update({'fcm_token': fcmToken}).eq('idUsuario', userId);
     }
   }
 
@@ -112,9 +70,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                   fit: BoxFit.cover,
                 ),
               ),
-              child: Container(
-                color: Colors.black.withValues(alpha: 0.5),
-              ),
+              child: Container(color: Colors.black.withOpacity(0.5)),
             ),
             // Contenido principal
             Column(
@@ -128,14 +84,15 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                         padding: EdgeInsets.symmetric(
                             horizontal: size.width * 0.05,
                             vertical: size.height * 0.025),
-                        child: const ListViewProducts(),
+                        child: const ListviewProducts(),
                       ),
-                      _buildPricesTab(context, size),
+                      _buildPricesTab(),
                       Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: size.width * 0.05,
-                              vertical: size.height * 0.025),
-                          child: const ProfileWidget()),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: size.width * 0.05,
+                            vertical: size.height * 0.025),
+                        child: const ProfileWidget(),
+                      ),
                     ],
                   ),
                 ),
@@ -156,20 +113,15 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
         indicatorColor: Colors.transparent,
         tabs: [
           CustomTabButton(
-            label: 'Home',
-            icon: Icons.home,
-            isSelected: _selectedIndex == 0,
-          ),
+              label: 'Home', icon: Icons.home, isSelected: _selectedIndex == 0),
           CustomTabButton(
-            label: 'Precios',
-            icon: Icons.attach_money,
-            isSelected: _selectedIndex == 1,
-          ),
+              label: 'Precios',
+              icon: Icons.attach_money,
+              isSelected: _selectedIndex == 1),
           CustomTabButton(
-            label: 'Perfil',
-            icon: Icons.person,
-            isSelected: _selectedIndex == 2,
-          ),
+              label: 'Perfil',
+              icon: Icons.person,
+              isSelected: _selectedIndex == 2),
         ],
         onTap: (index) {
           setState(() {
@@ -182,7 +134,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _buildPricesTab(BuildContext context, Size size) {
+  Widget _buildPricesTab() {
     return const Center(
       child:
           Text('Aquí van los precios', style: TextStyle(color: Colors.white)),

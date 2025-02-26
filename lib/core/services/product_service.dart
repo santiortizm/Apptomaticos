@@ -7,6 +7,17 @@ class ProductService {
 
   ProductService(this.supabaseClient);
 
+  /// Muestra todos los productos disponibles
+  Future<List<Product>> fetchAllProducts() async {
+    try {
+      final response = await supabaseClient.from('productos').select('*');
+      return response.map((data) => Product.fromMap(data)).toList();
+    } catch (e) {
+      print('Error obteniendo productos: $e');
+      return [];
+    }
+  }
+
   /// Registra un nuevo producto
   Future<bool> registerProduct(Product product) async {
     try {
@@ -115,6 +126,22 @@ class ProductService {
     } catch (e) {
       print('Error al obtener los productos del productor: $e');
       return [];
+    }
+  }
+
+  /// Actualiza la cantidad de un producto (puede restar o sumar)
+  Future<void> updateProductQuantity(int productId, int changeAmount) async {
+    try {
+      final product = await fetchProductDetails(productId);
+      if (product == null) return;
+
+      final newQuantity = product.cantidad + changeAmount;
+
+      await supabaseClient
+          .from('productos')
+          .update({'cantidad': newQuantity}).eq('idProducto', productId);
+    } catch (e) {
+      print('Error actualizando cantidad del producto: $e');
     }
   }
 }

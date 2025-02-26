@@ -42,19 +42,19 @@ Deno.serve(async (req) => {
 
   
   const res = await fetch(
-    `https://fcm.googleapis.com/v1/projects/${serviceAccount.project_id}/messages:send`,
+    `https://fcm.googleapis.com/v1/projects/${serviceAccount.project_id}/messages:send`
     {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: Bearer ${accessToken},
       },
       body: JSON.stringify({
         message: {
           token: fcmToken,
           notification: {
-            title: `Public Product Confirmation`,
-            body: `${payload.record.nombreProducto} purchased for \$${payload.record.precio}.`
+            title: Nuevo Producto en Venta,
+            body: ${payload.record.nombreProducto} en venta por \$${payload.record.precio}.
           }
         }
       }) 
