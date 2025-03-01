@@ -60,13 +60,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
           _drawerItem(Icons.store, 'Mis Productos', context, '/myProducts'),
           _drawerItem(Icons.add, 'Mis Ventas', context, '/agregarProducto'),
           _drawerItem(
-              Icons.add, 'Mis Contra Ofertas', context, '/agregarProducto'),
+              Icons.add, 'Mis Contra Ofertas', context, '/myCouterOffers'),
           widget.cerrarSesion,
         ];
       case 'Comerciante':
         return [
           _drawerItem(
-              Icons.shopping_cart, 'Mis Compras', context, '/misCompras'),
+              Icons.shopping_cart, 'Mis Compras', context, '/shoppingMerchant'),
           _drawerItem(
               Icons.business, 'Mis Contra Ofertas', context, '/proveedores'),
           _drawerItem(Icons.business, 'Mis Pedidos', context, '/proveedores'),

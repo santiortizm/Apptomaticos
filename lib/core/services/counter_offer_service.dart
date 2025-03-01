@@ -52,25 +52,23 @@ class CounterOfferService {
     }
   }
 
-  /// Revisar y revertir ofertas "En Espera" después de 30 minutos
-  Future<void> checkExpiredOffers() async {
+  //
+  Future<List<CounterOffer>> fetchCounterOfferByProducer() async {
     try {
-      final now = DateTime.now();
-      final expirationTime = now.subtract(const Duration(minutes: 2));
-
-      final ofertas = await supabaseClient
-          .from('contra_oferta')
-          .select('*')
-          .eq('estadoOferta', 'En Espera')
-          .lt('created_at', expirationTime.toIso8601String());
-
-      for (var oferta in ofertas) {
-        final contraOferta = CounterOffer.fromMap(oferta);
-        await updateContraOfertaStatus(
-            contraOferta.idContraOferta!, "Rechazado");
+      final user = supabaseClient.auth.currentUser;
+      if (user == null) {
+        return [];
       }
+
+      final response = await supabaseClient
+          .from('contra_oferta')
+          .select()
+          .eq('idPropietario', user.id)
+          .order('created_at', ascending: false);
+
+      return response.map((json) => CounterOffer.fromMap(json)).toList();
     } catch (e) {
-      return;
+      return [];
     }
   }
 }

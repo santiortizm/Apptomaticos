@@ -1,104 +1,127 @@
 import 'package:apptomaticos/core/constants/colors.dart';
+import 'package:apptomaticos/core/services/cloudinary_service.dart';
 import 'package:apptomaticos/core/widgets/custom_button.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-class CustomCardBuysMerchant extends StatelessWidget {
-  const CustomCardBuysMerchant({super.key});
-
+class CustomCardCounterOffer extends StatelessWidget {
+  final String imagen;
+  final String nombreProducto;
+  final String nombreOfertador;
+  final String cantidadOfertada;
+  final String totalOferta;
+  const CustomCardCounterOffer(
+      {super.key,
+      required this.imagen,
+      required this.nombreProducto,
+      required this.nombreOfertador,
+      required this.cantidadOfertada,
+      required this.totalOferta});
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return Container(
-      padding: EdgeInsets.symmetric(
-          horizontal: size.width * 0.025, vertical: size.height * 0.025),
-      width: size.width * 0.8,
-      decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(18)),
-      child: Column(
-        children: [
-          Row(
-            spacing: 12,
-            children: [
-              Container(
-                width: size.width * 0.28,
-                height: size.height * 0.16,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
-                  image: const DecorationImage(
-                    fit: BoxFit.fill,
-                    image: NetworkImage(
-                        'https://images.unsplash.com/photo-1616943269705-f8d095067a4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NTYyMDF8MHwxfHNlYXJjaHwxfHx0b21hdG9lfGVufDB8fHx8MTczNzY1NzI1Nnww&ixlib=rb-4.0.3&q=80&w=1080'),
-                  ),
-                ),
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  texTitletWidget(context, 'Tomate Chonto', 22),
-                  texTitletWidget(context, 'Juan Peréz', 16),
-                  moreInfo(
-                      context, 'Cantidad:', 12, '10 Canastas', 12, 0.2, 0.22),
-                  moreInfo(context, 'Precio Unitario:', 12, '30.000', 12, 0.26,
-                      0.15),
-                  moreInfo(
-                      context, 'Total compra:', 12, '300.000', 12, 0.26, 0.15),
-                ],
-              ),
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: size.height * 0.012),
-            child: Row(
-              spacing: 8,
-              mainAxisAlignment: MainAxisAlignment.center,
+    final cloudinaryService =
+        CloudinaryService(cloudName: dotenv.env['CLOUD_NAME'] ?? '');
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+            horizontal: size.width * 0.025, vertical: size.height * 0.025),
+        width: size.width * 0.8,
+        decoration: BoxDecoration(
+            color: Colors.white, borderRadius: BorderRadius.circular(18)),
+        child: Column(
+          children: [
+            Row(
+              spacing: 12,
               children: [
-                CustomButton(
-                  onPressed: () {},
-                  color: Colors.white,
-                  colorBorder: redApp,
-                  border: 18,
-                  width: 0.3,
-                  height: 0.05,
-                  elevation: 2,
-                  sizeBorder: 2,
-                  child: AutoSizeText(
-                    'RECHAZAR',
-                    maxLines: 1,
-                    maxFontSize: 17,
-                    minFontSize: 14,
-                    style: temaApp.textTheme.titleSmall!.copyWith(
-                        color: redApp,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 30),
+                Container(
+                  width: size.width * 0.28,
+                  height: size.height * 0.16,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: CachedNetworkImage(
+                    imageUrl: cloudinaryService.getOptimizedImageUrl(
+                      imagen,
+                    ),
+                    fit: BoxFit.scaleDown,
+                    placeholder: (context, url) =>
+                        const Center(child: CircularProgressIndicator()),
+                    errorWidget: (context, url, error) => Image.network(
+                        'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp'),
                   ),
                 ),
-                CustomButton(
-                  onPressed: () {},
-                  color: buttonGreen,
-                  colorBorder: Colors.transparent,
-                  border: 18,
-                  width: 0.3,
-                  height: 0.05,
-                  elevation: 2,
-                  sizeBorder: 0,
-                  child: AutoSizeText(
-                    'ACEPTAR',
-                    maxLines: 1,
-                    maxFontSize: 17,
-                    minFontSize: 14,
-                    style: temaApp.textTheme.titleSmall!.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 30),
-                  ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    texTitletWidget(context, nombreProducto, 22),
+                    texTitletWidget(context, nombreOfertador, 16),
+                    moreInfo(context, 'Cantidad:', 12,
+                        '$cantidadOfertada Canastas', 12, 0.2, 0.22),
+                    moreInfo(context, 'Precio Unitario:', 12, 'valorUnitario',
+                        12, 0.26, 0.15),
+                    moreInfo(context, 'Total compra:', 12, totalOferta, 12,
+                        0.26, 0.15),
+                  ],
                 ),
               ],
             ),
-          ),
-        ],
+            Padding(
+              padding: EdgeInsets.only(top: size.height * 0.012),
+              child: Row(
+                spacing: 8,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CustomButton(
+                    onPressed: () {},
+                    color: Colors.white,
+                    colorBorder: redApp,
+                    border: 18,
+                    width: 0.3,
+                    height: 0.05,
+                    elevation: 2,
+                    sizeBorder: 2,
+                    child: AutoSizeText(
+                      'RECHAZAR',
+                      maxLines: 1,
+                      maxFontSize: 17,
+                      minFontSize: 14,
+                      style: temaApp.textTheme.titleSmall!.copyWith(
+                          color: redApp,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 30),
+                    ),
+                  ),
+                  CustomButton(
+                    onPressed: () {},
+                    color: buttonGreen,
+                    colorBorder: Colors.transparent,
+                    border: 18,
+                    width: 0.3,
+                    height: 0.05,
+                    elevation: 2,
+                    sizeBorder: 0,
+                    child: AutoSizeText(
+                      'ACEPTAR',
+                      maxLines: 1,
+                      maxFontSize: 17,
+                      minFontSize: 14,
+                      style: temaApp.textTheme.titleSmall!.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 30),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

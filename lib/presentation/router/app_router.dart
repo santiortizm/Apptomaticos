@@ -5,6 +5,8 @@ import 'package:apptomaticos/presentation/screens/menu/menu.dart';
 import 'package:apptomaticos/presentation/screens/second_pages/second_pages_merchant/offert_page.dart';
 import 'package:apptomaticos/presentation/screens/second_pages/second_pages_merchant/payment_alternatives.dart';
 import 'package:apptomaticos/presentation/screens/second_pages/second_pages_merchant/purchase_page.dart';
+import 'package:apptomaticos/presentation/screens/second_pages/second_pages_merchant/shopping_merchant.dart';
+import 'package:apptomaticos/presentation/screens/second_pages/second_pages_producer/counter_offers_producer.dart';
 import 'package:apptomaticos/presentation/screens/second_pages/second_pages_producer/products_of_producer.dart';
 import 'package:go_router/go_router.dart';
 
@@ -31,6 +33,10 @@ class AppRouter {
       GoRoute(
           path: '/myProducts',
           builder: (context, state) => const ProductsOfProducer()),
+      GoRoute(
+        path: '/myCouterOffers',
+        builder: (context, state) => const CounterOffersProducer(),
+      ),
       GoRoute(
         path: '/purchase',
         builder: (context, state) {
@@ -67,6 +73,10 @@ class AppRouter {
           );
         },
       ),
+      GoRoute(
+        path: '/shoppingMerchant',
+        builder: (context, state) => const ShoppingMerchant(),
+      )
     ],
   );
 }

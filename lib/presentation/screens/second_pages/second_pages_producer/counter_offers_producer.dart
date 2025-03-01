@@ -1,7 +1,7 @@
-import 'package:apptomaticos/core/models/buy_model.dart';
-import 'package:apptomaticos/core/services/buy_service.dart';
+import 'package:apptomaticos/core/models/counter_offer_model.dart';
+import 'package:apptomaticos/core/services/counter_offer_service.dart';
 import 'package:apptomaticos/core/services/product_service.dart';
-import 'package:apptomaticos/core/widgets/cards/custom_card_purchases_merchant.dart';
+import 'package:apptomaticos/core/widgets/cards/custom_card_counter_offer.dart';
 import 'package:apptomaticos/core/widgets/custom_button.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -9,18 +9,18 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class ShoppingMerchant extends StatefulWidget {
-  const ShoppingMerchant({super.key});
+class CounterOffersProducer extends StatefulWidget {
+  const CounterOffersProducer({super.key});
 
   @override
-  State<ShoppingMerchant> createState() => _ShoppingMerchantState();
+  State<CounterOffersProducer> createState() => _CounterOffersProducerState();
 }
 
-class _ShoppingMerchantState extends State<ShoppingMerchant> {
+class _CounterOffersProducerState extends State<CounterOffersProducer> {
   final supabase = Supabase.instance.client;
-  final BuyService purchasetService =
-      BuyService(ProductService(Supabase.instance.client));
-  late Future<List<Buy>> purchaseMerchantFuture;
+  final CounterOfferService counterOfferService = CounterOfferService(
+      Supabase.instance.client, ProductService(Supabase.instance.client));
+  late Future<List<CounterOffer>> producerOffersFuture;
   String? idUsuario;
   late RealtimeChannel _channel;
 
@@ -33,7 +33,7 @@ class _ShoppingMerchantState extends State<ShoppingMerchant> {
   Future<void> _initialize() async {
     await _fetchIdUsuario();
     _subscribeToProductChanges();
-    _refreshProducts();
+    _refreshOffers();
   }
 
   @override
@@ -63,7 +63,6 @@ class _ShoppingMerchantState extends State<ShoppingMerchant> {
     }
   }
 
-  /// Suscripción en tiempo real a los cambios en `productos`
   void _subscribeToProductChanges() {
     _channel = supabase
         .channel('public:productos')
@@ -72,16 +71,17 @@ class _ShoppingMerchantState extends State<ShoppingMerchant> {
           schema: 'public',
           table: 'productos',
           callback: (payload, [ref]) {
-            _refreshProducts();
+            _refreshOffers();
           },
         )
         .subscribe();
   }
 
-  Future<void> _refreshProducts() async {
+  Future<void> _refreshOffers() async {
     if (idUsuario != null) {
       setState(() {
-        purchaseMerchantFuture = purchasetService.fetchPurchasesByUser();
+        producerOffersFuture =
+            counterOfferService.fetchCounterOfferByProducer();
       });
     }
   }
@@ -160,7 +160,7 @@ class _ShoppingMerchantState extends State<ShoppingMerchant> {
                         ),
                       ),
                       AutoSizeText(
-                        'Mis Compras',
+                        'Mis Contra Ofertas',
                         maxFontSize: 26,
                         minFontSize: 18,
                         maxLines: 1,
@@ -171,8 +171,8 @@ class _ShoppingMerchantState extends State<ShoppingMerchant> {
                         ),
                       ),
                       Expanded(
-                        child: FutureBuilder<List<Buy>>(
-                          future: purchaseMerchantFuture,
+                        child: FutureBuilder<List<CounterOffer>>(
+                          future: producerOffersFuture,
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
@@ -186,29 +186,28 @@ class _ShoppingMerchantState extends State<ShoppingMerchant> {
                             if (snapshot.data == null ||
                                 snapshot.data!.isEmpty) {
                               return const Center(
-                                  child: Text('No hay compras realizadas'));
+                                  child: Text('No tienes contra ofertas.'));
                             }
 
-                            final purchase = snapshot.data!;
+                            final ofertas = snapshot.data!;
                             return RefreshIndicator(
-                              onRefresh: _refreshProducts,
+                              onRefresh: _refreshOffers,
                               child: ListView.builder(
                                 padding: EdgeInsets.symmetric(
                                     horizontal: size.width * 0.05),
-                                itemCount: purchase.length,
+                                itemCount: ofertas.length,
                                 itemBuilder: (context, index) {
-                                  final buy = purchase[index];
-                                  return Padding(
-                                    padding: const EdgeInsets.only(bottom: 10),
-                                    child: CustomCardPurchasesMerchant(
-                                        imagen: buy.imagenProducto.isNotEmpty
-                                            ? '${buy.imagenProducto}?v=${DateTime.now().millisecondsSinceEpoch}'
-                                            : 'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp',
-                                        nombreProducto: buy.nombreProducto,
-                                        fecha: buy.createdAt.toIso8601String(),
-                                        cantidad: buy.cantidad.toString(),
-                                        precio: buy.total.toString()),
-                                  );
+                                  final oferta = ofertas[index];
+                                  return CustomCardCounterOffer(
+                                      imagen: oferta.imagenProducto.isNotEmpty
+                                          ? '${oferta.imagenProducto}?v=${DateTime.now().millisecondsSinceEpoch}'
+                                          : 'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp',
+                                      nombreProducto: oferta.nombreProducto,
+                                      nombreOfertador: oferta.idComprador,
+                                      cantidadOfertada:
+                                          oferta.cantidad.toString(),
+                                      totalOferta:
+                                          oferta.valorOferta.toString());
                                 },
                               ),
                             );
