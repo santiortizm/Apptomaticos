@@ -2,6 +2,7 @@ import 'package:apptomaticos/auth_app.dart';
 import 'package:apptomaticos/presentation/screens/login/login_widget.dart';
 import 'package:apptomaticos/presentation/screens/products/add_product_page.dart';
 import 'package:apptomaticos/presentation/screens/menu/menu.dart';
+import 'package:apptomaticos/presentation/screens/second_pages/second_pages_merchant/my_counter_offers.dart';
 import 'package:apptomaticos/presentation/screens/second_pages/second_pages_merchant/offert_page.dart';
 import 'package:apptomaticos/presentation/screens/second_pages/second_pages_merchant/payment_alternatives.dart';
 import 'package:apptomaticos/presentation/screens/second_pages/second_pages_merchant/purchase_page.dart';
@@ -48,6 +49,10 @@ class AppRouter {
             availableQuantify: extra['availableQuantify'],
           );
         },
+      ),
+      GoRoute(
+        path: '/counterOfferMerchant',
+        builder: (context, state) => const MyCounterOffers(),
       ),
       GoRoute(
           path: '/paymentAlternatives',

@@ -1,7 +1,7 @@
 import 'package:apptomaticos/core/models/counter_offer_model.dart';
 import 'package:apptomaticos/core/services/counter_offer_service.dart';
 import 'package:apptomaticos/core/services/product_service.dart';
-import 'package:apptomaticos/core/widgets/cards/custom_card_counter_offer.dart';
+import 'package:apptomaticos/core/widgets/cards/custom_card_counter_offer_producer.dart';
 import 'package:apptomaticos/core/widgets/custom_button.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -32,7 +32,7 @@ class _CounterOffersProducerState extends State<CounterOffersProducer> {
 
   Future<void> _initialize() async {
     await _fetchIdUsuario();
-    _subscribeToProductChanges();
+    _subscribeToTableChanges();
     _refreshOffers();
   }
 
@@ -63,13 +63,13 @@ class _CounterOffersProducerState extends State<CounterOffersProducer> {
     }
   }
 
-  void _subscribeToProductChanges() {
+  void _subscribeToTableChanges() {
     _channel = supabase
         .channel('public:productos')
         .onPostgresChanges(
           event: PostgresChangeEvent.all,
           schema: 'public',
-          table: 'productos',
+          table: 'contra_oferta',
           callback: (payload, [ref]) {
             _refreshOffers();
           },
@@ -159,15 +159,18 @@ class _CounterOffersProducerState extends State<CounterOffersProducer> {
                           ),
                         ),
                       ),
-                      AutoSizeText(
-                        'Mis Contra Ofertas',
-                        maxFontSize: 26,
-                        minFontSize: 18,
-                        maxLines: 1,
-                        style: temaApp.textTheme.titleSmall!.copyWith(
-                          fontSize: 26,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w700,
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: AutoSizeText(
+                          'Mis Contra Ofertas',
+                          maxFontSize: 26,
+                          minFontSize: 18,
+                          maxLines: 1,
+                          style: temaApp.textTheme.titleSmall!.copyWith(
+                            fontSize: 26,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                       Expanded(
@@ -189,7 +192,9 @@ class _CounterOffersProducerState extends State<CounterOffersProducer> {
                                   child: Text('No tienes contra ofertas.'));
                             }
 
-                            final ofertas = snapshot.data!;
+                            final ofertas = snapshot.data!
+                                .where((o) => o.estadoOferta != 'Rechazado')
+                                .toList();
                             return RefreshIndicator(
                               onRefresh: _refreshOffers,
                               child: ListView.builder(
@@ -198,16 +203,99 @@ class _CounterOffersProducerState extends State<CounterOffersProducer> {
                                 itemCount: ofertas.length,
                                 itemBuilder: (context, index) {
                                   final oferta = ofertas[index];
-                                  return CustomCardCounterOffer(
-                                      imagen: oferta.imagenProducto.isNotEmpty
-                                          ? '${oferta.imagenProducto}?v=${DateTime.now().millisecondsSinceEpoch}'
-                                          : 'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp',
-                                      nombreProducto: oferta.nombreProducto,
-                                      nombreOfertador: oferta.idComprador,
-                                      cantidadOfertada:
-                                          oferta.cantidad.toString(),
-                                      totalOferta:
-                                          oferta.valorOferta.toString());
+                                  final now = DateTime.now();
+
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 8),
+                                    child: Stack(
+                                      children: [
+                                        CustomCardCounterOfferProducer(
+                                          imagen: oferta
+                                                  .imagenProducto.isNotEmpty
+                                              ? '${oferta.imagenProducto}?v=${DateTime.now().millisecondsSinceEpoch}'
+                                              : 'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp',
+                                          nombreProducto: oferta.nombreProducto,
+                                          nombreOfertador: oferta.idComprador,
+                                          cantidadOfertada:
+                                              oferta.cantidad.toString(),
+                                          totalOferta:
+                                              oferta.valorOferta.toString(),
+                                          acceptOffer: () async {
+                                            try {
+                                              await supabase
+                                                  .from('contra_oferta')
+                                                  .update({
+                                                'estadoOferta': 'Aceptado'
+                                              }).eq('idContraOferta',
+                                                      oferta.idContraOferta!);
+                                              await supabase
+                                                  .from('compras')
+                                                  .insert({
+                                                'alternativaPago':
+                                                    'Contra Oferta',
+                                                'cantidad': oferta.cantidad,
+                                                'total': oferta.valorOferta,
+                                                'fecha': now.toIso8601String(),
+                                                'idProducto': oferta.idProducto,
+                                                'idComprador':
+                                                    oferta.idComprador,
+                                                'nombreProducto':
+                                                    oferta.nombreProducto,
+                                                'idPropietario':
+                                                    oferta.idPropietario,
+                                                'imagenProducto':
+                                                    oferta.imagenProducto,
+                                                'estadoCompra': 'En Espera'
+                                              });
+                                              setState(() {});
+                                            } catch (e) {
+                                              return;
+                                            }
+                                          },
+                                          declineOffer: () async {
+                                            await supabase
+                                                .from('contra_oferta')
+                                                .update({
+                                              'estadoOferta': 'Rechazado'
+                                            }).eq('idContraOferta',
+                                                    oferta.idContraOferta!);
+                                          },
+                                        ),
+                                        if (oferta.estadoOferta == 'Aceptado')
+                                          Positioned.fill(
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                  color: Colors.green
+                                                      .withValues(alpha: .5),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          18)),
+                                              child: const Center(
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Icon(Icons.check_circle,
+                                                        color: Colors.white,
+                                                        size: 60),
+                                                    SizedBox(height: 10),
+                                                    Text(
+                                                      'Oferta Aceptada',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  );
                                 },
                               ),
                             );

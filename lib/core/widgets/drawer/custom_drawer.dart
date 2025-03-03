@@ -17,7 +17,9 @@ class CustomDrawer extends StatefulWidget {
 class _CustomDrawerState extends State<CustomDrawer> {
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Drawer(
+      width: size.width * .9,
       backgroundColor: Colors.white,
       child: Column(
         children: [
@@ -67,8 +69,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
         return [
           _drawerItem(
               Icons.shopping_cart, 'Mis Compras', context, '/shoppingMerchant'),
-          _drawerItem(
-              Icons.business, 'Mis Contra Ofertas', context, '/proveedores'),
+          _drawerItem(Icons.business, 'Mis Contra Ofertas', context,
+              '/counterOfferMerchant'),
           _drawerItem(Icons.business, 'Mis Pedidos', context, '/proveedores'),
           widget.cerrarSesion,
         ];

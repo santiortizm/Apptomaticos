@@ -46,7 +46,6 @@ class _ShoppingMerchantState extends State<ShoppingMerchant> {
   Future<void> _fetchIdUsuario() async {
     final user = supabase.auth.currentUser;
     if (user == null) return;
-
     try {
       final response = await supabase
           .from('usuarios')
@@ -54,7 +53,6 @@ class _ShoppingMerchantState extends State<ShoppingMerchant> {
           .eq('idUsuario',
               user.id) // Corregido: Usa 'idAuth' en lugar de 'idUsuario'
           .single();
-
       setState(() {
         idUsuario = response['idUsuario'].toString();
       });
@@ -70,7 +68,7 @@ class _ShoppingMerchantState extends State<ShoppingMerchant> {
         .onPostgresChanges(
           event: PostgresChangeEvent.all,
           schema: 'public',
-          table: 'productos',
+          table: 'compras',
           callback: (payload, [ref]) {
             _refreshProducts();
           },
@@ -89,11 +87,9 @@ class _ShoppingMerchantState extends State<ShoppingMerchant> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
     if (idUsuario == null) {
       return const Center(child: CircularProgressIndicator());
     }
-
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -188,8 +184,11 @@ class _ShoppingMerchantState extends State<ShoppingMerchant> {
                               return const Center(
                                   child: Text('No hay compras realizadas'));
                             }
-
-                            final purchase = snapshot.data!;
+                            final purchase = snapshot.data!
+                                .where((p) =>
+                                    p.estadoCompra != 'No Finalizada' &&
+                                    p.estadoCompra != 'En Espera')
+                                .toList();
                             return RefreshIndicator(
                               onRefresh: _refreshProducts,
                               child: ListView.builder(

@@ -59,17 +59,17 @@ class _PaymentAlternativesState extends State<PaymentAlternatives> {
 
       // Crear el modelo de compra con todos los parámetros
       final Buy compra = Buy(
-        idProducto: widget.productId,
-        createdAt: DateTime.now(),
-        cantidad: widget.quantity,
-        alternativaPago: 'PAGO CONTRA ENTREGA',
-        idComprador: userId,
-        fecha: now,
-        nombreProducto: nombreProducto,
-        total: widget.totalPrice,
-        idPropietario: idPropietario,
-        imagenProducto: idImagen ?? '',
-      );
+          idProducto: widget.productId,
+          createdAt: DateTime.now(),
+          cantidad: widget.quantity,
+          alternativaPago: 'PAGO CONTRA ENTREGA',
+          idComprador: userId,
+          fecha: now,
+          nombreProducto: nombreProducto,
+          total: widget.totalPrice,
+          idPropietario: idPropietario,
+          imagenProducto: idImagen ?? '',
+          estadoCompra: 'Finalizada');
 
       // Usar el servicio de compra
       bool success = await buyService.createPurchase(compra);
