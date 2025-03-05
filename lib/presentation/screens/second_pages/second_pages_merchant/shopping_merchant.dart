@@ -184,11 +184,7 @@ class _ShoppingMerchantState extends State<ShoppingMerchant> {
                               return const Center(
                                   child: Text('No hay compras realizadas'));
                             }
-                            final purchase = snapshot.data!
-                                .where((p) =>
-                                    p.estadoCompra != 'No Finalizada' &&
-                                    p.estadoCompra != 'En Espera')
-                                .toList();
+                            final purchase = snapshot.data!;
                             return RefreshIndicator(
                               onRefresh: _refreshProducts,
                               child: ListView.builder(

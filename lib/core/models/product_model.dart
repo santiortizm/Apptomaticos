@@ -9,7 +9,7 @@ class Product {
   final String fechaCosecha;
   final String fechaCaducidad;
   final double precio;
-  final String imagen;
+  final String? imagen;
   final String idPropietario;
 
   Product({
@@ -23,7 +23,7 @@ class Product {
     required this.fechaCosecha,
     required this.fechaCaducidad,
     required this.precio,
-    required this.imagen,
+    this.imagen,
     required this.idPropietario,
   });
 

@@ -4,6 +4,7 @@ class CounterOffer {
   final int cantidad;
   final double valorOferta;
   final String estadoOferta;
+  final String? estadoPago;
   final String imagenProducto;
   final String nombreProducto;
   final int idProducto;
@@ -16,6 +17,7 @@ class CounterOffer {
     required this.cantidad,
     required this.valorOferta,
     required this.estadoOferta,
+    this.estadoPago,
     required this.imagenProducto,
     required this.nombreProducto,
     required this.idProducto,
@@ -30,6 +32,7 @@ class CounterOffer {
       cantidad: map['cantidad'],
       valorOferta: map['valorOferta'].toDouble(),
       estadoOferta: map['estadoOferta'],
+      estadoPago: map['estadoPago'] ?? '',
       imagenProducto: map['imagenProducto'],
       nombreProducto: map['nombreProducto'],
       idProducto: map['idProducto'],

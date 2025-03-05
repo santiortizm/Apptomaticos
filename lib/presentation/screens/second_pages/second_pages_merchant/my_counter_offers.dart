@@ -1,6 +1,8 @@
 import 'package:apptomaticos/core/models/counter_offer_model.dart';
+import 'package:apptomaticos/core/models/sale_model.dart';
 import 'package:apptomaticos/core/services/counter_offer_service.dart';
 import 'package:apptomaticos/core/services/product_service.dart';
+import 'package:apptomaticos/core/services/sale_service.dart';
 import 'package:apptomaticos/core/widgets/cards/custom_card_counter_offer_merchant.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -22,6 +24,7 @@ class _MyCounterOffersState extends State<MyCounterOffers> {
   late Future<List<CounterOffer>> producerOffersFuture;
   String? idUsuario;
   late RealtimeChannel _channel;
+  final SaleService saleService = SaleService();
 
   @override
   void initState() {
@@ -50,8 +53,7 @@ class _MyCounterOffersState extends State<MyCounterOffers> {
       final response = await supabase
           .from('usuarios')
           .select('idUsuario')
-          .eq('idUsuario',
-              user.id) // Corregido: Usa 'idAuth' en lugar de 'idUsuario'
+          .eq('idUsuario', user.id)
           .single();
 
       setState(() {
@@ -185,7 +187,8 @@ class _MyCounterOffersState extends State<MyCounterOffers> {
                               final ofertas = snapshot.data!
                                   .where((o) =>
                                       o.estadoOferta != 'Rechazado' &&
-                                      o.estadoOferta != 'En Espera')
+                                      o.estadoOferta != 'En Espera' &&
+                                      o.estadoPago != 'Finalizado')
                                   .toList();
                               return RefreshIndicator(
                                 onRefresh: _refreshOffers,
@@ -210,14 +213,81 @@ class _MyCounterOffersState extends State<MyCounterOffers> {
                                             oferta.valorOferta.toString(),
                                         acceptOffer: () async {
                                           try {
+                                            final now = DateTime.now();
+
+                                            //  **Actualizar el estado de pago en `contra_oferta`**
                                             await supabase
-                                                .from('compras')
+                                                .from('contra_oferta')
                                                 .update({
-                                              'estadoCompra': 'Finalizada'
-                                            });
-                                            setState(() {});
+                                              'estadoPago': 'Finalizado'
+                                            }).eq('idContraOferta',
+                                                    oferta.idContraOferta!);
+
+                                            //  **Insertar la compra en `compras` y obtener `idCompra`**
+                                            final insertResponse =
+                                                await supabase
+                                                    .from('compras')
+                                                    .insert({
+                                                      'alternativaPago':
+                                                          'Contra Oferta',
+                                                      'cantidad':
+                                                          oferta.cantidad,
+                                                      'total':
+                                                          oferta.valorOferta,
+                                                      'fecha':
+                                                          now.toIso8601String(),
+                                                      'idProducto':
+                                                          oferta.idProducto,
+                                                      'idComprador':
+                                                          oferta.idComprador,
+                                                      'nombreProducto':
+                                                          oferta.nombreProducto,
+                                                      'idPropietario':
+                                                          oferta.idPropietario,
+                                                      'imagenProducto':
+                                                          oferta.imagenProducto,
+                                                    })
+                                                    .select(
+                                                        'id') //  Retorna el ID de la compra creada
+                                                    .maybeSingle();
+
+                                            if (insertResponse == null ||
+                                                insertResponse['id'] == null) {
+                                              throw Exception(
+                                                  'No se pudo registrar la compra.');
+                                            }
+
+                                            final int idCompra = insertResponse[
+                                                'id']; //  ID de la compra
+
+                                            final Sale venta = Sale(
+                                              createdAt: now,
+                                              estadoVenta: 'En Curso',
+                                              idCompra:
+                                                  idCompra, // Usamos el ID de la compra recién creada
+                                            );
+
+                                            final bool saleSuccess =
+                                                await saleService
+                                                    .createSale(venta);
+
+                                            if (!saleSuccess) {
+                                              throw Exception(
+                                                  'Error al registrar la venta.');
+                                            }
+
+                                            if (!mounted) return;
+
+                                            // ignore: use_build_context_synchronously
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                  content: Text(
+                                                      'Venta creada con éxito')),
+                                            );
+                                            _refreshOffers();
                                           } catch (e) {
-                                            return;
+                                            return print('Error');
                                           }
                                         },
                                       ),

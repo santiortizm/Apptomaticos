@@ -203,7 +203,6 @@ class _CounterOffersProducerState extends State<CounterOffersProducer> {
                                 itemCount: ofertas.length,
                                 itemBuilder: (context, index) {
                                   final oferta = ofertas[index];
-                                  final now = DateTime.now();
 
                                   return Padding(
                                     padding: const EdgeInsets.only(bottom: 8),
@@ -225,28 +224,11 @@ class _CounterOffersProducerState extends State<CounterOffersProducer> {
                                               await supabase
                                                   .from('contra_oferta')
                                                   .update({
-                                                'estadoOferta': 'Aceptado'
+                                                'estadoOferta': 'Aceptado',
+                                                'estadoPago': 'En Espera'
                                               }).eq('idContraOferta',
                                                       oferta.idContraOferta!);
-                                              await supabase
-                                                  .from('compras')
-                                                  .insert({
-                                                'alternativaPago':
-                                                    'Contra Oferta',
-                                                'cantidad': oferta.cantidad,
-                                                'total': oferta.valorOferta,
-                                                'fecha': now.toIso8601String(),
-                                                'idProducto': oferta.idProducto,
-                                                'idComprador':
-                                                    oferta.idComprador,
-                                                'nombreProducto':
-                                                    oferta.nombreProducto,
-                                                'idPropietario':
-                                                    oferta.idPropietario,
-                                                'imagenProducto':
-                                                    oferta.imagenProducto,
-                                                'estadoCompra': 'En Espera'
-                                              });
+
                                               setState(() {});
                                             } catch (e) {
                                               return;

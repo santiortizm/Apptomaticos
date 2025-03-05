@@ -65,6 +65,7 @@ class _CustomCardProductsProducerState
           borderRadius: BorderRadius.circular(24),
         ),
         child: Row(
+          spacing: 2,
           children: [
             Container(
               width: size.width * .3,

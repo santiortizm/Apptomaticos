@@ -106,9 +106,8 @@ class _ListviewProductsState extends State<ListviewProducts> {
                           title: product.nombreProducto,
                           state: product.maduracion,
                           price: product.precio.toString(),
-                          imageUrl: product.imagen.isNotEmpty
-                              ? '${product.imagen}?v=${DateTime.now().millisecondsSinceEpoch}'
-                              : 'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp',
+                          imageUrl: product.imagen ??
+                              'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp',
                           productId: product.idProducto,
                         );
                       });

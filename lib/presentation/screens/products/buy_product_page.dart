@@ -196,7 +196,7 @@ class _BuyProductPageState extends State<BuyProductPage> {
                                   child: CachedNetworkImage(
                                     imageUrl:
                                         cloudinaryService.getOptimizedImageUrl(
-                                            productData.imagen,
+                                            productData.imagen!,
                                             width: 300,
                                             height: 300),
                                     fit: BoxFit.scaleDown,

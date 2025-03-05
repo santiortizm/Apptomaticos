@@ -202,9 +202,8 @@ class _ProductsOfProducerState extends State<ProductsOfProducer> {
                                     productId: producto.idProducto,
                                     title: producto.nombreProducto,
                                     date: producto.createdAt.toIso8601String(),
-                                    imageUrl: producto.descripcion.isNotEmpty
-                                        ? producto.descripcion
-                                        : 'https://via.placeholder.com/150', // Imagen por defecto
+                                    imageUrl: producto.imagen ??
+                                        'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp', // Imagen por defecto
                                   );
                                 },
                               ),
