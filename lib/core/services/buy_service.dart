@@ -42,6 +42,7 @@ class BuyService {
         'idPropietario': idPropietario,
         'imagenProducto': imagen ?? '',
         'fecha': purchase.fecha.toIso8601String(),
+        'estadoCompra': purchase.estadoCompra,
       }).select();
 
       if (insertResponse.isEmpty) {
@@ -72,6 +73,16 @@ class BuyService {
           .order('fecha', ascending: false);
 
       return response.map((json) => Buy.fromJson(json)).toList();
+    } catch (e) {
+      return [];
+    }
+  }
+
+  Future<List<Buy>> fetchPurchase() async {
+    try {
+      final response = await _supabase.from('compras').select('*');
+
+      return response.map((data) => Buy.fromJson(data)).toList();
     } catch (e) {
       return [];
     }

@@ -31,32 +31,39 @@ class _ProfileWidgetState extends State<ProfileWidget> {
     if (user == null) return;
 
     try {
-      // Carga el rol del usuario
       final roleResponse = await supabase
           .from('usuarios')
           .select('rol, nombre, apellido, celular')
           .eq('idUsuario', user.id)
           .single();
 
-      // Carga la imagen de perfil
-      final imagePath = '${user.id}/profile';
-      final publicUrl =
-          supabase.storage.from('profiles').getPublicUrl(imagePath);
+      // Verificar si la imagen existe en Supabase Storage
+      final imagePath = '${user.id}/profile.jpg';
+      final response =
+          await supabase.storage.from('profiles').list(path: user.id);
+
+      String? imageUrl;
+      if (response.any((file) => file.name == 'profile.jpg')) {
+        imageUrl = supabase.storage.from('profiles').getPublicUrl(imagePath);
+      }
+
+      if (!mounted)
+        return; //  Evita llamar `setState` si el widget ya no está en el árbol
 
       setState(() {
         _userInfo = roleResponse;
         userRole = roleResponse['rol'];
-        _imageUrl = publicUrl;
+        _imageUrl = imageUrl;
       });
     } catch (e) {
-      return;
+      if (!mounted) return; //Verifica `mounted` antes de actualizar el estado
+      print('Error cargando datos de usuario: $e');
     }
   }
 
   @override
   void dispose() {
     super.dispose();
-    _loadUserProfileData();
   }
 
   @override

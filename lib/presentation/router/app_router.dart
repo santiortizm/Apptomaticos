@@ -1,5 +1,6 @@
 import 'package:apptomaticos/auth_app.dart';
 import 'package:apptomaticos/presentation/screens/login/login_widget.dart';
+import 'package:apptomaticos/presentation/screens/menu_trucker/menu_trucker.dart';
 import 'package:apptomaticos/presentation/screens/products/add_product_page.dart';
 import 'package:apptomaticos/presentation/screens/menu/menu.dart';
 import 'package:apptomaticos/presentation/screens/second_pages/second_pages_merchant/my_counter_offers.dart';
@@ -9,6 +10,8 @@ import 'package:apptomaticos/presentation/screens/second_pages/second_pages_merc
 import 'package:apptomaticos/presentation/screens/second_pages/second_pages_merchant/shopping_merchant.dart';
 import 'package:apptomaticos/presentation/screens/second_pages/second_pages_producer/counter_offers_producer.dart';
 import 'package:apptomaticos/presentation/screens/second_pages/second_pages_producer/products_of_producer.dart';
+import 'package:apptomaticos/presentation/screens/second_pages/second_pages_trucker/my_transports.dart';
+import 'package:apptomaticos/presentation/screens/second_pages/second_pages_trucker/transport_status.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
@@ -22,6 +25,10 @@ class AppRouter {
       GoRoute(
         path: '/login',
         builder: (context, state) => const LoginWidget(),
+      ),
+      GoRoute(
+        path: '/menuTrucker',
+        builder: (context, state) => const MenuTrucker(),
       ),
       GoRoute(
         path: '/menu',
@@ -81,7 +88,21 @@ class AppRouter {
       GoRoute(
         path: '/shoppingMerchant',
         builder: (context, state) => const ShoppingMerchant(),
-      )
+      ),
+      GoRoute(
+        path: '/myTransports',
+        builder: (context, state) => const MyTransports(),
+      ),
+      GoRoute(
+        path: '/transportStatus',
+        builder: (context, state) {
+          final data = state.extra as Map<String, dynamic>;
+
+          return TransportStatus(
+            idTransporte: data['idTransporte'],
+          );
+        },
+      ),
     ],
   );
 }

@@ -7,25 +7,17 @@ class LoginWidget extends StatefulWidget {
   const LoginWidget({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _LoginWidgetState createState() => _LoginWidgetState();
 }
 
 class _LoginWidgetState extends State<LoginWidget> {
   final SupabaseClient supabase = Supabase.instance.client;
-
-  bool singInLoading = false;
-  bool singupLoading = false;
   final userController = TextEditingController();
   final passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool _isObscure = true; // Para controlar la visibilidad de la contraseña
-  bool _rememberMe = false; // Estado del checkbox "Recuérdame"
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  bool _isObscure = true;
+  bool _rememberMe = false;
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -72,13 +64,10 @@ class _LoginWidgetState extends State<LoginWidget> {
                             ),
                       ),
                       SizedBox(height: size.height * 0.05),
-                      // Campo de usuario
                       _buildUsernameField(),
                       SizedBox(height: size.height * 0.02),
-                      // Campo de contraseña
                       _buildPasswordField(),
                       SizedBox(height: size.height * 0.02),
-                      // Checkbox "Recuérdame"
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -89,7 +78,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                 _rememberMe = value ?? false;
                               });
                             },
-                            activeColor: redApp, // Color del checkbox
+                            activeColor: redApp,
                           ),
                           const Text(
                             'Recuérdame',
@@ -98,48 +87,10 @@ class _LoginWidgetState extends State<LoginWidget> {
                         ],
                       ),
                       SizedBox(height: size.height * 0.02),
-                      // Botón "Iniciar Sesión"
-                      singInLoading
+                      isLoading
                           ? const CircularProgressIndicator()
                           : ElevatedButton(
-                              onPressed: () async {
-                                final isValid =
-                                    _formKey.currentState?.validate();
-                                if (isValid != true) {
-                                  return; // Detener si los campos son inválidos
-                                }
-
-                                setState(() {
-                                  singInLoading = true;
-                                });
-
-                                try {
-                                  await supabase.auth.signInWithPassword(
-                                    email: userController.text,
-                                    password: passwordController.text,
-                                  );
-
-                                  //  Si el inicio de sesión es exitoso, navegar al menú
-                                  if (mounted) {
-                                    // ignore: use_build_context_synchronously
-                                    GoRouter.of(context).go('/menu');
-                                    //  GoRouter navega a la pantalla de inicio
-                                  }
-                                } catch (e) {
-                                  // ignore: use_build_context_synchronously
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: const Text(
-                                          'Inicio de sesión fallido. Verifique sus credenciales.'),
-                                      backgroundColor: redApp,
-                                    ),
-                                  );
-                                } finally {
-                                  setState(() {
-                                    singInLoading = false;
-                                  });
-                                }
-                              },
+                              onPressed: _handleLogin,
                               style: ElevatedButton.styleFrom(
                                 padding: EdgeInsets.symmetric(
                                   vertical: size.height * 0.02,
@@ -157,7 +108,6 @@ class _LoginWidgetState extends State<LoginWidget> {
                               ),
                             ),
                       SizedBox(height: size.height * 0.02),
-                      // Enlaces de Olvidó su contraseña y Registrarse
                       _buildFooterLinks(),
                     ],
                   ),
@@ -170,10 +120,60 @@ class _LoginWidgetState extends State<LoginWidget> {
     );
   }
 
-  // Campo de texto para el usuario
+  ///  **Maneja el inicio de sesión y redirige según el rol**
+  Future<void> _handleLogin() async {
+    final isValid = _formKey.currentState?.validate();
+    if (isValid != true) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final response = await supabase.auth.signInWithPassword(
+        email: userController.text,
+        password: passwordController.text,
+      );
+
+      final user = response.user;
+      if (user == null) throw 'Error en la autenticación';
+
+      //  **Obtener el rol del usuario**
+      final userRoleResponse = await supabase
+          .from('usuarios')
+          .select('rol')
+          .eq('idUsuario', user.id)
+          .maybeSingle();
+
+      final String? userRole = userRoleResponse?['rol'];
+
+      if (userRole == 'Transportador') {
+        if (mounted) GoRouter.of(context).go('/menuTrucker');
+      } else {
+        if (mounted) GoRouter.of(context).go('/menu');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+              'Inicio de sesión fallido. Verifique sus credenciales.'),
+          backgroundColor: redApp,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false; //  Ocultar loading
+        });
+      }
+    }
+  }
+
+  ///  **Campo de usuario**
   Widget _buildUsernameField() {
     return TextFormField(
       controller: userController,
+      keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
         labelText: 'Usuario',
         labelStyle: const TextStyle(color: Colors.white70),
@@ -184,16 +184,12 @@ class _LoginWidgetState extends State<LoginWidget> {
           borderRadius: BorderRadius.circular(10),
         ),
       ),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Por favor ingrese su usuario';
-        }
-        return null;
-      },
+      validator: (value) =>
+          value == null || value.isEmpty ? 'Ingrese su usuario' : null,
     );
   }
 
-  // Campo de texto para la contraseña
+  ///  **Campo de contraseña**
   Widget _buildPasswordField() {
     return TextFormField(
       controller: passwordController,
@@ -203,15 +199,11 @@ class _LoginWidgetState extends State<LoginWidget> {
         labelStyle: const TextStyle(color: Colors.white70),
         prefixIcon: Icon(Icons.lock, color: redApp),
         suffixIcon: IconButton(
-          icon: Icon(
-            _isObscure ? Icons.visibility : Icons.visibility_off,
-            color: redApp,
-          ),
-          onPressed: () {
-            setState(() {
-              _isObscure = !_isObscure;
-            });
-          },
+          icon: Icon(_isObscure ? Icons.visibility : Icons.visibility_off,
+              color: redApp),
+          onPressed: () => setState(() {
+            _isObscure = !_isObscure;
+          }),
         ),
         filled: true,
         fillColor: Colors.white.withValues(alpha: 0.9),
@@ -219,47 +211,33 @@ class _LoginWidgetState extends State<LoginWidget> {
           borderRadius: BorderRadius.circular(10),
         ),
       ),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Por favor ingrese su contraseña';
-        }
-        return null;
-      },
+      validator: (value) =>
+          value == null || value.isEmpty ? 'Ingrese su contraseña' : null,
     );
   }
 
-  // Enlaces de "Olvidó su contraseña" y "Registrarse"
+  /// 🔹 **Enlaces de "Olvidó su contraseña" y "Registrarse"**
   Widget _buildFooterLinks() {
     return Column(
       children: [
         GestureDetector(
-          onTap: () {
-            // Acción para "Olvidó su contraseña"
-          },
-          child: const Text(
-            '¿Olvidó su contraseña?',
-            style: TextStyle(color: Colors.white),
-          ),
+          onTap: () {},
+          child: const Text('¿Olvidó su contraseña?',
+              style: TextStyle(color: Colors.white)),
         ),
         const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              '¿Aún no tienes una cuenta?',
-              style: TextStyle(color: Colors.white),
-            ),
+            const Text('¿Aún no tienes una cuenta?',
+                style: TextStyle(color: Colors.white)),
             const SizedBox(width: 4),
             GestureDetector(
-              onTap: () {
-                // Acción para "Registrarse"
-              },
+              onTap: () {},
               child: const Text(
                 'Regístrate',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),
           ],

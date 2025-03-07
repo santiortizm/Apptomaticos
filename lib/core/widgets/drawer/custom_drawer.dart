@@ -76,9 +76,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
         ];
       case 'Transportador':
         return [
-          _drawerItem(
-              Icons.local_shipping, 'Mis Envíos', context, '/misEnvios'),
-          _drawerItem(Icons.map, 'Rutas Disponibles', context, '/rutas'),
+          _drawerItem(Icons.local_shipping, 'Mis Transportes', context,
+              '/myTransports'),
           widget.cerrarSesion,
         ];
       default:

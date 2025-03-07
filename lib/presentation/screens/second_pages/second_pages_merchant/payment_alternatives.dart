@@ -1,9 +1,7 @@
 import 'package:apptomaticos/core/constants/colors.dart';
 import 'package:apptomaticos/core/models/buy_model.dart';
-import 'package:apptomaticos/core/models/sale_model.dart';
 import 'package:apptomaticos/core/services/buy_service.dart';
 import 'package:apptomaticos/core/services/product_service.dart';
-import 'package:apptomaticos/core/services/sale_service.dart';
 import 'package:apptomaticos/core/widgets/custom_button.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -31,7 +29,6 @@ class _PaymentAlternativesState extends State<PaymentAlternatives> {
   final supabase = Supabase.instance.client;
   final BuyService buyService =
       BuyService(ProductService(Supabase.instance.client));
-  final SaleService saleService = SaleService();
   Future<void> _handleCashOnDelivery() async {
     try {
       final userId = supabase.auth.currentUser?.id;
@@ -61,16 +58,18 @@ class _PaymentAlternativesState extends State<PaymentAlternatives> {
 
       // Crear el modelo de compra
       final Buy compra = Buy(
-          idProducto: widget.productId,
-          createdAt: now,
-          cantidad: widget.quantity,
-          alternativaPago: 'PAGO CONTRA ENTREGA',
-          idComprador: userId,
-          fecha: now,
-          nombreProducto: nombreProducto,
-          total: widget.totalPrice,
-          idPropietario: idPropietario,
-          imagenProducto: idImagen ?? '');
+        idProducto: widget.productId,
+        createdAt: now,
+        cantidad: widget.quantity,
+        alternativaPago: 'PAGO CONTRA ENTREGA',
+        idComprador: userId,
+        fecha: now,
+        nombreProducto: nombreProducto,
+        total: widget.totalPrice,
+        idPropietario: idPropietario,
+        imagenProducto: idImagen ?? '',
+        estadoCompra: 'En Progreso',
+      );
 
       // Registrar la compra
       final bool success = await buyService.createPurchase(compra);
@@ -93,26 +92,10 @@ class _PaymentAlternativesState extends State<PaymentAlternatives> {
         throw Exception('No se encontró la compra recién creada.');
       }
 
-      final int idCompra = response['id'];
-
-      // Crear la venta con estado "En Curso"
-      final Sale venta = Sale(
-        createdAt: now,
-        estadoVenta: 'En Curso',
-        idCompra: idCompra,
-      );
-
-      final bool saleSuccess = await saleService.createSale(venta);
-
-      if (!saleSuccess) {
-        throw Exception('Error al registrar la venta.');
-      }
-
-      // Todo salió bien, notificar al usuario
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Compra y venta registradas con éxito')),
+        const SnackBar(content: Text('Compra registradacon éxito')),
       );
       context.pushReplacement('/menu');
     } catch (e) {

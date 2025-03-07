@@ -10,6 +10,7 @@ class Buy {
   final int idProducto;
   final String idComprador;
   final String imagenProducto;
+  final String estadoCompra;
 
   Buy({
     this.id,
@@ -23,6 +24,7 @@ class Buy {
     required this.idComprador,
     required this.idPropietario,
     required this.imagenProducto,
+    required this.estadoCompra,
   });
 
   /// Convierte el modelo a un `Map<String, dynamic>` para insertarlo en Supabase
@@ -34,6 +36,7 @@ class Buy {
       'cantidad': cantidad,
       'total': total,
       'alternativaPago': alternativaPago,
+      'estadoCompra': estadoCompra,
       'idComprador': idComprador,
       'idPropietario': idPropietario,
       'imagenProducto': imagenProducto,
@@ -51,6 +54,7 @@ class Buy {
       cantidad: json['cantidad'],
       total: (json['total'] as num).toDouble(),
       fecha: DateTime.parse(json['fecha']),
+      estadoCompra: json['estadoCompra'],
       idPropietario: json['idPropietario'],
       idProducto: json['idProducto'],
       idComprador: json['idComprador'],
