@@ -156,6 +156,7 @@ class _PurchasePageState extends State<PurchasePage> {
                                 'productId': widget.productId,
                                 'quantity': quantity,
                                 'totalPrice': _totalPrice,
+                                'imageProduct': widget.imageUrl,
                               },
                             );
                           },

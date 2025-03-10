@@ -37,7 +37,8 @@ class _AvatarState extends State<Avatar> {
         supabase.storage.from('profiles').getPublicUrl(path);
 
     setState(() {
-      _imageUrl = imageUrl;
+      _imageUrl =
+          "$imageUrl?v=${DateTime.now().millisecondsSinceEpoch}"; // 🔥 Evita caché
     });
   }
 
@@ -61,12 +62,9 @@ class _AvatarState extends State<Avatar> {
     final String path = 'profiles/$userId/profile.jpg';
 
     try {
-      //  Comprimir la imagen antes de subirla
       _imageFile = await ImageService.compressImage(image, quality: 50);
-
       if (_imageFile == null) throw 'Error al comprimir la imagen';
 
-      //  Subir la imagen comprimida a Supabase
       await supabase.storage.from('profiles').upload(
             path,
             _imageFile!,
@@ -129,8 +127,7 @@ class _AvatarState extends State<Avatar> {
         Center(
           child: CircleAvatar(
             backgroundImage: (_imageUrl != null && _imageUrl!.isNotEmpty)
-                ? NetworkImage(_imageUrl!,
-                    headers: {"Cache-Control": "no-cache"})
+                ? NetworkImage(_imageUrl!)
                 : null,
             radius: 70,
             child: (_imageUrl == null || _imageUrl!.isEmpty)

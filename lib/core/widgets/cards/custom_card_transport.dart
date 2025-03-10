@@ -274,19 +274,22 @@ class _CustomCardTransportState extends State<CustomCardTransport> {
                 ),
               ],
             ),
-            SizedBox(
-              width: size.width * .9,
-              height: size.height * 0.2,
-              child: CachedNetworkImage(
-                imageUrl: cloudinaryService.getOptimizedImageUrl(
-                  widget.imageUrlProduct,
-                ),
-                fit: BoxFit.scaleDown,
-                placeholder: (context, url) =>
-                    const Center(child: CircularProgressIndicator()),
-                errorWidget: (context, url, error) => Image.network(
-                    'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp'),
-              ),
+            // SizedBox(
+            //   width: size.width * .9,
+            //   height: size.height * 0.2,
+            //   child: CachedNetworkImage(
+            //     imageUrl: cloudinaryService.getOptimizedImageUrl(
+            //       widget.imageUrlProduct,
+            //     ),
+            //     fit: BoxFit.scaleDown,
+            //     placeholder: (context, url) =>
+            //         const Center(child: CircularProgressIndicator()),
+            //     errorWidget: (context, url, error) => Image.network(
+            //         'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp'),
+            //   ),
+            // ),
+            Image(
+              image: NetworkImage(widget.imageUrlProduct),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

@@ -77,6 +77,7 @@ class AppRouter {
             return PaymentAlternatives(
               productId: extra['productId'],
               quantity: extra['quantity'],
+              imageProduct: extra['imageProduct'],
               totalPrice: extra['totalPrice'],
             );
           }),

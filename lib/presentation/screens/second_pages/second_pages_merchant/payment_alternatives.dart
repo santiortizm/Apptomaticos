@@ -13,12 +13,13 @@ class PaymentAlternatives extends StatefulWidget {
   final int productId;
   final int quantity;
   final double totalPrice;
-
+  final String imageProduct;
   const PaymentAlternatives({
     super.key,
     required this.productId,
     required this.quantity,
     required this.totalPrice,
+    required this.imageProduct,
   });
 
   @override
@@ -54,7 +55,6 @@ class _PaymentAlternativesState extends State<PaymentAlternatives> {
 
       final String nombreProducto = productResponse['nombreProducto'];
       final String idPropietario = productResponse['idPropietario'];
-      final String? idImagen = productResponse['imagen'];
 
       // Crear el modelo de compra
       final Buy compra = Buy(
@@ -67,7 +67,7 @@ class _PaymentAlternativesState extends State<PaymentAlternatives> {
         nombreProducto: nombreProducto,
         total: widget.totalPrice,
         idPropietario: idPropietario,
-        imagenProducto: idImagen ?? '',
+        imagenProducto: widget.imageProduct,
         estadoCompra: 'En Curso',
       );
 

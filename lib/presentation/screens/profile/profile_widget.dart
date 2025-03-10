@@ -38,7 +38,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
           .single();
 
       // Verificar si la imagen existe en Supabase Storage
-      final imagePath = '${user.id}/profile.jpg';
+      final imagePath = 'profiles/${user.id}/profile.jpg';
       final response =
           await supabase.storage.from('profiles').list(path: user.id);
 
@@ -53,7 +53,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
       setState(() {
         _userInfo = roleResponse;
         userRole = roleResponse['rol'];
-        _imageUrl = imageUrl;
+        _imageUrl = "$imageUrl?v=${DateTime.now().millisecondsSinceEpoch}";
       });
     } catch (e) {
       if (!mounted) return; //Verifica `mounted` antes de actualizar el estado
