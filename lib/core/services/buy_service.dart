@@ -87,4 +87,24 @@ class BuyService {
       return [];
     }
   }
+
+  /// 🔥 **Obtiene las compras del usuario junto con los datos del transporte**
+  Future<List<Buy>> fetchPurchasesWithTransport() async {
+    try {
+      final user = _supabase.auth.currentUser;
+      if (user == null) return [];
+
+      final response = await _supabase
+          .from('compras')
+          .select(
+              '*, transportes(idTransporte, fechaCargue, fechaEntrega, estado)')
+          .eq('idComprador', user.id)
+          .order('fecha', ascending: false);
+
+      return response.map((json) => Buy.fromJson(json)).toList();
+    } catch (e) {
+      print('Error obteniendo compras con transporte: $e');
+      return [];
+    }
+  }
 }

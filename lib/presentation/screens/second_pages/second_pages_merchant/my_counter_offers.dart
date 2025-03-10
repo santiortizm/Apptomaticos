@@ -236,7 +236,7 @@ class _MyCounterOffersState extends State<MyCounterOffers> {
                                                   oferta.idPropietario,
                                               'imagenProducto':
                                                   oferta.imagenProducto,
-                                              'estadoCompra': 'En Progreso',
+                                              'estadoCompra': 'En Curso',
                                             });
 
                                             if (insertResponse == null ||

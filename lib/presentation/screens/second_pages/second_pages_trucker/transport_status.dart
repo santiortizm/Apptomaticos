@@ -7,7 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-const List<String> estadoTransporte = <String>['En Central de abastos'];
+const List<String> estadoTransporte = <String>[
+  'En Camino',
+  'En Central de abastos'
+];
 
 class TransportStatus extends StatefulWidget {
   final int idTransporte;
@@ -58,7 +61,7 @@ class _TransportStatusState extends State<TransportStatus> {
                           iconSize: 36,
                           icon: const Icon(Icons.arrow_back),
                           onPressed: () {
-                            GoRouter.of(context).go('/menuTrucker');
+                            GoRouter.of(context).go('/myTransports');
                           },
                         ),
                       ],

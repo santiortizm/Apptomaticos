@@ -3,7 +3,9 @@ import 'package:apptomaticos/presentation/screens/login/login_widget.dart';
 import 'package:apptomaticos/presentation/screens/menu_trucker/menu_trucker.dart';
 import 'package:apptomaticos/presentation/screens/products/add_product_page.dart';
 import 'package:apptomaticos/presentation/screens/menu/menu.dart';
+import 'package:apptomaticos/presentation/screens/products/buy_product_page.dart';
 import 'package:apptomaticos/presentation/screens/second_pages/second_pages_merchant/my_counter_offers.dart';
+import 'package:apptomaticos/presentation/screens/second_pages/second_pages_merchant/my_orders.dart';
 import 'package:apptomaticos/presentation/screens/second_pages/second_pages_merchant/offert_page.dart';
 import 'package:apptomaticos/presentation/screens/second_pages/second_pages_merchant/payment_alternatives.dart';
 import 'package:apptomaticos/presentation/screens/second_pages/second_pages_merchant/purchase_page.dart';
@@ -16,7 +18,7 @@ import 'package:go_router/go_router.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: '/', // ✅ Define la pantalla de inicio
+    initialLocation: '/',
     routes: [
       GoRoute(
         path: '/',
@@ -37,6 +39,13 @@ class AppRouter {
       GoRoute(
         path: '/registerProduct',
         builder: (context, state) => const AddProductPage(),
+      ),
+      GoRoute(
+        path: '/buyProduct',
+        builder: (context, state) {
+          final data = state.extra as Map<String, dynamic>;
+          return BuyProductPage(productId: data['productId']);
+        },
       ),
       GoRoute(
           path: '/myProducts',
@@ -88,6 +97,10 @@ class AppRouter {
       GoRoute(
         path: '/shoppingMerchant',
         builder: (context, state) => const ShoppingMerchant(),
+      ),
+      GoRoute(
+        path: '/myOrders',
+        builder: (context, state) => const MyOrders(),
       ),
       GoRoute(
         path: '/myTransports',

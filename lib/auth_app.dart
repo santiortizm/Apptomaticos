@@ -16,76 +16,84 @@ class _AuthAppState extends State<AuthApp> {
   final SupabaseClient supabase = Supabase.instance.client;
   User? user;
   String? userRole;
-  bool isLoading = true; //  Nuevo: Indica que estamos cargando el rol
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    getAuth();
+    _initializeAuth();
   }
 
-  Future<void> getAuth() async {
-    if (mounted) {
-      setState(() {
-        user = supabase.auth.currentUser;
-      });
-    }
+  Future<void> _initializeAuth() async {
+    user = supabase.auth.currentUser;
 
     if (user != null) {
-      await _fetchUserRole(); //  Esperamos el rol antes de continuar
+      await _fetchUserRole();
+    } else {
+      setState(
+          () => isLoading = false); // ✅ Si no hay usuario, salir del loading
     }
 
     supabase.auth.onAuthStateChange.listen((event) async {
-      if (event.session?.user != null) {
-        await FirebaseMessaging.instance.requestPermission();
-        await saveFcmToken();
-        await _fetchUserRole();
+      final newUser = event.session?.user;
+
+      if (newUser == null) {
+        // ✅ Si el usuario cierra sesión, limpiar todo y mostrar login
+        setState(() {
+          user = null;
+          userRole = null;
+          isLoading = false;
+        });
+        return;
       }
 
-      if (mounted) {
-        setState(() {
-          user = event.session?.user;
-        });
-      }
+      setState(
+          () => isLoading = true); // ⏳ Mostrar loading antes de cargar el rol
+
+      user = newUser;
+      await FirebaseMessaging.instance.requestPermission();
+      await saveFcmToken();
+      await _fetchUserRole();
     });
   }
 
-  ///  Obtiene el rol del usuario desde la base de datos
+  /// ✅ Obtiene el rol del usuario desde la base de datos
   Future<void> _fetchUserRole() async {
-    final userId = user?.id;
-    if (userId == null) return;
+    if (user == null) return; // 🔥 Evita llamar si el usuario cerró sesión
 
     final response = await supabase
         .from('usuarios')
         .select('rol')
-        .eq('idUsuario', userId)
+        .eq('idUsuario', user!.id)
         .maybeSingle();
 
     if (mounted) {
       setState(() {
         userRole = response?['rol'];
-        isLoading = false; //  Ya cargamos el rol, podemos mostrar la pantalla
+        isLoading = false; // 🔥 Detener carga después de obtener el rol
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (user == null) return const LoginWidget();
-
-    //  Muestra un loader hasta obtener el rol
     if (isLoading) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
-    //  Ahora sí, mostramos el menú correcto de inmediato
-    return userRole == 'Transportador' ? const MenuTrucker() : const Menu();
+    if (user == null) return const LoginWidget();
+
+    if (userRole == 'Transportador') {
+      return const MenuTrucker();
+    } else {
+      return const Menu();
+    }
   }
 }
 
-///  Guarda el token de FCM en Supabase
+/// ✅ Guarda el token de FCM en Supabase
 Future<void> saveFcmToken() async {
   final user = Supabase.instance.client.auth.currentUser;
   if (user == null) return;

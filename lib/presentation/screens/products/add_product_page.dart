@@ -241,6 +241,8 @@ class _AddProductPageState extends State<AddProductPage> {
                                         _model.harvestDateController.text,
                                     'fechaCaducidad':
                                         _model.expirationDateController.text,
+                                    'imagen':
+                                        'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp',
                                     'precio': double.parse(
                                         _model.priceController.text),
                                     'idPropietario': idUsuario,

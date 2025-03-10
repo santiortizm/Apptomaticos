@@ -1,11 +1,11 @@
 import 'package:apptomaticos/core/constants/colors.dart';
 import 'package:apptomaticos/core/services/cloudinary_service.dart';
-import 'package:apptomaticos/presentation/screens/products/buy_product_page.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:go_router/go_router.dart';
 
 class CustomCardProducts extends StatelessWidget {
   final int productId;
@@ -29,11 +29,7 @@ class CustomCardProducts extends StatelessWidget {
     var size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => BuyProductPage(productId: productId),
-          ),
-        );
+        context.push('/buyProduct', extra: {'productId': productId});
       },
       child: Container(
         margin: EdgeInsets.symmetric(vertical: size.height * 0.01),

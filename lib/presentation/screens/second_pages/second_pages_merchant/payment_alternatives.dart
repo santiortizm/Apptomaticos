@@ -68,7 +68,7 @@ class _PaymentAlternativesState extends State<PaymentAlternatives> {
         total: widget.totalPrice,
         idPropietario: idPropietario,
         imagenProducto: idImagen ?? '',
-        estadoCompra: 'En Progreso',
+        estadoCompra: 'En Curso',
       );
 
       // Registrar la compra

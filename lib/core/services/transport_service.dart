@@ -53,4 +53,30 @@ class TransportService {
       return [];
     }
   }
+
+  Future<List<Transport>> fetchTransportsByBuyer(String idComprador) async {
+    try {
+      final compras = await supabase
+          .from('compras')
+          .select('id')
+          .eq('idComprador', idComprador);
+
+      if (compras.isEmpty) return [];
+
+      final idsCompras = compras.map<int>((c) => c['id'] as int).toList();
+
+      final transportes = await supabase
+          .from('transportes')
+          .select('*')
+          .inFilter('idCompra',
+              idsCompras); // 🔥 Solo transportes con idCompra del comprador
+
+      return transportes
+          .map<Transport>((data) => Transport.fromMap(data))
+          .toList();
+    } catch (e) {
+      print('Error al obtener transportes del comprador: $e');
+      return [];
+    }
+  }
 }

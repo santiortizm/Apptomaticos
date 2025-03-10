@@ -71,7 +71,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
               Icons.shopping_cart, 'Mis Compras', context, '/shoppingMerchant'),
           _drawerItem(Icons.business, 'Mis Contra Ofertas', context,
               '/counterOfferMerchant'),
-          _drawerItem(Icons.business, 'Mis Pedidos', context, '/proveedores'),
+          _drawerItem(Icons.business, 'Mis Pedidos', context, '/myOrders'),
           widget.cerrarSesion,
         ];
       case 'Transportador':

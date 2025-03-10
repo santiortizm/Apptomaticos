@@ -138,20 +138,8 @@ class _LoginWidgetState extends State<LoginWidget> {
       final user = response.user;
       if (user == null) throw 'Error en la autenticación';
 
-      //  **Obtener el rol del usuario**
-      final userRoleResponse = await supabase
-          .from('usuarios')
-          .select('rol')
-          .eq('idUsuario', user.id)
-          .maybeSingle();
-
-      final String? userRole = userRoleResponse?['rol'];
-
-      if (userRole == 'Transportador') {
-        if (mounted) GoRouter.of(context).go('/menuTrucker');
-      } else {
-        if (mounted) GoRouter.of(context).go('/menu');
-      }
+      // ✅ Redirigir a AuthApp para que verifique el rol
+      GoRouter.of(context).go('/');
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -163,7 +151,7 @@ class _LoginWidgetState extends State<LoginWidget> {
     } finally {
       if (mounted) {
         setState(() {
-          isLoading = false; //  Ocultar loading
+          isLoading = false; // ⏳ Ocultar loading
         });
       }
     }

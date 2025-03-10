@@ -63,7 +63,7 @@ class _CustomCardTransportState extends State<CustomCardTransport> {
     transportPrice = operacion * 400;
   }
 
-  ///  Obtiene la información del comprador (nombre e imagen desde Supabase Storage)
+  ///  Obtiene la información del comprador
   Future<void> _fetchUserData() async {
     try {
       final response = await supabase
@@ -87,7 +87,98 @@ class _CustomCardTransportState extends State<CustomCardTransport> {
     }
   }
 
-  Future<void> _handleTransportCreation() async {
+  /// 🔥 **Muestra el diálogo para seleccionar la fecha de cargue**
+  Future<void> _showDateSelectionDialog() async {
+    DateTime? selectedCargaDate;
+    DateTime? entregaDate;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Seleccionar Fecha de Cargue'),
+        content: StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    labelText: 'Fecha de Cargue',
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.calendar_today),
+                      onPressed: () async {
+                        final DateTime now = DateTime.now();
+                        final DateTime firstDate = now.hour >= 16
+                            ? now.add(const Duration(days: 1))
+                            : now;
+                        final DateTime lastDate =
+                            now.add(const Duration(days: 2));
+
+                        final pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: firstDate,
+                          firstDate: firstDate,
+                          lastDate: lastDate,
+                        );
+
+                        if (pickedDate != null) {
+                          setStateDialog(() {
+                            selectedCargaDate = pickedDate;
+                            entregaDate =
+                                pickedDate.add(const Duration(days: 1));
+                          });
+                        }
+                      },
+                    ),
+                  ),
+                  controller: TextEditingController(
+                    text: selectedCargaDate != null
+                        ? "${selectedCargaDate!.day}/${selectedCargaDate!.month}/${selectedCargaDate!.year}"
+                        : '',
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  readOnly: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Fecha de Entrega',
+                  ),
+                  controller: TextEditingController(
+                    text: entregaDate != null
+                        ? "${entregaDate!.day}/${entregaDate!.month}/${entregaDate!.year}"
+                        : '',
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () {
+              if (selectedCargaDate != null) {
+                Navigator.pop(context);
+                _handleTransportCreation(selectedCargaDate!);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text('Seleccione una fecha de cargue')),
+                );
+              }
+            },
+            child: const Text('Confirmar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _handleTransportCreation(DateTime fechaCargue) async {
     final idTransportador = supabase.auth.currentUser!.id;
     final bool hasActiveTransport =
         await transportService.hasActiveTransport(idTransportador);
@@ -100,9 +191,9 @@ class _CustomCardTransportState extends State<CustomCardTransport> {
     final transport = Transport(
       idTransporte: DateTime.now().millisecondsSinceEpoch,
       createdAt: DateTime.now(),
-      fechaCargue: DateTime.now().toString(),
-      fechaEntrega: DateTime.now().add(const Duration(days: 2)).toString(),
-      estado: 'En Curso',
+      fechaCargue: fechaCargue.toString(),
+      fechaEntrega: fechaCargue.add(const Duration(days: 1)).toString(),
+      estado: 'Aceptado',
       pesoCarga: countTransport,
       valorTransporte: transportPrice,
       idCompra: widget.idCompra,
@@ -112,18 +203,13 @@ class _CustomCardTransportState extends State<CustomCardTransport> {
     final success = await transportService.createTransport(transport);
 
     if (success) {
-      try {
-        await supabase.from('compras').update(
-            {'estadoCompra': 'Transportando'}).eq('id', widget.idCompra);
+      // await supabase
+      //     .from('compras')
+      //     .update({'estadoCompra': 'Transportando'}).eq('id', widget.idCompra);
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Transporte registrado')),
-        );
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error actualizando compra: $e')),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Transporte registrado')),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('No se pudo registrar el transporte')),
@@ -270,7 +356,7 @@ class _CustomCardTransportState extends State<CustomCardTransport> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CustomButton(
-                    onPressed: _handleTransportCreation,
+                    onPressed: _showDateSelectionDialog,
                     color: buttonGreen,
                     colorBorder: Colors.transparent,
                     border: 18,
