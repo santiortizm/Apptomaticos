@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:apptomaticos/core/constants/colors.dart';
-import 'package:apptomaticos/core/services/image_service.dart'; // 🔥 Importar servicio de compresión
+import 'package:apptomaticos/core/services/image_service.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -9,7 +10,6 @@ class AvatarProduct extends StatefulWidget {
   final String? imageUrl;
   final void Function(String imageUrl) onUpLoad;
   final int productId;
-
   const AvatarProduct({
     super.key,
     required this.imageUrl,
@@ -24,15 +24,16 @@ class AvatarProduct extends StatefulWidget {
 class _AvatarProductState extends State<AvatarProduct> {
   File? _imageFile;
   final supabase = Supabase.instance.client;
-  bool isLoading = false; // Para feedback visual
+  bool isLoading = false;
+
+  /// 🔹 **Mantiene la URL de la imagen actualizada**
+  late String? _currentImageUrl = widget.imageUrl;
 
   Future<void> _pickAndUploadImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
-    if (image == null) {
-      return;
-    }
+    if (image == null) return;
 
     final bool confirm = await _confirmImageChange();
     if (!confirm) return;
@@ -42,17 +43,12 @@ class _AvatarProductState extends State<AvatarProduct> {
     });
 
     final String fileName = '${widget.productId}';
-    final String path = 'product/$fileName';
+    final String path = 'products/$fileName.jpg';
 
     try {
-      // 🔥 Comprimir la imagen antes de subirla
       _imageFile = await ImageService.compressImage(image, quality: 50);
+      if (_imageFile == null) throw 'Error al comprimir la imagen';
 
-      if (_imageFile == null) {
-        throw 'Error al comprimir la imagen';
-      }
-
-      // 1️⃣ **Subir la nueva imagen con `upsert: true` para sobrescribir si ya existe**
       await supabase.storage.from('products').upload(
             path,
             _imageFile!,
@@ -60,16 +56,18 @@ class _AvatarProductState extends State<AvatarProduct> {
           );
 
       final String imageUrl =
-          supabase.storage.from('products').getPublicUrl(path);
+          "${supabase.storage.from('products').getPublicUrl(path)}?v=${DateTime.now().millisecondsSinceEpoch}";
 
-      // 4️⃣ **Actualizar la UI**
-      widget.onUpLoad(imageUrl);
-      // ignore: use_build_context_synchronously
+      setState(() {
+        _currentImageUrl = imageUrl; // 🔥 Actualiza la imagen al instante
+      });
+
+      widget.onUpLoad(imageUrl); // Notificar cambio
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Imagen actualizada correctamente')),
       );
     } catch (e) {
-      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error al subir la imagen: $e')),
       );
@@ -80,7 +78,7 @@ class _AvatarProductState extends State<AvatarProduct> {
     }
   }
 
-  /// Muestra un diálogo de confirmación antes de cambiar la imagen.
+  /// 🔹 **Confirma si el usuario quiere cambiar la imagen**
   Future<bool> _confirmImageChange() async {
     return await showDialog<bool>(
           context: context,
@@ -112,11 +110,11 @@ class _AvatarProductState extends State<AvatarProduct> {
         Center(
           child: CircleAvatar(
             backgroundImage:
-                (widget.imageUrl != null && widget.imageUrl!.isNotEmpty)
-                    ? NetworkImage(widget.imageUrl!)
+                (_currentImageUrl != null && _currentImageUrl!.isNotEmpty)
+                    ? CachedNetworkImageProvider(_currentImageUrl!)
                     : null,
             radius: 70,
-            child: (widget.imageUrl == null || widget.imageUrl!.isEmpty)
+            child: (_currentImageUrl == null || _currentImageUrl!.isEmpty)
                 ? const Icon(Icons.image, size: 50, color: Colors.grey)
                 : null,
           ),

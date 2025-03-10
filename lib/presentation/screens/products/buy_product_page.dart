@@ -494,15 +494,14 @@ class _BuyProductPageState extends State<BuyProductPage> {
                   priceController: priceController,
                   quantityController: quantityController,
                   productId: widget.productId,
-                  imageUrl: productData.imagen,
+                  imageUrl:
+                      "${productData.imagen}?v=${DateTime.now().millisecondsSinceEpoch}", // 🔥 Evita caché
                   onUpLoad: (String imageUrl) async {
-                    //  **Actualizar en la base de datos**
                     final success = await productService.updateProductDetails(
                       widget.productId,
                       {
                         'imagen': imageUrl,
-                        'updated_at': DateTime.now()
-                            .toIso8601String(), // Fuerza actualización en Supabase
+                        'updated_at': DateTime.now().toIso8601String(),
                       },
                     );
 
@@ -511,12 +510,10 @@ class _BuyProductPageState extends State<BuyProductPage> {
                         productDetails = productService
                             .fetchProductDetails(widget.productId);
                       });
-                      // ignore: use_build_context_synchronously
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Imagen actualizada')),
                       );
                     } else {
-                      // ignore: use_build_context_synchronously
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                             content: Text('Error al actualizar la imagen')),
@@ -532,8 +529,7 @@ class _BuyProductPageState extends State<BuyProductPage> {
                       'descripcion': descriptionController.text,
                       'precio': double.tryParse(priceController.text),
                       'cantidad': int.tryParse(quantityController.text),
-                      'updated_at': DateTime.now()
-                          .toIso8601String(), // Fuerza actualización en Supabase
+                      'updated_at': DateTime.now().toIso8601String(),
                     };
 
                     final success = await productService.updateProductDetails(
@@ -546,17 +542,13 @@ class _BuyProductPageState extends State<BuyProductPage> {
                         productDetails = productService
                             .fetchProductDetails(widget.productId);
                       });
-                      // ignore: use_build_context_synchronously
                       Navigator.of(context).pop();
-                      // ignore: use_build_context_synchronously
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                             content: Text('Producto actualizado exitosamente')),
                       );
                     } else {
-                      // ignore: use_build_context_synchronously
                       Navigator.of(context).pop();
-                      // ignore: use_build_context_synchronously
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                             content: Text('Error al actualizar el producto')),
