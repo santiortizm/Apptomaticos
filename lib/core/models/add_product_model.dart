@@ -1,3 +1,4 @@
+import 'package:apptomaticos/core/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -19,16 +20,61 @@ class AddProductModel {
 
   // Método para seleccionar la fecha de cosecha usando el datepicker
   void selectHarvestDate(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
+    final DateTime? pickedDate = await showDialog<DateTime>(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2030),
+      builder: (context) {
+        DateTime selectedDate = DateTime.now();
+
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: buttonGreen, // Color de la barra superior
+            hintColor: Colors.green, // Color del selector
+            colorScheme: ColorScheme.light(primary: buttonGreen),
+            buttonTheme:
+                const ButtonThemeData(textTheme: ButtonTextTheme.primary),
+          ),
+          child: StatefulBuilder(
+            builder: (context, setState) {
+              return AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                title: const Text("Selecciona una fecha"),
+                content: SizedBox(
+                  height: 300,
+                  child: CalendarDatePicker(
+                    initialDate: selectedDate,
+                    firstDate: DateTime(2025),
+                    lastDate: DateTime(2026),
+                    onDateChanged: (date) {
+                      setState(() {
+                        selectedDate = date;
+                      });
+                    },
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, null),
+                    child: Text("Cancelar", style: TextStyle(color: redApp)),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, selectedDate),
+                    child:
+                        Text("Aceptar", style: TextStyle(color: buttonGreen)),
+                  ),
+                ],
+              );
+            },
+          ),
+        );
+      },
     );
+
     if (pickedDate != null) {
       final formattedDate = DateFormat.yMMMd().format(pickedDate);
       harvestDateController.text = formattedDate;
-      calculateExpirationDate(pickedDate); // Cambiado a método público
+      calculateExpirationDate(
+          pickedDate); // ✅ Actualiza la fecha de vencimiento
     }
   }
 

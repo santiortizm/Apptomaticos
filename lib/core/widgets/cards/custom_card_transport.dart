@@ -273,6 +273,7 @@ class _CustomCardTransportState extends State<CustomCardTransport> {
                 ),
               ],
             ),
+
             // SizedBox(
             //   width: size.width * .9,
             //   height: size.height * 0.2,
@@ -288,7 +289,11 @@ class _CustomCardTransportState extends State<CustomCardTransport> {
             //   ),
             // ),
             Image(
-              image: NetworkImage(widget.imageUrlProduct),
+              width: 150,
+              height: 150,
+              image: NetworkImage(
+                widget.imageUrlProduct,
+              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

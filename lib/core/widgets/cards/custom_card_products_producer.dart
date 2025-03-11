@@ -65,7 +65,7 @@ class _CustomCardProductsProducerState
           borderRadius: BorderRadius.circular(24),
         ),
         child: Row(
-          spacing: 2,
+          spacing: 8,
           children: [
             Container(
               width: size.width * .3,
@@ -83,14 +83,16 @@ class _CustomCardProductsProducerState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  width: size.width * 0.3,
+                  width: size.width * 0.27,
                   child: AutoSizeText(
                     widget.title,
-                    maxFontSize: 22,
-                    minFontSize: 12,
+                    maxFontSize: 18,
+                    minFontSize: 17,
                     maxLines: 2,
-                    style: temaApp.textTheme.titleSmall!
-                        .copyWith(fontSize: 22, color: Colors.black),
+                    style: temaApp.textTheme.titleSmall!.copyWith(
+                        fontSize: 22,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500),
                   ),
                 ),
                 Column(
@@ -117,7 +119,6 @@ class _CustomCardProductsProducerState
                 ),
               ],
             ),
-            const Spacer(),
             IconButton(
               onPressed: () async {
                 _dialog(context);

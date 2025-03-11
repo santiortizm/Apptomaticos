@@ -157,62 +157,62 @@ class _BuyProductPageState extends State<BuyProductPage> {
                                   children: [
                                     IconButton(
                                       onPressed: () {
-                                        AlertDialog(
-                                          title: const Text('Advertencia'),
-                                          content: const Text(
-                                              '¿Estás seguro de eliminar el producto?'),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              child: const Text('Cancelar'),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                            ),
-                                            TextButton(
-                                              child: const Text('Aceptar'),
-                                              onPressed: () async {
-                                                Navigator.of(context).pop();
-                                                final success =
-                                                    await productService
-                                                        .deleteProduct(
-                                                            widget.productId);
-
-                                                if (success) {
-                                                  setState(() {
-                                                    productDetails =
-                                                        productService
-                                                            .fetchProductDetails(
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text('Advertencia'),
+                                              content: const Text(
+                                                  '¿Estás seguro de eliminar el producto?'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: Text('Cancelar',
+                                                      style: TextStyle(
+                                                          color: redApp)),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                                TextButton(
+                                                  child: Text('Aceptar',
+                                                      style: TextStyle(
+                                                          color: buttonGreen)),
+                                                  onPressed: () async {
+                                                    Navigator.of(context).pop();
+                                                    final success =
+                                                        await productService
+                                                            .deleteProduct(
                                                                 widget
                                                                     .productId);
-                                                  });
 
-                                                  // ignore: use_build_context_synchronously
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    const SnackBar(
-                                                      content: Text(
-                                                          'Producto eliminado exitosamente'),
-                                                    ),
-                                                  );
-                                                } else {
-                                                  // ignore: use_build_context_synchronously
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    const SnackBar(
-                                                      content: Text(
-                                                          'Error al eliminar el producto'),
-                                                    ),
-                                                  );
-                                                }
-                                              },
-                                            ),
-                                          ],
+                                                    if (success) {
+                                                      setState(
+                                                        () {
+                                                          productDetails =
+                                                              productService
+                                                                  .fetchProductDetails(
+                                                                      widget
+                                                                          .productId);
+                                                        },
+                                                      );
+                                                    } else {
+                                                      // ignore: use_build_context_synchronously
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        const SnackBar(
+                                                            content: Text(
+                                                                'Error al eliminar el producto')),
+                                                      );
+                                                    }
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
                                         );
                                       },
-                                      icon: Icon(
-                                        Icons.delete,
-                                        color: redApp,
-                                      ),
+                                      icon: Icon(Icons.delete, color: redApp),
                                     ),
                                     CustomButton(
                                       onPressed: () {

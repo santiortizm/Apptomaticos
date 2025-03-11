@@ -7,6 +7,7 @@ class LoginWidget extends StatefulWidget {
   const LoginWidget({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _LoginWidgetState createState() => _LoginWidgetState();
 }
 
@@ -16,7 +17,6 @@ class _LoginWidgetState extends State<LoginWidget> {
   final passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isObscure = true;
-  bool _rememberMe = false;
   bool isLoading = false;
 
   @override
@@ -36,7 +36,7 @@ class _LoginWidgetState extends State<LoginWidget> {
               ),
             ),
             child: Container(
-              color: Colors.black.withValues(alpha: 0.4),
+              color: Colors.black.withValues(alpha: 0.6),
             ),
           ),
           Center(
@@ -60,7 +60,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                       Text(
                         'Utilice su cuenta para iniciar sesión',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: Colors.white70,
+                              color: const Color.fromARGB(255, 255, 255, 255),
                             ),
                       ),
                       SizedBox(height: size.height * 0.05),
@@ -68,24 +68,6 @@ class _LoginWidgetState extends State<LoginWidget> {
                       SizedBox(height: size.height * 0.02),
                       _buildPasswordField(),
                       SizedBox(height: size.height * 0.02),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Checkbox(
-                            value: _rememberMe,
-                            onChanged: (value) {
-                              setState(() {
-                                _rememberMe = value ?? false;
-                              });
-                            },
-                            activeColor: redApp,
-                          ),
-                          const Text(
-                            'Recuérdame',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ],
-                      ),
                       SizedBox(height: size.height * 0.02),
                       isLoading
                           ? const CircularProgressIndicator()
@@ -163,8 +145,8 @@ class _LoginWidgetState extends State<LoginWidget> {
       controller: userController,
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
-        labelText: 'Usuario',
-        labelStyle: const TextStyle(color: Colors.white70),
+        hintText: 'Correo',
+        hintStyle: const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
         prefixIcon: Icon(Icons.person, color: redApp),
         filled: true,
         fillColor: Colors.white.withValues(alpha: 0.9),
@@ -183,8 +165,8 @@ class _LoginWidgetState extends State<LoginWidget> {
       controller: passwordController,
       obscureText: _isObscure,
       decoration: InputDecoration(
-        labelText: 'Contraseña',
-        labelStyle: const TextStyle(color: Colors.white70),
+        hintText: 'Contraseña',
+        hintStyle: const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
         prefixIcon: Icon(Icons.lock, color: redApp),
         suffixIcon: IconButton(
           icon: Icon(_isObscure ? Icons.visibility : Icons.visibility_off,

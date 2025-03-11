@@ -6,9 +6,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class CustomCardProducts extends StatelessWidget {
+class CustomCardProducts extends StatefulWidget {
   final int productId;
+  final String idUsuario;
   final String title;
   final String state;
   final String price;
@@ -19,7 +21,48 @@ class CustomCardProducts extends StatelessWidget {
       required this.state,
       required this.price,
       required this.imageUrl,
-      required this.productId});
+      required this.productId,
+      required this.idUsuario});
+
+  @override
+  State<CustomCardProducts> createState() => _CustomCardProductsState();
+}
+
+class _CustomCardProductsState extends State<CustomCardProducts> {
+  final supabase = Supabase.instance.client;
+
+  String? producerName;
+  String? producerImage;
+  @override
+  void initState() {
+    super.initState();
+
+    _fetchUserData();
+  }
+
+  Future<void> _fetchUserData() async {
+    try {
+      final response = await supabase
+          .from('usuarios')
+          .select('nombre')
+          .eq('idUsuario', widget.idUsuario)
+          .maybeSingle();
+
+      final String imagePath = 'profiles/${widget.idUsuario}/profile.jpg';
+      final String imageUrl =
+          supabase.storage.from('profiles').getPublicUrl(imagePath);
+
+      if (mounted) {
+        setState(() {
+          producerName = response?['nombre'] ?? 'Desconocido';
+          producerImage =
+              '$imageUrl?v=${DateTime.now().millisecondsSinceEpoch}';
+        });
+      }
+    } catch (e) {
+      print('Error obteniendo datos del usuario: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,21 +72,46 @@ class CustomCardProducts extends StatelessWidget {
     var size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () {
-        context.push('/buyProduct', extra: {'productId': productId});
+        context.push('/buyProduct', extra: {'productId': widget.productId});
       },
       child: Container(
         margin: EdgeInsets.symmetric(vertical: size.height * 0.01),
         alignment: Alignment.center,
         padding: EdgeInsets.symmetric(
-            vertical: size.height * 0.0025, horizontal: size.width * 0.005),
+            vertical: size.height * 0.015, horizontal: size.width * 0.025),
         width: size.width * 1,
-        height: size.height * 0.38,
+        height: 380,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
+          spacing: 6,
           children: [
+            Row(
+              spacing: 12,
+              children: [
+                CircleAvatar(
+                  radius: 26,
+                  backgroundImage:
+                      (producerImage != null && producerImage!.isNotEmpty)
+                          ? NetworkImage(producerImage!)
+                          : const AssetImage("./assets/images/user.png")
+                              as ImageProvider,
+                ),
+                SizedBox(
+                  width: size.width * 0.5,
+                  child: AutoSizeText(
+                    producerName ?? 'Cargando...',
+                    maxLines: 1,
+                    maxFontSize: 14,
+                    minFontSize: 12,
+                    style: temaApp.textTheme.titleSmall!
+                        .copyWith(color: Colors.black, fontSize: 14),
+                  ),
+                ),
+              ],
+            ),
             Container(
               width: size.width * 1,
               height: size.height * 0.28,
@@ -53,8 +121,10 @@ class CustomCardProducts extends StatelessWidget {
                     topRight: Radius.circular(16)),
               ),
               child: CachedNetworkImage(
-                imageUrl: cloudinaryService.getOptimizedImageUrl(imageUrl,
-                    width: 300, height: 300),
+                imageUrl: cloudinaryService.getOptimizedImageUrl(
+                    widget.imageUrl,
+                    width: 300,
+                    height: 300),
                 fit: BoxFit.scaleDown,
                 placeholder: (context, url) =>
                     const Center(child: CircularProgressIndicator()),
@@ -76,7 +146,7 @@ class CustomCardProducts extends StatelessWidget {
                       SizedBox(
                         width: size.width * 0.4,
                         child: AutoSizeText(
-                          title,
+                          widget.title,
                           minFontSize: 12,
                           maxFontSize: 18,
                           maxLines: 1,
@@ -101,7 +171,7 @@ class CustomCardProducts extends StatelessWidget {
                             alignment: Alignment.centerLeft,
                             width: size.width * 0.27,
                             child: AutoSizeText(
-                              state,
+                              widget.state,
                               minFontSize: 12,
                               maxFontSize: 16,
                               maxLines: 1,
@@ -121,7 +191,7 @@ class CustomCardProducts extends StatelessWidget {
                         width: size.width * 0.3,
                         height: size.height * 0.05,
                         child: AutoSizeText(
-                          price,
+                          widget.price,
                           minFontSize: 12,
                           maxFontSize: 16,
                           maxLines: 1,

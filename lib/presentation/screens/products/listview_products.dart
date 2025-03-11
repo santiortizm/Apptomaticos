@@ -103,9 +103,10 @@ class _ListviewProductsState extends State<ListviewProducts> {
                         }
 
                         return CustomCardProducts(
+                          idUsuario: product.idPropietario,
                           title: product.nombreProducto,
                           state: product.maduracion,
-                          price: product.precio.toString(),
+                          price: product.precio.toStringAsFixed(0),
                           imageUrl: product.imagen ??
                               'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp',
                           productId: product.idProducto,
@@ -122,39 +123,22 @@ class _ListviewProductsState extends State<ListviewProducts> {
           if (userRole == 'Productor')
             Center(
               child: Container(
-                width: size.width * 0.4,
-                alignment: const Alignment(0.0, 0.95),
-                child: CustomButton(
+                alignment: const Alignment(0.99, 0.99),
+                child: IconButton(
                   onPressed: () {
                     context.go('/registerProduct');
                   },
-                  color: buttonGreen,
-                  border: 18,
-                  width: 0.4,
-                  height: 0.07,
-                  elevation: 4,
-                  colorBorder: Colors.transparent,
-                  sizeBorder: 0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.sell, color: redApp, size: 26),
-                      AutoSizeText(
-                        'Vender',
-                        maxFontSize: 32,
-                        minFontSize: 14,
-                        maxLines: 1,
-                        style: temaApp.textTheme.titleSmall!.copyWith(
-                          fontSize: 18,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
+                  icon: Image(
+                    width: 55,
+                    height: 55,
+                    fit: BoxFit.fill,
+                    image: AssetImage(
+                      './assets/images/vender.png',
+                    ),
                   ),
                 ),
               ),
-            ),
+            )
         ],
       ),
     );

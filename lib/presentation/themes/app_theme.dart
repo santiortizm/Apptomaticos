@@ -27,6 +27,9 @@ final temaApp = ThemeData(
       borderRadius: BorderRadius.all(Radius.circular(16.0)),
     ),
   ),
+  dialogTheme: const DialogTheme(
+    backgroundColor: Color.fromARGB(255, 255, 255, 255),
+  ),
   textTheme: const TextTheme(
     //Tipo de letra portada
     titleMedium: TextStyle(

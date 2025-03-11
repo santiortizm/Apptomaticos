@@ -107,4 +107,25 @@ class BuyService {
       return [];
     }
   }
+
+  /// 🔥 Obtiene todas las ventas finalizadas del productor autenticado
+  Future<List<Buy>> fetchCompletedSalesForProducer() async {
+    try {
+      final user = _supabase.auth.currentUser;
+      if (user == null) return [];
+
+      final response = await _supabase
+          .from('compras')
+          .select('*')
+          .eq('idPropietario',
+              user.id) // Solo compras del productor autenticado
+          .eq('estadoCompra', 'Finalizada') // Solo compras finalizadas
+          .order('fecha', ascending: false);
+
+      return response.map((json) => Buy.fromJson(json)).toList();
+    } catch (e) {
+      print('Error obteniendo ventas finalizadas: $e');
+      return [];
+    }
+  }
 }

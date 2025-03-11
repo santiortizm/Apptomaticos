@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:apptomaticos/presentation/screens/login/login_widget.dart';
 import 'package:apptomaticos/presentation/screens/menu/menu.dart';
 import 'package:apptomaticos/presentation/screens/menu_trucker/menu_trucker.dart';
@@ -17,6 +19,7 @@ class _AuthAppState extends State<AuthApp> {
   User? user;
   String? userRole;
   bool isLoading = true;
+  StreamSubscription<AuthState>? _authSubscription;
 
   @override
   void initState() {
@@ -30,25 +33,30 @@ class _AuthAppState extends State<AuthApp> {
     if (user != null) {
       await _fetchUserRole();
     } else {
-      setState(
-          () => isLoading = false); // ✅ Si no hay usuario, salir del loading
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
     }
 
-    supabase.auth.onAuthStateChange.listen((event) async {
+    _authSubscription = supabase.auth.onAuthStateChange.listen((event) async {
+      if (!mounted) return;
+
       final newUser = event.session?.user;
 
       if (newUser == null) {
-        // ✅ Si el usuario cierra sesión, limpiar todo y mostrar login
-        setState(() {
-          user = null;
-          userRole = null;
-          isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            user = null;
+            userRole = null;
+            isLoading = false;
+          });
+        }
         return;
       }
 
-      setState(
-          () => isLoading = true); // ⏳ Mostrar loading antes de cargar el rol
+      if (mounted) {
+        setState(() => isLoading = true);
+      }
 
       user = newUser;
       await FirebaseMessaging.instance.requestPermission();
@@ -59,7 +67,7 @@ class _AuthAppState extends State<AuthApp> {
 
   /// ✅ Obtiene el rol del usuario desde la base de datos
   Future<void> _fetchUserRole() async {
-    if (user == null) return; // 🔥 Evita llamar si el usuario cerró sesión
+    if (user == null) return;
 
     final response = await supabase
         .from('usuarios')
@@ -70,9 +78,16 @@ class _AuthAppState extends State<AuthApp> {
     if (mounted) {
       setState(() {
         userRole = response?['rol'];
-        isLoading = false; // 🔥 Detener carga después de obtener el rol
+        isLoading = false;
       });
     }
+  }
+
+  @override
+  void dispose() {
+    _authSubscription
+        ?.cancel(); // ✅ Cancela la suscripción cuando el widget es eliminado
+    super.dispose();
   }
 
   @override
