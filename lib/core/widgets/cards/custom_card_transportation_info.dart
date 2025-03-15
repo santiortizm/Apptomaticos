@@ -6,26 +6,29 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class CustomCardTransportationHistory extends StatefulWidget {
+class CustomCardTransportationInfo extends StatefulWidget {
   final int idTransporte;
   final int idCompra;
   final String pesoCarga;
   final String valorTransporte;
-
-  const CustomCardTransportationHistory(
+  final String estado;
+  final VoidCallback confirmarPago;
+  const CustomCardTransportationInfo(
       {super.key,
       required this.pesoCarga,
       required this.valorTransporte,
       required this.idCompra,
-      required this.idTransporte});
+      required this.idTransporte,
+      required this.estado,
+      required this.confirmarPago});
 
   @override
-  State<CustomCardTransportationHistory> createState() =>
-      _CustomCardTransportationHistoryState();
+  State<CustomCardTransportationInfo> createState() =>
+      _CustomCardTransportationInfoState();
 }
 
-class _CustomCardTransportationHistoryState
-    extends State<CustomCardTransportationHistory> {
+class _CustomCardTransportationInfoState
+    extends State<CustomCardTransportationInfo> {
   Future<Map<String, dynamic>?> _fetchCompraData() async {
     try {
       final response = await Supabase.instance.client
@@ -71,6 +74,7 @@ class _CustomCardTransportationHistoryState
         children: [
           Row(
             spacing: 12,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
                 width: size.width * 0.28,
@@ -86,53 +90,77 @@ class _CustomCardTransportationHistoryState
                 ),
               ),
               Column(
+                spacing: 4,
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   texTitletWidget(
                       context, compraData?['nombreProducto'] ?? '', 22),
                   moreInfo(
-                      context, 'Cantidad:', 12, '10 Canastas', 12, 0.2, 0.22),
+                      context, 'Cantidad:', 12, '10 Canastas', 12, 0.26, 0.22),
                   moreInfo(context, 'Peso Carga:', 12, '${widget.pesoCarga} T',
-                      12, 0.26, 0.15),
+                      12, 0.26, 0.22),
                   moreInfo(context, 'Total compra:', 12,
-                      '${widget.valorTransporte}\$', 12, 0.26, 0.15),
+                      '\$${widget.valorTransporte}', 12, 0.26, 0.22),
+                  infoState(
+                      context, 'Estado', 12, widget.estado, 12, 0.20, 0.40)
                 ],
               ),
             ],
           ),
-          Padding(
-            padding: EdgeInsets.only(top: size.height * 0.012),
-            child: Row(
-              spacing: 8,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CustomButton(
-                  onPressed: () {
-                    context.push('/transportStatus',
-                        extra: {'idTransporte': widget.idTransporte});
-                  },
-                  color: buttonGreen,
-                  colorBorder: Colors.transparent,
-                  border: 18,
-                  width: 0.3,
-                  height: 0.05,
-                  elevation: 2,
-                  sizeBorder: 0,
-                  child: AutoSizeText(
-                    'ACTUALIZAR ESTADO',
-                    maxLines: 1,
-                    maxFontSize: 17,
-                    minFontSize: 14,
-                    style: temaApp.textTheme.titleSmall!.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 30),
-                  ),
+          if (widget.estado == 'Entregado')
+            Padding(
+              padding: EdgeInsets.only(top: size.height * 0.012),
+              child: CustomButton(
+                onPressed: widget.confirmarPago,
+                color: buttonGreen,
+                colorBorder: Colors.transparent,
+                border: 18,
+                width: 0.3,
+                height: 0.05,
+                elevation: 2,
+                sizeBorder: 0,
+                child: AutoSizeText(
+                  'CONFIRMAR PAGO',
+                  maxLines: 1,
+                  maxFontSize: 17,
+                  minFontSize: 14,
+                  style: temaApp.textTheme.titleSmall!.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 30),
                 ),
-              ],
+              ),
+            )
+          else if (widget.estado == 'Finalizado')
+            SizedBox.shrink()
+          else
+            Padding(
+              padding: EdgeInsets.only(top: size.height * 0.012),
+              child: CustomButton(
+                onPressed: () {
+                  context.push('/transportStatus',
+                      extra: {'idTransporte': widget.idTransporte});
+                },
+                color: buttonGreen,
+                colorBorder: Colors.transparent,
+                border: 18,
+                width: 0.3,
+                height: 0.05,
+                elevation: 2,
+                sizeBorder: 0,
+                child: AutoSizeText(
+                  'ACTUALIZAR ESTADO',
+                  maxLines: 1,
+                  maxFontSize: 17,
+                  minFontSize: 14,
+                  style: temaApp.textTheme.titleSmall!.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 30),
+                ),
+              ),
             ),
-          ),
         ],
       ),
     );
@@ -200,6 +228,55 @@ class _CustomCardTransportationHistoryState
               fontSize: 100,
               fontWeight: FontWeight.w900,
               color: Colors.black,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget infoState(
+      BuildContext context,
+      String textTitleInfo,
+      double maxFontSizeTitleInfo,
+      String textTextInfo,
+      double maxFontSizeTextInfo,
+      double widthTitle,
+      double widthText) {
+    final size = MediaQuery.of(context).size;
+
+    return Column(
+      children: [
+        Container(
+          alignment: Alignment.center,
+          width: size.width * widthTitle,
+          child: AutoSizeText(
+            textAlign: TextAlign.center,
+            textTitleInfo,
+            minFontSize: 12,
+            maxFontSize: maxFontSizeTitleInfo,
+            maxLines: 1,
+            style: temaApp.textTheme.titleSmall!.copyWith(
+              fontSize: 100,
+              fontWeight: FontWeight.w900,
+              color: buttonGreen,
+            ),
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+              color: buttonGreen, borderRadius: BorderRadius.circular(16)),
+          width: size.width * widthText,
+          child: AutoSizeText(
+            textAlign: TextAlign.center,
+            textTextInfo,
+            minFontSize: 12,
+            maxFontSize: maxFontSizeTextInfo,
+            maxLines: 1,
+            style: temaApp.textTheme.titleSmall!.copyWith(
+              fontSize: 100,
+              fontWeight: FontWeight.w900,
+              color: Colors.white,
             ),
           ),
         ),

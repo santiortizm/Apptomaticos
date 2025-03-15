@@ -1,3 +1,4 @@
+import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class DropDownFieldController extends StatefulWidget {
@@ -22,6 +23,7 @@ class _DropDownFieldControllerState extends State<DropDownFieldController> {
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(
       value: widget.selectedValue,
+      dropdownColor: Colors.white,
       decoration: InputDecoration(
         labelText: widget.labelText,
         filled: true,
@@ -33,7 +35,10 @@ class _DropDownFieldControllerState extends State<DropDownFieldController> {
       items: widget.options
           .map((option) => DropdownMenuItem(
                 value: option,
-                child: Text(option),
+                child: Text(
+                  option,
+                  style: temaApp.textTheme.titleSmall,
+                ),
               ))
           .toList(),
       onChanged: widget.onChanged,

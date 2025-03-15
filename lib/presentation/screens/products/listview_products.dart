@@ -1,11 +1,7 @@
-import 'package:apptomaticos/core/constants/colors.dart';
 import 'package:apptomaticos/core/models/product_model.dart';
 import 'package:apptomaticos/core/services/product_service.dart';
 import 'package:apptomaticos/core/services/user_services.dart';
 import 'package:apptomaticos/core/widgets/cards/custom_card_products.dart';
-import 'package:apptomaticos/core/widgets/custom_button.dart';
-import 'package:apptomaticos/presentation/themes/app_theme.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -56,10 +52,10 @@ class _ListviewProductsState extends State<ListviewProducts> {
     }
   }
 
-  /// 🔄 Función para refrescar manualmente la lista de productos
+  ///  Función para refrescar manualmente la lista de productos
   Future<void> _refreshProducts() async {
     setState(() {
-      _initializeStream(); // 🔥 Reinicia el Stream para forzar actualización
+      _initializeStream();
     });
   }
 
@@ -106,7 +102,7 @@ class _ListviewProductsState extends State<ListviewProducts> {
                           idUsuario: product.idPropietario,
                           title: product.nombreProducto,
                           state: product.maduracion,
-                          price: product.precio.toStringAsFixed(0),
+                          price: product.precio,
                           imageUrl: product.imagen ??
                               'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp',
                           productId: product.idProducto,

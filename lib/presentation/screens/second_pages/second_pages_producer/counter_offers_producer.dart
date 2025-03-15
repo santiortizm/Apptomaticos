@@ -209,15 +209,15 @@ class _CounterOffersProducerState extends State<CounterOffersProducer> {
                                     child: Stack(
                                       children: [
                                         CustomCardCounterOfferProducer(
+                                          idOfertador: oferta.idComprador,
                                           imagen: oferta
                                                   .imagenProducto.isNotEmpty
                                               ? '${oferta.imagenProducto}?v=${DateTime.now().millisecondsSinceEpoch}'
                                               : 'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp',
                                           nombreProducto: oferta.nombreProducto,
-                                          nombreOfertador: oferta.idComprador,
                                           cantidadOfertada:
                                               oferta.cantidad.toString(),
-                                          totalOferta:
+                                          valorOferta:
                                               oferta.valorOferta.toString(),
                                           acceptOffer: () async {
                                             try {

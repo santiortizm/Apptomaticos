@@ -14,6 +14,7 @@ import 'package:apptomaticos/presentation/screens/second_pages/second_pages_prod
 import 'package:apptomaticos/presentation/screens/second_pages/second_pages_producer/my_sales.dart';
 import 'package:apptomaticos/presentation/screens/second_pages/second_pages_producer/products_of_producer.dart';
 import 'package:apptomaticos/presentation/screens/second_pages/second_pages_trucker/my_transports.dart';
+import 'package:apptomaticos/presentation/screens/second_pages/second_pages_trucker/transport_history.dart';
 import 'package:apptomaticos/presentation/screens/second_pages/second_pages_trucker/transport_status.dart';
 import 'package:go_router/go_router.dart';
 
@@ -67,6 +68,7 @@ class AppRouter {
             productId: extra['productId'],
             imageUrl: extra['imageUrl'],
             price: extra['price'],
+            cantidad: extra['cantidad'],
             availableQuantify: extra['availableQuantify'],
           );
         },
@@ -111,6 +113,10 @@ class AppRouter {
       GoRoute(
         path: '/myTransports',
         builder: (context, state) => const MyTransports(),
+      ),
+      GoRoute(
+        path: '/transportHistory',
+        builder: (context, state) => TransportHistory(),
       ),
       GoRoute(
         path: '/transportStatus',

@@ -124,7 +124,7 @@ class _TransportStatusState extends State<TransportStatus> {
                                 .from('transportes')
                                 .update({'estado': selectedEstado}).eq(
                                     'idTransporte', widget.idTransporte);
-
+                            GoRouter.of(context).go('/myTransports');
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content:

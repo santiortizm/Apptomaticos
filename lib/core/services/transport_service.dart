@@ -3,36 +3,33 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class TransportService {
   final SupabaseClient supabase = Supabase.instance.client;
-
-  /// 🔹 Verifica si el transportador ya tiene un transporte "En Curso"
   Future<bool> hasActiveTransport(String idUsuario) async {
     try {
       final response = await supabase
           .from('transportes')
-          .select('idTransporte')
+          .select('idTransporte, estado')
           .eq('idTransportador', idUsuario)
-          .eq('estado', 'En Curso')
+          .not('estado', 'eq',
+              'Finalizado') // ❌ Filtra todos los que NO están "Finalizado"
           .maybeSingle();
 
       return response !=
-          null; // Retorna `true` si ya tiene un transporte activo
+          null; // Si encuentra al menos uno, tiene transporte activo
     } catch (e) {
       print('Error al verificar transporte activo: $e');
       return false;
     }
   }
 
-  /// 🔹 Crea un nuevo transporte SOLO si no hay uno "En Curso"
   Future<bool> createTransport(Transport transport) async {
     try {
-      // ❗ Verificar si el transportador ya tiene un transporte en curso
       final hasActive = await hasActiveTransport(transport.idTransportador);
       if (hasActive) {
-        return false; // ❌ No permite registrar otro transporte
+        return false; // ❌ No permite crear si hay transportes NO finalizados
       }
 
       await supabase.from('transportes').insert(transport.toMap());
-      return true;
+      return true; // ✅ Transporte creado
     } catch (e) {
       print('Error al crear el transporte: $e');
       return false;

@@ -108,8 +108,6 @@ class _MyOrdersState extends State<MyOrders> {
           children: [
             // Fondo de pantalla
             Container(
-              width: size.width,
-              height: size.height,
               decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('assets/images/fondo_2.jpg'),
@@ -167,15 +165,18 @@ class _MyOrdersState extends State<MyOrders> {
                           ),
                         ),
                       ),
-                      AutoSizeText(
-                        'Mis Pedidos',
-                        maxFontSize: 26,
-                        minFontSize: 18,
-                        maxLines: 1,
-                        style: temaApp.textTheme.titleSmall!.copyWith(
-                          fontSize: 26,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w700,
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: AutoSizeText(
+                          'Mis Pedidos',
+                          maxFontSize: 26,
+                          minFontSize: 18,
+                          maxLines: 1,
+                          style: temaApp.textTheme.titleSmall!.copyWith(
+                            fontSize: 26,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                       Expanded(
@@ -197,15 +198,13 @@ class _MyOrdersState extends State<MyOrders> {
                                   child: Text('No hay pedidos realizadas'));
                             }
                             final orders = snapshot.data!
-                                .where((o) =>
-                                    o.estado != 'En Camino' &&
-                                    o.estado != 'Aceptado')
+                                .where((o) => o.estado != 'Finalizado')
                                 .toList();
                             return RefreshIndicator(
                               onRefresh: _refreshTransports,
                               child: ListView.builder(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: size.width * 0.05),
+                                    horizontal: size.width * 0.025),
                                 itemCount: orders.length,
                                 itemBuilder: (context, index) {
                                   final order = orders[index];
@@ -229,34 +228,44 @@ class _MyOrdersState extends State<MyOrders> {
                                                   'Compra no encontrada.'));
                                         }
                                         if (compra['estadoCompra'] ==
-                                            'Finalizada') {
+                                            'Pagado') {
                                           return const SizedBox
                                               .shrink(); // 🔹 Oculta la card
                                         }
-                                        return CustomCardOrder(
-                                          imagen: compra[
-                                              'imagenProducto'], // Imagen de la compra
-                                          nombreProducto: compra[
-                                              'nombreProducto'], // Nombre del producto
-                                          fechaEntrega: order
-                                              .fechaEntrega, // Fecha de entrega del transporte
-                                          totalAPagar: compra['total']
-                                              .toString(), // Precio total de la compra
-                                          cantidad: compra['cantidad']
-                                              .toString(), // Cantidad comprada
-                                          onPressed: () async {
-                                            try {
-                                              await supabase
-                                                  .from('compras')
-                                                  .update({
-                                                'estadoCompra': 'Finalizada'
-                                              }).eq('id', compra['id']);
-
-                                              _refreshTransports();
-                                            } catch (e) {
-                                              return;
-                                            }
-                                          },
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                              bottom: 10.0),
+                                          child: CustomCardOrder(
+                                            estado: order.estado,
+                                            imagen: compra[
+                                                'imagenProducto'], // Imagen de la compra
+                                            nombreProducto: compra[
+                                                'nombreProducto'], // Nombre del producto
+                                            fechaEntrega: order
+                                                .fechaEntrega, // Fecha de entrega del transporte
+                                            totalAPagar: compra['total']
+                                                .toString(), // Precio total de la compra
+                                            cantidad: compra['cantidad']
+                                                .toString(), // Cantidad comprada
+                                            onPressed: () async {
+                                              try {
+                                                await supabase
+                                                    .from('compras')
+                                                    .update({
+                                                  'estadoCompra': 'Entregado'
+                                                }).eq('id', compra['id']);
+                                                await supabase
+                                                    .from('transportes')
+                                                    .update({
+                                                  'estado': 'Entregado'
+                                                }).eq('idTransporte',
+                                                        order.idTransporte);
+                                                _refreshTransports();
+                                              } catch (e) {
+                                                return;
+                                              }
+                                            },
+                                          ),
                                         );
                                       });
                                 },

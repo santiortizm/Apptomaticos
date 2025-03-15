@@ -21,6 +21,12 @@ class CustomCardPurchasesMerchant extends StatelessWidget {
       required this.cantidad,
       required this.precio});
 
+  String formatPrice(num price) {
+    final formatter =
+        NumberFormat.currency(locale: 'es_CO', symbol: '', decimalDigits: 0);
+    return formatter.format(price);
+  }
+
   @override
   Widget build(BuildContext context) {
     final cloudinaryService =
@@ -70,7 +76,8 @@ class CustomCardPurchasesMerchant extends StatelessWidget {
                       0.16),
                   moreInfo(context, 'Cantidad :', 12, '$cantidad Canastas', 12,
                       0.2, 0.22),
-                  moreInfo(context, 'Precio :', 12, precio, 12, 0.18, 0.24),
+                  moreInfo(context, 'Precio :', 12,
+                      '\$${formatPrice(double.parse(precio))}', 12, 0.18, 0.24),
                 ],
               ),
             ],

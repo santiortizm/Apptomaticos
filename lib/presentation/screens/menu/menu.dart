@@ -1,6 +1,7 @@
 import 'package:apptomaticos/core/constants/colors.dart';
 import 'package:apptomaticos/core/widgets/custom_button.dart';
 import 'package:apptomaticos/core/widgets/drawer/custom_drawer.dart';
+import 'package:apptomaticos/presentation/screens/price/price_page.dart';
 import 'package:apptomaticos/presentation/screens/products/listview_products.dart';
 import 'package:apptomaticos/presentation/screens/profile/profile_widget.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
@@ -150,7 +151,12 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                             vertical: size.height * 0.025),
                         child: const ListviewProducts(),
                       ),
-                      _buildPricesTab(),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: size.width * 0.05,
+                            vertical: size.height * 0.025),
+                        child: PriceScreen(),
+                      ),
                       Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: size.width * 0.05,

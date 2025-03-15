@@ -6,24 +6,85 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:intl/intl.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class CustomCardCounterOfferProducer extends StatelessWidget {
+class CustomCardCounterOfferProducer extends StatefulWidget {
   final String imagen;
   final String nombreProducto;
-  final String nombreOfertador;
   final String cantidadOfertada;
-  final String totalOferta;
+  final String valorOferta;
+  final String idOfertador;
   final VoidCallback acceptOffer;
   final VoidCallback declineOffer;
   const CustomCardCounterOfferProducer(
       {super.key,
       required this.imagen,
       required this.nombreProducto,
-      required this.nombreOfertador,
       required this.cantidadOfertada,
-      required this.totalOferta,
+      required this.valorOferta,
       required this.acceptOffer,
-      required this.declineOffer});
+      required this.declineOffer,
+      required this.idOfertador});
+
+  @override
+  State<CustomCardCounterOfferProducer> createState() =>
+      _CustomCardCounterOfferProducerState();
+}
+
+class _CustomCardCounterOfferProducerState
+    extends State<CustomCardCounterOfferProducer> {
+  final supabase = Supabase.instance.client;
+  String? nombreOfertador;
+  Future<void> nameUser() async {
+    try {
+      final response = await supabase
+          .from('usuarios')
+          .select('nombre, apellido') // ✅ Selecciona correctamente
+          .eq('idUsuario', widget.idOfertador)
+          .maybeSingle(); // ✅ Evita errores si no encuentra usuario
+
+      if (response != null) {
+        setState(() {
+          nombreOfertador =
+              '${response['nombre']} ${response['apellido']}'; // ✅ Concatena nombre y apellido
+        });
+      } else {
+        setState(() {
+          nombreOfertador =
+              'Desconocido'; // ✅ Valor por defecto si no se encuentra
+        });
+      }
+    } catch (e) {
+      print('❌ Error obteniendo nombre del ofertador: $e');
+      setState(() {
+        nombreOfertador = 'Error';
+      });
+    }
+  }
+
+  late int valorTotal = 0;
+
+  void _calculateTotalValue() {
+    final int cantidad = int.parse(widget.cantidadOfertada);
+    final int valorOfetado = (double.tryParse(widget.valorOferta) ?? 0).toInt();
+
+    valorTotal = cantidad * valorOfetado;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _calculateTotalValue();
+    nameUser(); // ✅ Llama a la función para obtener el nombre del ofertador
+  }
+
+  String formatValue(num value) {
+    final formatter =
+        NumberFormat.currency(locale: 'es_CO', symbol: '', decimalDigits: 0);
+    return formatter.format(value);
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -48,7 +109,7 @@ class CustomCardCounterOfferProducer extends StatelessWidget {
                 ),
                 child: CachedNetworkImage(
                   imageUrl: cloudinaryService.getOptimizedImageUrl(
-                    imagen,
+                    widget.imagen,
                   ),
                   fit: BoxFit.scaleDown,
                   placeholder: (context, url) =>
@@ -61,14 +122,20 @@ class CustomCardCounterOfferProducer extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  texTitletWidget(context, nombreProducto, 22),
-                  texTitletWidget(context, nombreOfertador, 16),
+                  texTitletWidget(context, widget.nombreProducto, 22),
+                  texTitletWidget(context, nombreOfertador!, 16),
                   moreInfo(context, 'Cantidad:', 12,
-                      '$cantidadOfertada Canastas', 12, 0.2, 0.22),
-                  moreInfo(context, 'Precio Unitario:', 12, 'valorUnitario', 12,
-                      0.26, 0.15),
-                  moreInfo(context, 'Total compra:', 12, totalOferta, 12, 0.26,
+                      '${widget.cantidadOfertada} Canastas', 12, 0.2, 0.22),
+                  moreInfo(
+                      context,
+                      'Precio Unitario:',
+                      12,
+                      ' \$${formatValue(double.parse(widget.valorOferta))}',
+                      12,
+                      0.26,
                       0.15),
+                  moreInfo(context, 'Total compra:', 12,
+                      '\$${formatValue(valorTotal)}', 12, 0.26, 0.15),
                 ],
               ),
             ],
@@ -80,7 +147,7 @@ class CustomCardCounterOfferProducer extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CustomButton(
-                  onPressed: declineOffer,
+                  onPressed: widget.declineOffer,
                   color: Colors.white,
                   colorBorder: redApp,
                   border: 18,
@@ -100,7 +167,7 @@ class CustomCardCounterOfferProducer extends StatelessWidget {
                   ),
                 ),
                 CustomButton(
-                  onPressed: acceptOffer,
+                  onPressed: widget.acceptOffer,
                   color: buttonGreen,
                   colorBorder: Colors.transparent,
                   border: 18,

@@ -12,6 +12,7 @@ class CustomCardOrder extends StatelessWidget {
   final String imagen;
   final String nombreProducto;
   final String fechaEntrega;
+  final String estado;
   final String cantidad;
   final VoidCallback onPressed;
   final String totalAPagar;
@@ -23,7 +24,13 @@ class CustomCardOrder extends StatelessWidget {
       required this.fechaEntrega,
       required this.totalAPagar,
       required this.cantidad,
+      required this.estado,
       required this.onPressed});
+  String formatPrice(num price) {
+    final formatter =
+        NumberFormat.currency(locale: 'es_CO', symbol: '', decimalDigits: 0);
+    return formatter.format(price);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,10 +41,10 @@ class CustomCardOrder extends StatelessWidget {
       padding: EdgeInsets.symmetric(
           horizontal: size.width * 0.025, vertical: size.height * 0.025),
       width: size.width * 0.8,
-      height: 210,
       decoration: BoxDecoration(
           color: Colors.white, borderRadius: BorderRadius.circular(18)),
       child: Column(
+        spacing: 10,
         children: [
           Row(
             spacing: 12,
@@ -62,6 +69,7 @@ class CustomCardOrder extends StatelessWidget {
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
+                spacing: 8,
                 children: [
                   texTitletWidget(context, nombreProducto, 22),
                   moreInfo(
@@ -72,11 +80,19 @@ class CustomCardOrder extends StatelessWidget {
                           .format(DateTime.parse(fechaEntrega)),
                       12,
                       0.26,
-                      0.16),
+                      0.20),
                   moreInfo(context, 'Cantidad :', 12, '$cantidad Canastas', 12,
-                      0.2, 0.22),
-                  moreInfo(context, 'Valor Pago:', 12, '$totalAPagar \$', 12,
-                      0.20, 0.22),
+                      0.22, 0.24),
+                  moreInfo(
+                      context,
+                      'Valor Pago:',
+                      12,
+                      '\$${formatPrice(double.parse(totalAPagar))}',
+                      12,
+                      0.22,
+                      0.24),
+                  infoState(context, 'Estado del Transporte', 12, estado, 12,
+                      0.40, 0.40)
                 ],
               ),
             ],
@@ -84,26 +100,29 @@ class CustomCardOrder extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CustomButton(
-                onPressed: onPressed,
-                color: buttonGreen,
-                colorBorder: Colors.transparent,
-                border: 18,
-                width: 0.3,
-                height: 0.05,
-                elevation: 2,
-                sizeBorder: 0,
-                child: AutoSizeText(
-                  'PAGAR',
-                  maxLines: 1,
-                  maxFontSize: 17,
-                  minFontSize: 14,
-                  style: temaApp.textTheme.titleSmall!.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 30),
-                ),
-              )
+              if (estado == 'En Central de abastos')
+                CustomButton(
+                  onPressed: onPressed,
+                  color: buttonGreen,
+                  colorBorder: Colors.transparent,
+                  border: 18,
+                  width: 0.3,
+                  height: 0.05,
+                  elevation: 2,
+                  sizeBorder: 0,
+                  child: AutoSizeText(
+                    'Entregado',
+                    maxLines: 1,
+                    maxFontSize: 17,
+                    minFontSize: 14,
+                    style: temaApp.textTheme.titleSmall!.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 30),
+                  ),
+                )
+              else
+                SizedBox.shrink()
             ],
           )
         ],
@@ -164,7 +183,7 @@ class CustomCardOrder extends StatelessWidget {
         SizedBox(
           width: size.width * widthText,
           child: AutoSizeText(
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.right,
             textTextInfo,
             minFontSize: 8,
             maxFontSize: maxFontSizeTextInfo,
@@ -173,6 +192,55 @@ class CustomCardOrder extends StatelessWidget {
               fontSize: 100,
               fontWeight: FontWeight.w900,
               color: Colors.black,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget infoState(
+      BuildContext context,
+      String textTitleInfo,
+      double maxFontSizeTitleInfo,
+      String textTextInfo,
+      double maxFontSizeTextInfo,
+      double widthTitle,
+      double widthText) {
+    final size = MediaQuery.of(context).size;
+
+    return Column(
+      children: [
+        Container(
+          alignment: Alignment.center,
+          width: size.width * widthTitle,
+          child: AutoSizeText(
+            textAlign: TextAlign.center,
+            textTitleInfo,
+            minFontSize: 12,
+            maxFontSize: maxFontSizeTitleInfo,
+            maxLines: 1,
+            style: temaApp.textTheme.titleSmall!.copyWith(
+              fontSize: 100,
+              fontWeight: FontWeight.w900,
+              color: buttonGreen,
+            ),
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+              color: buttonGreen, borderRadius: BorderRadius.circular(16)),
+          width: size.width * widthText,
+          child: AutoSizeText(
+            textAlign: TextAlign.center,
+            textTextInfo,
+            minFontSize: 12,
+            maxFontSize: maxFontSizeTextInfo,
+            maxLines: 1,
+            style: temaApp.textTheme.titleSmall!.copyWith(
+              fontSize: 100,
+              fontWeight: FontWeight.w900,
+              color: Colors.white,
             ),
           ),
         ),

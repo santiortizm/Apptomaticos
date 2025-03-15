@@ -6,8 +6,9 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:intl/intl.dart';
 
-class CustomCardCounterOfferMerchant extends StatelessWidget {
+class CustomCardCounterOfferMerchant extends StatefulWidget {
   final String imagen;
   final String nombreProducto;
   final String nombreOfertador;
@@ -24,13 +25,40 @@ class CustomCardCounterOfferMerchant extends StatelessWidget {
       required this.acceptOffer});
 
   @override
+  State<CustomCardCounterOfferMerchant> createState() =>
+      _CustomCardCounterOfferMerchantState();
+}
+
+class _CustomCardCounterOfferMerchantState
+    extends State<CustomCardCounterOfferMerchant> {
+  late int totalPrice = 0;
+  late int valorUnitario = (double.tryParse(widget.totalOferta) ?? 0).toInt();
+  void _calculateTotalPrice() {
+    final int cantidad = int.tryParse(widget.cantidadOfertada) ?? 0;
+
+    totalPrice = cantidad * valorUnitario;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _calculateTotalPrice();
+  }
+
+  String formatPrice(num price) {
+    final formatter =
+        NumberFormat.currency(locale: 'es_CO', symbol: '', decimalDigits: 0);
+    return formatter.format(price);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final cloudinaryService =
         CloudinaryService(cloudName: dotenv.env['CLOUD_NAME'] ?? '');
     return Container(
       padding: EdgeInsets.symmetric(
-          horizontal: size.width * 0.025, vertical: size.height * 0.025),
+          horizontal: size.width * 0.02, vertical: size.height * 0.025),
       width: size.width * 0.9,
       decoration: BoxDecoration(
           color: Colors.white, borderRadius: BorderRadius.circular(18)),
@@ -47,7 +75,7 @@ class CustomCardCounterOfferMerchant extends StatelessWidget {
                 ),
                 child: CachedNetworkImage(
                   imageUrl: cloudinaryService.getOptimizedImageUrl(
-                    imagen,
+                    widget.imagen,
                   ),
                   fit: BoxFit.scaleDown,
                   placeholder: (context, url) =>
@@ -60,14 +88,14 @@ class CustomCardCounterOfferMerchant extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  texTitletWidget(context, nombreProducto, 22),
-                  texTitletWidget(context, nombreOfertador, 16),
+                  texTitletWidget(context, widget.nombreProducto, 22),
+                  texTitletWidget(context, widget.nombreOfertador, 16),
                   moreInfo(context, 'Cantidad:', 12,
-                      '$cantidadOfertada Canastas', 12, 0.2, 0.22),
-                  moreInfo(
-                      context, 'Precio Unitario:', 12, '2000', 12, 0.26, 0.15),
-                  moreInfo(context, 'Total compra:', 12, totalOferta, 12, 0.26,
-                      0.15),
+                      '${widget.cantidadOfertada} Canastas', 12, 0.2, 0.22),
+                  moreInfo(context, 'Precio Unitario:', 12,
+                      formatPrice(valorUnitario), 12, 0.26, 0.15),
+                  moreInfo(context, 'Total compra:', 12,
+                      '\$${formatPrice(totalPrice)}', 12, 0.26, 0.15),
                 ],
               ),
             ],
@@ -79,7 +107,7 @@ class CustomCardCounterOfferMerchant extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CustomButton(
-                  onPressed: acceptOffer,
+                  onPressed: widget.acceptOffer,
                   color: buttonGreen,
                   colorBorder: Colors.transparent,
                   border: 18,

@@ -4,18 +4,21 @@ import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 class PurchasePage extends StatefulWidget {
   final int productId;
   final double price;
   final String imageUrl;
+  final int cantidad;
   final int availableQuantify;
   const PurchasePage(
       {super.key,
       required this.productId,
       required this.imageUrl,
       required this.price,
-      required this.availableQuantify});
+      required this.availableQuantify,
+      required this.cantidad});
 
   @override
   State<PurchasePage> createState() => _PurchasePageState();
@@ -35,6 +38,12 @@ class _PurchasePageState extends State<PurchasePage> {
   void initState() {
     super.initState();
     _quantityController.addListener(_updateTotalPrice);
+  }
+
+  String formatPrice(num price) {
+    final formatter =
+        NumberFormat.currency(locale: 'es_CO', symbol: '', decimalDigits: 0);
+    return formatter.format(price);
   }
 
   @override
@@ -117,67 +126,101 @@ class _PurchasePageState extends State<PurchasePage> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(14),
                           image: DecorationImage(
-                            image: NetworkImage(
-                                widget.imageUrl), // ✅ Imagen del producto
-                            fit: BoxFit.cover,
+                            image: NetworkImage(widget.imageUrl),
+                            fit: BoxFit.contain,
                           ),
                         ),
                       ),
                       containerPrice(context, 'Precio Canasta',
-                          widget.price.toString(), 16),
-                      textWidget(context, 'Cantidad a Comprar:', 18),
+                          formatPrice(widget.price), 16),
+                      Column(
+                        spacing: 4,
+                        children: [
+                          textWidget(context, 'Cantidad a Comprar:', 18),
+                          textWidget(context,
+                              '(Cantidad Disponible: ${widget.cantidad})', 14),
+                        ],
+                      ),
                       SizedBox(
                         width: size.width * 0.6,
                         child: textFormField(context, 'Cantidad en Canastas',
                             TextInputType.number, _quantityController),
                       ),
                       containerPrice(context, 'Total a Pagar:',
-                          _totalPrice.toStringAsFixed(2), 16),
+                          formatPrice(_totalPrice), 16),
                       Container(
                         margin:
                             EdgeInsets.symmetric(vertical: size.height * 0.025),
-                        child: CustomButton(
-                          onPressed: () {
-                            final quantity =
-                                int.tryParse(_quantityController.text) ?? 0;
-                            if (quantity <= 0 ||
-                                quantity > widget.availableQuantify) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('Cantidad no válida')),
-                              );
-                              return;
-                            }
-
-                            // Navegar a la pantalla de métodos de pago con los datos de la compra
-                            context.push(
-                              '/paymentAlternatives',
-                              extra: {
-                                'productId': widget.productId,
-                                'quantity': quantity,
-                                'totalPrice': _totalPrice,
-                                'imageProduct': widget.imageUrl,
+                        child: Row(
+                          spacing: 20,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CustomButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
                               },
-                            );
-                          },
-                          color: buttonGreen,
-                          colorBorder: buttonGreen,
-                          border: 12,
-                          width: 0.4,
-                          height: 0.07,
-                          elevation: 1,
-                          sizeBorder: 0,
-                          child: AutoSizeText(
-                            'COMPRAR',
-                            maxLines: 1,
-                            maxFontSize: 20,
-                            minFontSize: 18,
-                            style: temaApp.textTheme.titleSmall!.copyWith(
                               color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 30,
+                              colorBorder: redApp,
+                              border: 12,
+                              width: 0.35,
+                              height: 0.07,
+                              elevation: 2,
+                              sizeBorder: 2.5,
+                              child: AutoSizeText(
+                                'CANCELAR',
+                                maxLines: 1,
+                                maxFontSize: 18,
+                                minFontSize: 16,
+                                style: temaApp.textTheme.titleSmall!.copyWith(
+                                    color: redApp,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 30),
+                              ),
                             ),
-                          ),
+                            CustomButton(
+                              onPressed: () {
+                                final quantity =
+                                    int.tryParse(_quantityController.text) ?? 0;
+                                if (quantity <= 0 ||
+                                    quantity > widget.availableQuantify) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text('Cantidad no válida')),
+                                  );
+                                  return;
+                                }
+
+                                // Navegar a la pantalla de métodos de pago con los datos de la compra
+                                context.push(
+                                  '/paymentAlternatives',
+                                  extra: {
+                                    'productId': widget.productId,
+                                    'quantity': quantity,
+                                    'totalPrice': _totalPrice,
+                                    'imageProduct': widget.imageUrl,
+                                  },
+                                );
+                              },
+                              color: buttonGreen,
+                              colorBorder: buttonGreen,
+                              border: 12,
+                              width: 0.35,
+                              height: 0.07,
+                              elevation: 1,
+                              sizeBorder: 0,
+                              child: AutoSizeText(
+                                'COMPRAR',
+                                maxLines: 1,
+                                maxFontSize: 20,
+                                minFontSize: 18,
+                                style: temaApp.textTheme.titleSmall!.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 30,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],

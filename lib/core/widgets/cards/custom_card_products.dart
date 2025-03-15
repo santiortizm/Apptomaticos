@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CustomCardProducts extends StatefulWidget {
@@ -13,7 +14,7 @@ class CustomCardProducts extends StatefulWidget {
   final String idUsuario;
   final String title;
   final String state;
-  final String price;
+  final double price;
   final String imageUrl;
   const CustomCardProducts(
       {super.key,
@@ -62,6 +63,12 @@ class _CustomCardProductsState extends State<CustomCardProducts> {
     } catch (e) {
       print('Error obteniendo datos del usuario: $e');
     }
+  }
+
+  String formatPrice(num price) {
+    final formatter =
+        NumberFormat.currency(locale: 'es_CO', symbol: '', decimalDigits: 0);
+    return formatter.format(price);
   }
 
   @override
@@ -182,6 +189,8 @@ class _CustomCardProductsState extends State<CustomCardProducts> {
                     ],
                   ),
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
                         alignment: Alignment.center,
@@ -191,12 +200,14 @@ class _CustomCardProductsState extends State<CustomCardProducts> {
                         width: size.width * 0.3,
                         height: size.height * 0.05,
                         child: AutoSizeText(
-                          widget.price,
+                          textAlign: TextAlign.center,
+                          '\$${formatPrice(widget.price)}',
                           minFontSize: 12,
                           maxFontSize: 16,
                           maxLines: 1,
-                          style: temaApp.textTheme.titleSmall!
-                              .copyWith(color: Colors.white),
+                          style: temaApp.textTheme.titleSmall!.copyWith(
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ],

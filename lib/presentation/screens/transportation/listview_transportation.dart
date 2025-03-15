@@ -65,7 +65,7 @@ class _ListviewTransportationState extends State<ListviewTransportation> {
               final transports = snapshot.data!
                   .where((t) =>
                       t.estadoCompra != 'Transportando' &&
-                      t.estadoCompra != 'Finalizado')
+                      t.estadoCompra != 'Pagado')
                   .toList();
               return ListView.builder(
                   padding:

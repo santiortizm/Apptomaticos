@@ -63,7 +63,7 @@ class _MyCounterOffersState extends State<MyCounterOffers> {
 
   void _subscribeToTableChanges() {
     _channel = supabase
-        .channel('public:productos')
+        .channel('public:contra_oferta')
         .onPostgresChanges(
           event: PostgresChangeEvent.all,
           schema: 'public',
@@ -218,7 +218,9 @@ class _MyCounterOffersState extends State<MyCounterOffers> {
                                               'estadoPago': 'Finalizado'
                                             }).eq('idContraOferta',
                                                     oferta.idContraOferta!);
-
+                                            final totalOferta =
+                                                oferta.cantidad *
+                                                    oferta.valorOferta;
                                             final insertResponse =
                                                 await supabase
                                                     .from('compras')
@@ -226,7 +228,7 @@ class _MyCounterOffersState extends State<MyCounterOffers> {
                                               'alternativaPago':
                                                   'Contra Oferta',
                                               'cantidad': oferta.cantidad,
-                                              'total': oferta.valorOferta,
+                                              'total': totalOferta,
                                               'fecha': now.toIso8601String(),
                                               'idProducto': oferta.idProducto,
                                               'idComprador': oferta.idComprador,

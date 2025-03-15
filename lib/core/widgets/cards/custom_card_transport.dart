@@ -5,8 +5,10 @@ import 'package:apptomaticos/core/services/transport_service.dart';
 import 'package:apptomaticos/core/widgets/custom_button.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CustomCardTransport extends StatefulWidget {
@@ -60,6 +62,12 @@ class _CustomCardTransportState extends State<CustomCardTransport> {
     final int cantidad = int.parse(widget.countTransport);
     int operacion = cantidad * 23;
     transportPrice = operacion * 400;
+  }
+
+  String formatPrice(num price) {
+    final formatter =
+        NumberFormat.currency(locale: 'es_CO', symbol: '', decimalDigits: 0);
+    return formatter.format(price);
   }
 
   ///  Obtiene la información del comprador
@@ -202,9 +210,9 @@ class _CustomCardTransportState extends State<CustomCardTransport> {
     final success = await transportService.createTransport(transport);
 
     if (success) {
-      // await supabase
-      //     .from('compras')
-      //     .update({'estadoCompra': 'Transportando'}).eq('id', widget.idCompra);
+      await supabase
+          .from('compras')
+          .update({'estadoCompra': 'Transportando'}).eq('id', widget.idCompra);
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Transporte registrado')),
@@ -273,26 +281,18 @@ class _CustomCardTransportState extends State<CustomCardTransport> {
                 ),
               ],
             ),
-
-            // SizedBox(
-            //   width: size.width * .9,
-            //   height: size.height * 0.2,
-            //   child: CachedNetworkImage(
-            //     imageUrl: cloudinaryService.getOptimizedImageUrl(
-            //       widget.imageUrlProduct,
-            //     ),
-            //     fit: BoxFit.scaleDown,
-            //     placeholder: (context, url) =>
-            //         const Center(child: CircularProgressIndicator()),
-            //     errorWidget: (context, url, error) => Image.network(
-            //         'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp'),
-            //   ),
-            // ),
-            Image(
-              width: 150,
-              height: 150,
-              image: NetworkImage(
-                widget.imageUrlProduct,
+            SizedBox(
+              width: size.width * .9,
+              height: size.height * 0.2,
+              child: CachedNetworkImage(
+                imageUrl: cloudinaryService.getOptimizedImageUrl(
+                  widget.imageUrlProduct,
+                ),
+                fit: BoxFit.scaleDown,
+                placeholder: (context, url) =>
+                    const Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) => Image.network(
+                    'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp'),
               ),
             ),
             Row(
@@ -314,7 +314,7 @@ class _CustomCardTransportState extends State<CustomCardTransport> {
                 SizedBox(
                   width: size.width * .25,
                   child: AutoSizeText(
-                    '${transportPrice.toStringAsFixed(0)} \$',
+                    '\$${formatPrice(transportPrice)} ',
                     maxLines: 1,
                     maxFontSize: 14,
                     minFontSize: 12,

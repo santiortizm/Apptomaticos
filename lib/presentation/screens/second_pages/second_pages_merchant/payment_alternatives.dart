@@ -138,6 +138,7 @@ class _PaymentAlternativesState extends State<PaymentAlternatives> {
                 ),
                 child: SingleChildScrollView(
                   child: Column(
+                    spacing: 18,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(
@@ -176,32 +177,32 @@ class _PaymentAlternativesState extends State<PaymentAlternatives> {
                           'Ofrecemos dos opciones para tu comodidad:\n\nPago Contra Entrega: Realiza el pago al recibir tus tomates, asegurando la calidad del producto antes de pagar.\n\nPago Inmediato: Paga al momento de hacer tu pedido y disfruta de un proceso de compra rápido y sencillo.',
                           16),
                       SizedBox(height: size.height * 0.03),
-                      // CustomButton(
-                      //   onPressed: () {},
-                      //   color: buttonGreen,
-                      //   colorBorder: buttonGreen,
-                      //   border: 12,
-                      //   width: 0.4,
-                      //   height: 0.07,
-                      //   elevation: 2,
-                      //   sizeBorder: 0,
-                      //   child: AutoSizeText(
-                      //     'PAGO INMEDIATO',
-                      //     maxLines: 1,
-                      //     maxFontSize: 18,
-                      //     minFontSize: 16,
-                      //     style: temaApp.textTheme.titleSmall!.copyWith(
-                      //         color: Colors.white,
-                      //         fontWeight: FontWeight.w600,
-                      //         fontSize: 30),
-                      //   ),
-                      // ),
+                      CustomButton(
+                        onPressed: () {},
+                        color: buttonGreen,
+                        colorBorder: buttonGreen,
+                        border: 12,
+                        width: 0.4,
+                        height: 0.07,
+                        elevation: 2,
+                        sizeBorder: 0,
+                        child: AutoSizeText(
+                          'PAGO INMEDIATO',
+                          maxLines: 1,
+                          maxFontSize: 18,
+                          minFontSize: 16,
+                          style: temaApp.textTheme.titleSmall!.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 30),
+                        ),
+                      ),
                       CustomButton(
                         onPressed: _handleCashOnDelivery,
                         color: Colors.white,
                         colorBorder: buttonGreen,
                         border: 12,
-                        width: 0.4,
+                        width: 0.35,
                         height: 0.07,
                         elevation: 2,
                         sizeBorder: 2.5,
@@ -212,6 +213,28 @@ class _PaymentAlternativesState extends State<PaymentAlternatives> {
                           minFontSize: 16,
                           style: temaApp.textTheme.titleSmall!.copyWith(
                               color: buttonGreen,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 30),
+                        ),
+                      ),
+                      CustomButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        color: redApp,
+                        colorBorder: redApp,
+                        border: 12,
+                        width: 0.35,
+                        height: 0.07,
+                        elevation: 2,
+                        sizeBorder: 2.5,
+                        child: AutoSizeText(
+                          'CANCELAR',
+                          maxLines: 1,
+                          maxFontSize: 18,
+                          minFontSize: 16,
+                          style: temaApp.textTheme.titleSmall!.copyWith(
+                              color: Colors.white,
                               fontWeight: FontWeight.w600,
                               fontSize: 30),
                         ),

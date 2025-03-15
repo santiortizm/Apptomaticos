@@ -59,35 +59,88 @@ class _CustomDrawerState extends State<CustomDrawer> {
     switch (widget.userRole) {
       case 'Productor':
         return [
-          _drawerItem(Icons.store, 'Mis Productos', context, '/myProducts'),
-          _drawerItem(Icons.add, 'Mis Ventas', context, '/mySales'),
           _drawerItem(
-              Icons.add, 'Mis Contra Ofertas', context, '/myCouterOffers'),
+              Image(
+                image: AssetImage('./assets/images/tomate.png'),
+              ),
+              'Mis Productos',
+              context,
+              '/myProducts'),
+          _drawerItem(
+              Image(
+                image: AssetImage('./assets/images/ventas.png'),
+              ),
+              'Mis Ventas',
+              context,
+              '/mySales'),
+          _drawerItem(
+              Image(
+                image: AssetImage('./assets/images/contra_oferta.png'),
+              ),
+              'Mis Contra Ofertas',
+              context,
+              '/myCouterOffers'),
           widget.cerrarSesion,
         ];
       case 'Comerciante':
         return [
           _drawerItem(
-              Icons.shopping_cart, 'Mis Compras', context, '/shoppingMerchant'),
-          _drawerItem(Icons.business, 'Mis Contra Ofertas', context,
+              Image(
+                image: AssetImage('./assets/images/ventas.png'),
+              ),
+              'Mis Compras',
+              context,
+              '/shoppingMerchant'),
+          _drawerItem(
+              Image(
+                image: AssetImage('./assets/images/contra_oferta.png'),
+              ),
+              'Mis Contra Ofertas',
+              context,
               '/counterOfferMerchant'),
-          _drawerItem(Icons.business, 'Mis Pedidos', context, '/myOrders'),
+          _drawerItem(
+              Image(
+                image: AssetImage('./assets/images/pedido.png'),
+              ),
+              'Mis Pedidos',
+              context,
+              '/myOrders'),
           widget.cerrarSesion,
         ];
       case 'Transportador':
         return [
-          _drawerItem(Icons.local_shipping, 'Mis Transportes', context,
+          _drawerItem(
+              Image(
+                image: AssetImage('./assets/images/transportes.png'),
+              ),
+              'Mis Transportes',
+              context,
               '/myTransports'),
+          _drawerItem(
+              Image(
+                image: AssetImage('./assets/images/transportes.png'),
+              ),
+              'Historial de transportes',
+              context,
+              '/transportHistory'),
           widget.cerrarSesion,
         ];
       default:
-        return [_drawerItem(Icons.error, 'Rol no reconocido', context, '/')];
+        return [
+          _drawerItem(
+              Image(
+                image: AssetImage('./assets/images/tomate.png'),
+              ),
+              'Rol no reconocido',
+              context,
+              '/')
+        ];
     }
   }
 
   ///  Genera cada ítem del Drawer
   Widget _drawerItem(
-      IconData icon, String title, BuildContext context, String route) {
+      Widget icon, String title, BuildContext context, String route) {
     final size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () {
@@ -118,13 +171,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 ),
               ),
               CircleAvatar(
-                radius: 30,
-                backgroundColor: Colors.white,
-                child: Icon(
-                  icon,
-                  color: Colors.black,
-                ),
-              ),
+                  radius: 30, backgroundColor: Colors.white, child: icon),
             ],
           ),
         ),

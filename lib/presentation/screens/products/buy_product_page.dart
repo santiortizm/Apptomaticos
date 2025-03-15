@@ -9,6 +9,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:go_router/go_router.dart';
 
@@ -68,6 +69,12 @@ class _BuyProductPageState extends State<BuyProductPage> {
     });
   }
 
+  String formatPrice(num price) {
+    final formatter =
+        NumberFormat.currency(locale: 'es_CO', symbol: '', decimalDigits: 0);
+    return formatter.format(price);
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -92,156 +99,155 @@ class _BuyProductPageState extends State<BuyProductPage> {
               child: Stack(
                 children: [
                   Container(
-                    width: size.width,
-                    height: size.height,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
+                      color: Colors.black,
                       image: DecorationImage(
-                        image: AssetImage('assets/images/fondo1.jpg'),
+                        opacity: 0.4,
+                        image: AssetImage(
+                          'assets/images/fondo1.jpg',
+                        ),
                         fit: BoxFit.cover,
                       ),
                     ),
-                    child: Container(
-                      color: Colors.black.withValues(alpha: 0.5),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: size.width * 0.05,
-                        vertical: size.height * 0.05),
-                    child: Container(
-                      width: size.width * 1,
-                      height: size.height * 1,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                margin:
-                                    EdgeInsets.only(top: size.height * 0.025),
-                                alignment: Alignment.centerLeft,
-                                width: size.width * .3,
-                                child: TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Row(
-                                    spacing: size.width * 0.02,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: size.width * 0.05,
+                          vertical: size.height * 0.05),
+                      child: Container(
+                        width: size.width * 1,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  margin:
+                                      EdgeInsets.only(top: size.height * 0.025),
+                                  alignment: Alignment.centerLeft,
+                                  width: size.width * .3,
+                                  child: TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Row(
+                                      spacing: size.width * 0.02,
+                                      children: [
+                                        const Icon(
+                                          size: 24,
+                                          Icons.arrow_back,
+                                          color: Colors.black,
+                                        ),
+                                        AutoSizeText(
+                                          'Atras',
+                                          maxLines: 1,
+                                          minFontSize: 16,
+                                          maxFontSize: 18,
+                                          style: temaApp.textTheme.titleSmall!
+                                              .copyWith(
+                                                  fontWeight: FontWeight.normal,
+                                                  color: Colors.black,
+                                                  fontSize: 28),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                if (isOwner)
+                                  Row(
                                     children: [
-                                      const Icon(
-                                        size: 24,
-                                        Icons.arrow_back,
-                                        color: Colors.black,
+                                      IconButton(
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title:
+                                                    const Text('Advertencia'),
+                                                content: const Text(
+                                                    '¿Estás seguro de eliminar el producto?'),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    child: Text('Cancelar',
+                                                        style: TextStyle(
+                                                            color: redApp)),
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  ),
+                                                  TextButton(
+                                                    child: Text('Aceptar',
+                                                        style: TextStyle(
+                                                            color:
+                                                                buttonGreen)),
+                                                    onPressed: () async {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                      final success =
+                                                          await productService
+                                                              .deleteProduct(
+                                                                  widget
+                                                                      .productId);
+
+                                                      if (success) {
+                                                        setState(
+                                                          () {
+                                                            productDetails =
+                                                                productService
+                                                                    .fetchProductDetails(
+                                                                        widget
+                                                                            .productId);
+                                                          },
+                                                        );
+                                                      } else {
+                                                        // ignore: use_build_context_synchronously
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                          const SnackBar(
+                                                              content: Text(
+                                                                  'Error al eliminar el producto')),
+                                                        );
+                                                      }
+                                                    },
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                        icon: Icon(Icons.delete, color: redApp),
                                       ),
-                                      AutoSizeText(
-                                        'Atras',
-                                        maxLines: 1,
-                                        minFontSize: 16,
-                                        maxFontSize: 18,
-                                        style: temaApp.textTheme.titleSmall!
-                                            .copyWith(
-                                                fontWeight: FontWeight.normal,
-                                                color: Colors.black,
-                                                fontSize: 28),
+                                      CustomButton(
+                                        onPressed: () {
+                                          _dialogBuilder(context);
+                                        },
+                                        color: Colors.white,
+                                        border: 0,
+                                        width: 0.1,
+                                        height: 0.1,
+                                        elevation: 0,
+                                        colorBorder: Colors.transparent,
+                                        sizeBorder: 0,
+                                        child: Icon(
+                                          size: 32,
+                                          Icons.edit,
+                                          color: redApp,
+                                        ),
                                       ),
                                     ],
                                   ),
-                                ),
-                              ),
-                              if (isOwner)
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      onPressed: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title: const Text('Advertencia'),
-                                              content: const Text(
-                                                  '¿Estás seguro de eliminar el producto?'),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                  child: Text('Cancelar',
-                                                      style: TextStyle(
-                                                          color: redApp)),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                                TextButton(
-                                                  child: Text('Aceptar',
-                                                      style: TextStyle(
-                                                          color: buttonGreen)),
-                                                  onPressed: () async {
-                                                    Navigator.of(context).pop();
-                                                    final success =
-                                                        await productService
-                                                            .deleteProduct(
-                                                                widget
-                                                                    .productId);
-
-                                                    if (success) {
-                                                      setState(
-                                                        () {
-                                                          productDetails =
-                                                              productService
-                                                                  .fetchProductDetails(
-                                                                      widget
-                                                                          .productId);
-                                                        },
-                                                      );
-                                                    } else {
-                                                      // ignore: use_build_context_synchronously
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                        const SnackBar(
-                                                            content: Text(
-                                                                'Error al eliminar el producto')),
-                                                      );
-                                                    }
-                                                  },
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      },
-                                      icon: Icon(Icons.delete, color: redApp),
-                                    ),
-                                    CustomButton(
-                                      onPressed: () {
-                                        _dialogBuilder(context);
-                                      },
-                                      color: Colors.white,
-                                      border: 0,
-                                      width: 0.1,
-                                      height: 0.1,
-                                      elevation: 0,
-                                      colorBorder: Colors.transparent,
-                                      sizeBorder: 0,
-                                      child: Icon(
-                                        size: 32,
-                                        Icons.edit,
-                                        color: redApp,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                            ],
-                          ),
-                          Container(
-                            alignment: Alignment.topCenter,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: size.width * 0.05),
-                            width: size.width * 1,
-                            height: size.height * 0.8,
-                            child: SingleChildScrollView(
+                              ],
+                            ),
+                            Container(
+                              alignment: Alignment.topCenter,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: size.width * 0.05),
+                              width: size.width * 1,
                               child: Column(
                                 spacing: 12,
                                 children: [
@@ -286,7 +292,9 @@ class _BuyProductPageState extends State<BuyProductPage> {
                                   ),
                                   _cardInfo(
                                     'Fecha de cosecha:',
-                                    productData.fechaCosecha,
+                                    DateFormat('dd/MM/yyyy').format(
+                                        DateTime.parse(
+                                            productData.fechaCosecha)),
                                     Icon(
                                       Icons.calendar_month,
                                       color: redApp,
@@ -294,7 +302,9 @@ class _BuyProductPageState extends State<BuyProductPage> {
                                   ),
                                   _cardInfo(
                                     'Fecha de caducidad:',
-                                    productData.fechaCaducidad,
+                                    DateFormat('dd/MM/yyyy').format(
+                                        DateTime.parse(
+                                            productData.fechaCaducidad)),
                                     Icon(
                                       Icons.date_range,
                                       color: redApp,
@@ -310,7 +320,7 @@ class _BuyProductPageState extends State<BuyProductPage> {
                                   ),
                                   _cardInfo(
                                     'Precio canasta:',
-                                    productData.precio.toString(),
+                                    productData.precio.toStringAsFixed(0),
                                     Icon(
                                       Icons.attach_money,
                                       color: redApp,
@@ -366,7 +376,7 @@ class _BuyProductPageState extends State<BuyProductPage> {
                                       margin: const EdgeInsets.only(
                                           top: 20, bottom: 40),
                                       child: Row(
-                                        spacing: 10,
+                                        spacing: 40,
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
@@ -376,6 +386,7 @@ class _BuyProductPageState extends State<BuyProductPage> {
                                               'productId': widget.productId,
                                               'imageUrl': productData.imagen,
                                               'price': productData.precio,
+                                              'cantidad': productData.cantidad,
                                               'availableQuantify':
                                                   productData.cantidad,
                                             }),
@@ -443,11 +454,11 @@ class _BuyProductPageState extends State<BuyProductPage> {
                                 ],
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -483,7 +494,7 @@ class _BuyProductPageState extends State<BuyProductPage> {
               final productData = snapshot.data!;
               titleController.text = productData.nombreProducto;
               descriptionController.text = productData.descripcion;
-              priceController.text = productData.precio.toString();
+              priceController.text = formatPrice(productData.precio);
               quantityController.text = productData.cantidad.toString();
 
               return SizedBox(

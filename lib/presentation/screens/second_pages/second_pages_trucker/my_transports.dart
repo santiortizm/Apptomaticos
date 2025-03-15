@@ -1,10 +1,11 @@
 import 'package:apptomaticos/core/services/transport_service.dart';
-import 'package:apptomaticos/core/widgets/cards/custom_card_transportation_history.dart';
+import 'package:apptomaticos/core/widgets/cards/custom_card_transportation_info.dart';
 import 'package:apptomaticos/core/widgets/custom_button.dart';
 import 'package:apptomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/models/transport_model.dart';
 
@@ -81,6 +82,12 @@ class _MyTransportsState extends State<MyTransports> {
             transportService.fetchTransportsByTrucker(idUsuario!);
       });
     }
+  }
+
+  String formatPrice(num price) {
+    final formatter =
+        NumberFormat.currency(locale: 'es_CO', symbol: '', decimalDigits: 0);
+    return formatter.format(price);
   }
 
   @override
@@ -191,25 +198,37 @@ class _MyTransportsState extends State<MyTransports> {
                             }
 
                             final transports = snapshot.data!
-                                .where(
-                                    (t) => t.estado != 'En Central de abastos')
+                                .where((t) => t.estado != 'Finalizado')
                                 .toList();
                             return RefreshIndicator(
                               onRefresh: _refreshTransports,
                               child: ListView.builder(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: size.width * 0.05),
+                                    horizontal: size.width * 0.02),
                                 itemCount: transports.length,
                                 itemBuilder: (context, index) {
                                   final transport = transports[index];
                                   return Padding(
                                     padding: const EdgeInsets.only(bottom: 16),
-                                    child: CustomCardTransportationHistory(
+                                    child: CustomCardTransportationInfo(
                                       idTransporte: transport.idTransporte,
+                                      estado: transport.estado,
                                       idCompra: transport.idCompra,
                                       pesoCarga: transport.pesoCarga.toString(),
-                                      valorTransporte:
-                                          transport.valorTransporte.toString(),
+                                      valorTransporte: formatPrice(
+                                          transport.valorTransporte),
+                                      confirmarPago: () async {
+                                        await supabase.from('compras').update({
+                                          'estadoCompra': 'Pagado'
+                                        }).eq('id', transport.idCompra);
+
+                                        await supabase
+                                            .from('transportes')
+                                            .update({
+                                          'estado': 'Finalizado'
+                                        }).eq('idTransporte',
+                                                transport.idTransporte);
+                                      },
                                     ),
                                   );
                                 },
