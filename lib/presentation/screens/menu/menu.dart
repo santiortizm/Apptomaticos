@@ -1,14 +1,14 @@
-import 'package:apptomaticos/core/constants/colors.dart';
-import 'package:apptomaticos/core/widgets/custom_button.dart';
-import 'package:apptomaticos/core/widgets/drawer/custom_drawer.dart';
-import 'package:apptomaticos/presentation/screens/price/price_page.dart';
-import 'package:apptomaticos/presentation/screens/products/listview_products.dart';
-import 'package:apptomaticos/presentation/screens/profile/profile_widget.dart';
-import 'package:apptomaticos/presentation/themes/app_theme.dart';
+import 'package:App_Tomaticos/core/constants/colors.dart';
+import 'package:App_Tomaticos/core/widgets/custom_button.dart';
+import 'package:App_Tomaticos/core/widgets/drawer/custom_drawer.dart';
+import 'package:App_Tomaticos/presentation/screens/price/price_page.dart';
+import 'package:App_Tomaticos/presentation/screens/products/listview_products.dart';
+import 'package:App_Tomaticos/presentation/screens/profile/profile_widget.dart';
+import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:apptomaticos/core/widgets/custom_tabbar_button.dart';
+import 'package:App_Tomaticos/core/widgets/custom_tabbar_button.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -201,13 +201,6 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
               duration: const Duration(milliseconds: 1));
         },
       ),
-    );
-  }
-
-  Widget _buildPricesTab() {
-    return const Center(
-      child:
-          Text('Aquí van los precios', style: TextStyle(color: Colors.white)),
     );
   }
 }

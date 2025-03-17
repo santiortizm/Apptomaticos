@@ -1,7 +1,7 @@
-import 'package:apptomaticos/core/services/transport_service.dart';
-import 'package:apptomaticos/core/widgets/cards/custom_card_transportation_info.dart';
-import 'package:apptomaticos/core/widgets/custom_button.dart';
-import 'package:apptomaticos/presentation/themes/app_theme.dart';
+import 'package:App_Tomaticos/core/services/transport_service.dart';
+import 'package:App_Tomaticos/core/widgets/cards/custom_card_transportation_info.dart';
+import 'package:App_Tomaticos/core/widgets/custom_button.dart';
+import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

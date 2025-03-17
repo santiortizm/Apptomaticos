@@ -1,5 +1,5 @@
-import 'package:apptomaticos/core/models/buy_model.dart';
-import 'package:apptomaticos/core/services/product_service.dart';
+import 'package:App_Tomaticos/core/models/buy_model.dart';
+import 'package:App_Tomaticos/core/services/product_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class BuyService {
@@ -103,7 +103,6 @@ class BuyService {
 
       return response.map((json) => Buy.fromJson(json)).toList();
     } catch (e) {
-      print('Error obteniendo compras con transporte: $e');
       return [];
     }
   }
@@ -124,8 +123,15 @@ class BuyService {
 
       return response.map((json) => Buy.fromJson(json)).toList();
     } catch (e) {
-      print('Error obteniendo ventas finalizadas: $e');
       return [];
+    }
+  }
+
+  Future<void> deleteBuy(int id) async {
+    try {
+      await _supabase.from('compras').delete().eq('id', id);
+    } catch (e) {
+      return;
     }
   }
 }

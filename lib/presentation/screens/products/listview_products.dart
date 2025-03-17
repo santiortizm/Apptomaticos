@@ -1,7 +1,7 @@
-import 'package:apptomaticos/core/models/product_model.dart';
-import 'package:apptomaticos/core/services/product_service.dart';
-import 'package:apptomaticos/core/services/user_services.dart';
-import 'package:apptomaticos/core/widgets/cards/custom_card_products.dart';
+import 'package:App_Tomaticos/core/models/product_model.dart';
+import 'package:App_Tomaticos/core/services/product_service.dart';
+import 'package:App_Tomaticos/core/services/user_services.dart';
+import 'package:App_Tomaticos/core/widgets/cards/custom_card_products.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';

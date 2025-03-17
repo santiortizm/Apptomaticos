@@ -1,4 +1,4 @@
-import 'package:apptomaticos/core/models/counter_offer_model.dart';
+import 'package:App_Tomaticos/core/models/counter_offer_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/product_service.dart';
 
@@ -89,6 +89,19 @@ class CounterOfferService {
       return response.map((json) => CounterOffer.fromMap(json)).toList();
     } catch (e) {
       return [];
+    }
+  }
+
+  Future<bool> deleteCounterOffer(int id) async {
+    try {
+      final response = await supabaseClient
+          .from('contra_oferta')
+          .delete()
+          .eq('idContraOferta', id);
+
+      return response.isNotEmpty;
+    } catch (e) {
+      return false;
     }
   }
 }

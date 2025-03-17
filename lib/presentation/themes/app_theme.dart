@@ -1,4 +1,4 @@
-import 'package:apptomaticos/core/constants/colors.dart';
+import 'package:App_Tomaticos/core/constants/colors.dart';
 import 'package:flutter/material.dart';
 
 final temaApp = ThemeData(

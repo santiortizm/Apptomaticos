@@ -1,4 +1,4 @@
-import 'package:apptomaticos/core/models/transport_model.dart';
+import 'package:App_Tomaticos/core/models/transport_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class TransportService {
@@ -74,6 +74,17 @@ class TransportService {
     } catch (e) {
       print('Error al obtener transportes del comprador: $e');
       return [];
+    }
+  }
+
+  Future<void> deleteTransport(int idTransporte) async {
+    try {
+      await supabase
+          .from('transportes')
+          .delete()
+          .eq('idTransporte', idTransporte);
+    } catch (e) {
+      print('Error al eliminar transporte: $e');
     }
   }
 }

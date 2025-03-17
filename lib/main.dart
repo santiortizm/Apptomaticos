@@ -1,5 +1,5 @@
-import 'package:apptomaticos/presentation/router/app_router.dart';
-import 'package:apptomaticos/presentation/themes/app_theme.dart';
+import 'package:App_Tomaticos/presentation/router/app_router.dart';
+import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
 import 'package:cloudinary_url_gen/cloudinary.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';

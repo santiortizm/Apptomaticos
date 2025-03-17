@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:apptomaticos/presentation/screens/login/login_widget.dart';
-import 'package:apptomaticos/presentation/screens/menu/menu.dart';
-import 'package:apptomaticos/presentation/screens/menu_trucker/menu_trucker.dart';
+import 'package:App_Tomaticos/presentation/screens/login/login_widget.dart';
+import 'package:App_Tomaticos/presentation/screens/menu/menu.dart';
+import 'package:App_Tomaticos/presentation/screens/menu_trucker/menu_trucker.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';

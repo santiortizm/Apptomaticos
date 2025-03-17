@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:apptomaticos/core/constants/colors.dart';
-import 'package:apptomaticos/core/services/image_service.dart';
+import 'package:App_Tomaticos/core/constants/colors.dart';
+import 'package:App_Tomaticos/core/services/image_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';

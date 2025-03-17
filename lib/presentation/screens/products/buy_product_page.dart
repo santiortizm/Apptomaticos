@@ -1,10 +1,10 @@
-import 'package:apptomaticos/core/constants/colors.dart';
-import 'package:apptomaticos/core/models/product_model.dart';
-import 'package:apptomaticos/core/services/cloudinary_service.dart';
-import 'package:apptomaticos/core/services/product_service.dart';
-import 'package:apptomaticos/core/widgets/custom_button.dart';
-import 'package:apptomaticos/presentation/screens/products/update_product.dart';
-import 'package:apptomaticos/presentation/themes/app_theme.dart';
+import 'package:App_Tomaticos/core/constants/colors.dart';
+import 'package:App_Tomaticos/core/models/product_model.dart';
+import 'package:App_Tomaticos/core/services/cloudinary_service.dart';
+import 'package:App_Tomaticos/core/services/product_service.dart';
+import 'package:App_Tomaticos/core/widgets/custom_button.dart';
+import 'package:App_Tomaticos/presentation/screens/products/update_product.dart';
+import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';

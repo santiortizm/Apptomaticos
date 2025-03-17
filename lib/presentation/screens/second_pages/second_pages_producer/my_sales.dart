@@ -1,9 +1,9 @@
-import 'package:apptomaticos/core/models/buy_model.dart';
-import 'package:apptomaticos/core/services/buy_service.dart';
-import 'package:apptomaticos/core/services/product_service.dart';
-import 'package:apptomaticos/core/widgets/cards/custom_card_sale_producer.dart';
-import 'package:apptomaticos/core/widgets/custom_button.dart';
-import 'package:apptomaticos/presentation/themes/app_theme.dart';
+import 'package:App_Tomaticos/core/models/buy_model.dart';
+import 'package:App_Tomaticos/core/services/buy_service.dart';
+import 'package:App_Tomaticos/core/services/product_service.dart';
+import 'package:App_Tomaticos/core/widgets/cards/custom_card_sale_producer.dart';
+import 'package:App_Tomaticos/core/widgets/custom_button.dart';
+import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

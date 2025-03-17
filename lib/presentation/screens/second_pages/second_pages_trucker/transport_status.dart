@@ -1,7 +1,7 @@
-import 'package:apptomaticos/core/constants/colors.dart';
-import 'package:apptomaticos/core/widgets/custom_button.dart';
-import 'package:apptomaticos/core/widgets/drop_down_field/custom_dropdown_field.dart';
-import 'package:apptomaticos/presentation/themes/app_theme.dart';
+import 'package:App_Tomaticos/core/constants/colors.dart';
+import 'package:App_Tomaticos/core/widgets/custom_button.dart';
+import 'package:App_Tomaticos/core/widgets/drop_down_field/custom_dropdown_field.dart';
+import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
