@@ -28,6 +28,7 @@ void main() {
     counterOfferService =
         CounterOfferService(supabaseClient, ProductService(supabaseClient));
   });
+
   test('✅ Crear un producto y validar los datos', () async {
     final newProduct = Product(
       idProducto: createdProductId,

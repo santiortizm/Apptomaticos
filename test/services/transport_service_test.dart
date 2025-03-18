@@ -109,29 +109,29 @@ void main() {
           '093b55d0-ac41-41f0-81bd-234a5ba16293', // ID de transportador
     );
 
-    final insertResponse = await supabaseClient
+    final regiterTransport = await supabaseClient
         .from('transportes')
         .insert(newTransport.toMap())
         .select()
         .single();
-    createdTransportId = insertResponse['idTransporte'];
+    createdTransportId = regiterTransport['idTransporte'];
 
     // Validar que los datos insertados sean correctos
     expect(createdTransportId, isNotNull);
     expect(createdTransportId, isA<int>());
-    expect(insertResponse['estado'], equals(newTransport.estado));
-    expect(insertResponse['pesoCarga'], equals(newTransport.pesoCarga));
+    expect(regiterTransport['estado'], equals(newTransport.estado));
+    expect(regiterTransport['pesoCarga'], equals(newTransport.pesoCarga));
   });
 
   test('✅ Actualizar estado del transporte', () async {
     expect(createdTransportId, isNotNull,
         reason: 'El ID del transporte no puede ser nulo.');
 
-    final updatedData = {'estado': 'En camino', 'valorTransporte': 1600};
+    final updateTransport = {'estado': 'En camino', 'valorTransporte': 1600};
 
     final updateResponse = await supabaseClient
         .from('transportes')
-        .update(updatedData)
+        .update(updateTransport)
         .eq('idTransporte', createdTransportId)
         .select()
         .single();
