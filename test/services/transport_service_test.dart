@@ -81,19 +81,19 @@ void main() {
       estadoCompra: 'Pendiente',
     );
 
-    final insertResponse = await supabaseClient
+    final registerPurchase = await supabaseClient
         .from('compras')
         .insert(newBuy.toMap())
         .select()
         .single();
-    createdBuyId = insertResponse['id'];
+    createdBuyId = registerPurchase['id'];
 
     // Validar que los datos insertados sean correctos
     expect(createdBuyId, isNotNull);
     expect(createdBuyId, isA<int>());
-    expect(insertResponse['cantidad'], equals(newBuy.cantidad));
-    expect(insertResponse['total'], equals(newBuy.total));
-    expect(insertResponse['estadoCompra'], equals(newBuy.estadoCompra));
+    expect(registerPurchase['cantidad'], equals(newBuy.cantidad));
+    expect(registerPurchase['total'], equals(newBuy.total));
+    expect(registerPurchase['estadoCompra'], equals(newBuy.estadoCompra));
   });
   test('✅ Crear un transporte y validar los datos', () async {
     final newTransport = Transport(
