@@ -75,11 +75,11 @@ void main() {
     expect(createdProductId, isNotNull,
         reason: 'El producto no fue creado correctamente.');
 
-    final updatedData = {'precio': 29.99};
+    final updateDataProduct = {'precio': 29.99};
 
     final updateResponse = await supabaseClient
         .from('productos')
-        .update(updatedData)
+        .update(updateDataProduct)
         .eq('idProducto', createdProductId)
         .select()
         .single();
