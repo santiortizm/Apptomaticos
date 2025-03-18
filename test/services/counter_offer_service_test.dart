@@ -77,31 +77,35 @@ void main() {
       idPropietario: 'c5de83d8-4805-4831-8a11-068020004369',
     );
 
-    final insertResponse = await supabaseClient
+    final registerCounterOffer = await supabaseClient
         .from('contra_oferta')
         .insert(newCounterOffer.toMap())
         .select()
         .single();
-    createdCounterOfferId = insertResponse['idContraOferta'];
+    createdCounterOfferId = registerCounterOffer['idContraOferta'];
 
     // Validar que los datos insertados sean correctos
     expect(createdCounterOfferId, isNotNull);
     expect(createdCounterOfferId, isA<int>());
-    expect(insertResponse['cantidad'], equals(newCounterOffer.cantidad));
-    expect(insertResponse['valorOferta'], equals(newCounterOffer.valorOferta));
-    expect(
-        insertResponse['estadoOferta'], equals(newCounterOffer.estadoOferta));
+    expect(registerCounterOffer['cantidad'], equals(newCounterOffer.cantidad));
+    expect(registerCounterOffer['valorOferta'],
+        equals(newCounterOffer.valorOferta));
+    expect(registerCounterOffer['estadoOferta'],
+        equals(newCounterOffer.estadoOferta));
   });
 
   test('✅ Actualizar una contraoferta', () async {
     expect(createdCounterOfferId, isNotNull,
         reason: 'El ID de la contraoferta no puede ser nulo.');
 
-    final updatedData = {'estadoOferta': 'Aceptada', 'valorOferta': 120.0};
+    final updateCounterOffer = {
+      'estadoOferta': 'Aceptada',
+      'valorOferta': 120.0
+    };
 
     final updateResponse = await supabaseClient
         .from('contra_oferta')
-        .update(updatedData)
+        .update(updateCounterOffer)
         .eq('idContraOferta', createdCounterOfferId)
         .select()
         .single();
