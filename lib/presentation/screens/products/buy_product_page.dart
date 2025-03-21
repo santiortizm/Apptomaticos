@@ -494,7 +494,7 @@ class _BuyProductPageState extends State<BuyProductPage> {
               final productData = snapshot.data!;
               titleController.text = productData.nombreProducto;
               descriptionController.text = productData.descripcion;
-              priceController.text = formatPrice(productData.precio);
+              priceController.text = productData.precio.toString();
               quantityController.text = productData.cantidad.toString();
 
               return SizedBox(

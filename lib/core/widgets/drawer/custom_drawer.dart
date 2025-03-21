@@ -165,7 +165,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   title,
                   maxLines: 1,
                   maxFontSize: 20,
-                  minFontSize: 18,
+                  minFontSize: 14,
                   style: temaApp.textTheme.titleSmall!
                       .copyWith(color: Colors.black, fontSize: 30),
                 ),

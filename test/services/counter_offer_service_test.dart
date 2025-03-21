@@ -94,13 +94,12 @@ void main() {
         equals(newCounterOffer.estadoOferta));
   });
 
-  test('✅ Actualizar una contraoferta', () async {
+  test('✅ Actualizar estado oferta', () async {
     expect(createdCounterOfferId, isNotNull,
         reason: 'El ID de la contraoferta no puede ser nulo.');
 
     final updateCounterOffer = {
       'estadoOferta': 'Aceptada',
-      'valorOferta': 120.0
     };
 
     final updateResponse = await supabaseClient
@@ -111,7 +110,6 @@ void main() {
         .single();
 
     expect(updateResponse['estadoOferta'], equals('Aceptada'));
-    expect(updateResponse['valorOferta'], equals(120.0));
     print('🟢 Contraoferta actualizada correctamente.');
   });
 

@@ -103,6 +103,7 @@ class _CustomCardTransportState extends State<CustomCardTransport> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Seleccionar Fecha de Cargue'),
+        backgroundColor: Colors.white,
         content: StatefulBuilder(
           builder: (context, setStateDialog) {
             return Column(
@@ -163,8 +164,8 @@ class _CustomCardTransportState extends State<CustomCardTransport> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
+            onPressed: () => Navigator.pop(context, null),
+            child: Text("Cancelar", style: TextStyle(color: redApp)),
           ),
           TextButton(
             onPressed: () {
@@ -173,12 +174,13 @@ class _CustomCardTransportState extends State<CustomCardTransport> {
                 _handleTransportCreation(selectedCargaDate!);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
+                  SnackBar(
+                      backgroundColor: redApp,
                       content: Text('Seleccione una fecha de cargue')),
                 );
               }
             },
-            child: const Text('Confirmar'),
+            child: Text("Aceptar", style: TextStyle(color: buttonGreen)),
           ),
         ],
       ),
@@ -234,7 +236,10 @@ class _CustomCardTransportState extends State<CustomCardTransport> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Aceptar'),
+            child: Text(
+              'Aceptar',
+              style: TextStyle(color: buttonGreen),
+            ),
           ),
         ],
       ),
@@ -371,15 +376,25 @@ class _CustomCardTransportState extends State<CustomCardTransport> {
                     height: 0.05,
                     elevation: 2,
                     sizeBorder: 0,
-                    child: AutoSizeText(
-                      'TRANSPORTAR',
-                      maxLines: 1,
-                      maxFontSize: 17,
-                      minFontSize: 14,
-                      style: temaApp.textTheme.titleSmall!.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 30),
+                    child: Row(
+                      spacing: 4,
+                      children: [
+                        AutoSizeText(
+                          'TRANSPORTAR',
+                          maxLines: 1,
+                          maxFontSize: 17,
+                          minFontSize: 14,
+                          style: temaApp.textTheme.titleSmall!.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 30),
+                        ),
+                        Image.asset(
+                          './assets/images/camion.png',
+                          width: 25,
+                          height: 25,
+                        )
+                      ],
                     ),
                   ),
                 ],
