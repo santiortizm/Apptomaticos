@@ -30,7 +30,7 @@ Deno.serve(async (req) => {
   const payload: WebhookPayload = await req.json();
   const idCompra = payload.record.idCompra;
 
-  // 🔹 Obtener idComprador de la compra
+  // Obtener idComprador de la compra
   const { data: compra, error: compraError } = await supabase
     .from('compras')
     .select('idComprador')
@@ -45,7 +45,7 @@ Deno.serve(async (req) => {
     );
   }
 
-  // 🔹 Obtener token de FCM del comprador
+  //  Obtener token de FCM del comprador
   const { data: comprador, error: usuarioError } = await supabase
     .from('usuarios')
     .select('fcm_token')
@@ -60,13 +60,13 @@ Deno.serve(async (req) => {
     );
   }
 
-  // 🔥 Obtener token de acceso de Firebase
+  //  Obtener token de acceso de Firebase
   const accessToken = await getAccessToken({
     clientEmail: serviceAccount.client_email,
     privateKey: serviceAccount.private_key,
   });
 
-  // 🔹 Enviar notificación al comprador
+  //  Enviar notificación al comprador
   const response = await fetch(
     `https://fcm.googleapis.com/v1/projects/${serviceAccount.project_id}/messages:send`,
     {
@@ -101,7 +101,7 @@ Deno.serve(async (req) => {
   );
 });
 
-// ✅ **Función para obtener el token de acceso de Firebase**
+//Función para obtener el token de acceso de Firebase
 const getAccessToken = ({
   clientEmail,
   privateKey,

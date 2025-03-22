@@ -33,7 +33,7 @@ Deno.serve(async (req) => {
   try {
     const payload: WebhookPayload = await req.json();
 
-    // 🔹 Verificar que el evento es un INSERT en la tabla compras
+    //  Verificar que el evento es un INSERT en la tabla compras
     if (payload.table !== "compras" || payload.type !== "INSERT") {
       return new Response("No es un nuevo registro de compra.", { status: 200 });
     }
@@ -42,7 +42,7 @@ Deno.serve(async (req) => {
 
     const idPropietario = payload.record.idPropietario;
 
-    // 🔹 Obtener el fcm_token del propietario del producto
+    // Obtener el fcm_token del propietario del producto
     const { data: propietario, error: propietarioError } = await supabase
       .from("usuarios")
       .select("fcm_token")
@@ -56,13 +56,13 @@ Deno.serve(async (req) => {
 
     console.log(`📲 Enviando notificación a propietario ${idPropietario}...`);
 
-    // 🔥 Obtener token de acceso de Firebase
+    //  Obtener token de acceso de Firebase
     const accessToken = await getAccessToken({
       clientEmail: serviceAccount.client_email,
       privateKey: serviceAccount.private_key,
     });
 
-    // 🔹 Enviar notificación al propietario
+    //  Enviar notificación al propietario
     const response = await fetch(
       `https://fcm.googleapis.com/v1/projects/${serviceAccount.project_id}/messages:send`,
       {
@@ -97,7 +97,7 @@ Deno.serve(async (req) => {
   }
 });
 
-// ✅ **Función para obtener el token de acceso de Firebase**
+// Función para obtener el token de acceso de Firebase
 const getAccessToken = ({
   clientEmail,
   privateKey,

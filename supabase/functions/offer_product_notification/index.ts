@@ -90,7 +90,7 @@ Deno.serve(async (req) => {
   }
 });
 
-// 🔹 **Función para obtener el token de acceso de Firebase**
+//Función para obtener el token de acceso de Firebase
 const getAccessToken = ({
   clientEmail,
   privateKey,

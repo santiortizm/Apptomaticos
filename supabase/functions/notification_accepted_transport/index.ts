@@ -30,7 +30,7 @@ Deno.serve(async (req) => {
   const payload: WebhookPayload = await req.json();
   const idCompra = payload.record.idCompra;
 
-  // 🔹 Obtener idComprador y idPropietario de la compra
+  //  Obtener idComprador y idPropietario de la compra
   const { data: compra, error: compraError } = await supabase
     .from('compras')
     .select('idComprador, idPropietario')
@@ -45,7 +45,7 @@ Deno.serve(async (req) => {
     );
   }
 
-  // 🔹 Obtener tokens de FCM para comprador y propietario
+  //  Obtener tokens de FCM para comprador y propietario
   const { data: usuarios, error: usuarioError } = await supabase
     .from('usuarios')
     .select('idUsuario, fcm_token')
@@ -69,13 +69,13 @@ Deno.serve(async (req) => {
     );
   }
 
-  // 🔥 Obtener token de acceso de Firebase
+  //  Obtener token de acceso de Firebase
   const accessToken = await getAccessToken({
     clientEmail: serviceAccount.client_email,
     privateKey: serviceAccount.private_key,
   });
 
-  // 🔹 Enviar notificación personalizada a comprador y propietario
+  //  Enviar notificación personalizada a comprador y propietario
   const notifications = usuarios.map(async (usuario) => {
     const fcmToken = usuario.fcm_token as string;
     const isComprador = usuario.idUsuario === compra.idComprador;
@@ -103,7 +103,7 @@ Deno.serve(async (req) => {
     );
   });
 
-  // 🔹 Ejecutar notificaciones en paralelo
+  //  Ejecutar notificaciones en paralelo
   const results = await Promise.allSettled(notifications);
   const failed = results.filter((result) => result.status === "rejected");
 
@@ -121,7 +121,7 @@ Deno.serve(async (req) => {
   );
 });
 
-// ✅ **Función para obtener el token de acceso de Firebase**
+// Función para obtener el token de acceso de Firebase
 const getAccessToken = ({
   clientEmail,
   privateKey,

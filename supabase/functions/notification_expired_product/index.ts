@@ -9,10 +9,10 @@ const supabase = createClient(
 
 Deno.serve(async (req) => {
   try {
-    const now = new Date(); // 📌 Obtener fecha actual en UTC
+    const now = new Date(); //  Obtener fecha actual en UTC
     console.log(`🕒 Ejecutando limpieza de productos caducados: ${now.toISOString()} (UTC)`);
 
-    // 🔹 Buscar productos caducados
+    //  Buscar productos caducados
     const { data: productosCaducados, error: fetchError } = await supabase
       .from("productos")
       .select("idProducto, nombreProducto, fechaCaducidad, idPropietario")
@@ -33,7 +33,7 @@ Deno.serve(async (req) => {
     for (const producto of productosCaducados) {
       console.log(`🗑 Eliminando producto: ${producto.nombreProducto} (ID: ${producto.idProducto})`);
 
-      // 🔥 Eliminar el producto
+      //  Eliminar el producto
       const { error: deleteError } = await supabase
         .from("productos")
         .delete()
@@ -47,11 +47,11 @@ Deno.serve(async (req) => {
       console.log(`✅ Producto ${producto.nombreProducto} eliminado con éxito.`);
       productosEliminados++;
 
-      // 🔥 Guardar el propietario para notificarlo después
+      //  Guardar el propietario para notificarlo después
       propietariosNotificados.add(producto.idPropietario);
     }
 
-    // 🔹 Obtener tokens de FCM de los propietarios
+    //  Obtener tokens de FCM de los propietarios
     const { data: propietarios, error: propietariosError } = await supabase
       .from("usuarios")
       .select("idUsuario, fcm_token")
@@ -66,13 +66,13 @@ Deno.serve(async (req) => {
     if (propietarios && propietarios.length > 0) {
       console.log(`🔔 Se enviarán notificaciones a ${propietarios.length} propietarios.`);
 
-      // 🔥 Obtener token de acceso de Firebase
+      //  Obtener token de acceso de Firebase
       const accessToken = await getAccessToken({
         clientEmail: serviceAccount.client_email,
         privateKey: serviceAccount.private_key,
       });
 
-      // 🔹 Enviar notificación a cada propietario
+      //  Enviar notificación a cada propietario
       const notifications = propietarios.map(async (propietario) => {
         const fcmToken = propietario.fcm_token as string;
 
@@ -97,7 +97,7 @@ Deno.serve(async (req) => {
         );
       });
 
-      // 🔹 Ejecutar notificaciones en paralelo
+      //  Ejecutar notificaciones en paralelo
       const results = await Promise.allSettled(notifications);
       const failed = results.filter((result) => result.status === "rejected");
 
@@ -116,7 +116,7 @@ Deno.serve(async (req) => {
   }
 });
 
-// ✅ **Función para obtener el token de acceso de Firebase**
+//Función para obtener el token de acceso de Firebase
 const getAccessToken = ({
   clientEmail,
   privateKey,
