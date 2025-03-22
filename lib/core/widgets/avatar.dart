@@ -38,7 +38,7 @@ class _AvatarState extends State<Avatar> {
 
     setState(() {
       _imageUrl =
-          "$imageUrl?v=${DateTime.now().millisecondsSinceEpoch}"; // 🔥 Evita caché
+          "$imageUrl?v=${DateTime.now().millisecondsSinceEpoch}"; //  Evita caché
     });
   }
 
@@ -76,7 +76,7 @@ class _AvatarState extends State<Avatar> {
 
       setState(() {
         _imageUrl =
-            "$imageUrl?v=${DateTime.now().millisecondsSinceEpoch}"; // 🔥 Evita caché
+            "$imageUrl?v=${DateTime.now().millisecondsSinceEpoch}"; //  Evita caché
       });
 
       widget.onUpLoad(_imageUrl!);

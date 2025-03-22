@@ -40,19 +40,17 @@ class _CustomCardCounterOfferProducerState
     try {
       final response = await supabase
           .from('usuarios')
-          .select('nombre, apellido') // ✅ Selecciona correctamente
+          .select('nombre, apellido')
           .eq('idUsuario', widget.idOfertador)
-          .maybeSingle(); // ✅ Evita errores si no encuentra usuario
+          .maybeSingle();
 
       if (response != null) {
         setState(() {
-          nombreOfertador =
-              '${response['nombre']} ${response['apellido']}'; // ✅ Concatena nombre y apellido
+          nombreOfertador = '${response['nombre']} ${response['apellido']}';
         });
       } else {
         setState(() {
-          nombreOfertador =
-              'Desconocido'; // ✅ Valor por defecto si no se encuentra
+          nombreOfertador = 'Desconocido';
         });
       }
     } catch (e) {
@@ -76,7 +74,7 @@ class _CustomCardCounterOfferProducerState
   void initState() {
     super.initState();
     _calculateTotalValue();
-    nameUser(); // ✅ Llama a la función para obtener el nombre del ofertador
+    nameUser();
   }
 
   String formatValue(num value) {

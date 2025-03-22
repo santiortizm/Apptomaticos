@@ -40,7 +40,6 @@ class _CustomCardTransportationInfoState
 
       return response;
     } catch (e) {
-      print('Error obteniendo datos de la compra: $e');
       return null;
     }
   }
@@ -197,7 +196,9 @@ class _CustomCardTransportationInfoState
                                                   'estado': 'En Camino'
                                                 }).eq('idTransporte',
                                                         widget.idTransporte);
+                                                // ignore: use_build_context_synchronously
                                                 Navigator.pop(context);
+                                                // ignore: use_build_context_synchronously
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(
                                                   SnackBar(
@@ -207,6 +208,7 @@ class _CustomCardTransportationInfoState
                                                           'Estado del transporte actualizado correctamente')),
                                                 );
                                               } catch (e) {
+                                                // ignore: use_build_context_synchronously
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(
                                                   SnackBar(
@@ -250,6 +252,7 @@ class _CustomCardTransportationInfoState
                                                 }).eq('idTransporte',
                                                         widget.idTransporte);
 
+                                                // ignore: use_build_context_synchronously
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(
                                                   SnackBar(
@@ -258,8 +261,10 @@ class _CustomCardTransportationInfoState
                                                       content: Text(
                                                           'Estado del transporte actualizado correctamente')),
                                                 );
+                                                // ignore: use_build_context_synchronously
                                                 Navigator.pop(context);
                                               } catch (e) {
+                                                // ignore: use_build_context_synchronously
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(
                                                   SnackBar(

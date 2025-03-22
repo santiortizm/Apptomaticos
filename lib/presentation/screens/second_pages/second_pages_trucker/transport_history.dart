@@ -49,8 +49,7 @@ class _TransportHistoryState extends State<TransportHistory> {
       final response = await supabase
           .from('usuarios')
           .select('idUsuario')
-          .eq('idUsuario',
-              user.id) // Corregido: Usa 'idAuth' en lugar de 'idUsuario'
+          .eq('idUsuario', user.id)
           .single();
 
       setState(() {

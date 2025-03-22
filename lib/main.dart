@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       theme: temaApp,
-      locale: const Locale('es'), // 🌎 Español sin variante regional
+      locale: const Locale('es'), // Español sin variante regional
       supportedLocales: const [
         Locale('es'), // Español
       ],

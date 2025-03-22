@@ -88,7 +88,7 @@ class BuyService {
     }
   }
 
-  /// 🔥 **Obtiene las compras del usuario junto con los datos del transporte**
+  /// Obtiene las compras del usuario junto con los datos del transporte
   Future<List<Buy>> fetchPurchasesWithTransport() async {
     try {
       final user = _supabase.auth.currentUser;
@@ -107,7 +107,7 @@ class BuyService {
     }
   }
 
-  /// 🔥 Obtiene todas las ventas finalizadas del productor autenticado
+  ///  Obtiene todas las ventas finalizadas del productor autenticado
   Future<List<Buy>> fetchCompletedSalesForProducer() async {
     try {
       final user = _supabase.auth.currentUser;

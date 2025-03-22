@@ -9,14 +9,11 @@ class TransportService {
           .from('transportes')
           .select('idTransporte, estado')
           .eq('idTransportador', idUsuario)
-          .not('estado', 'eq',
-              'Finalizado') // ❌ Filtra todos los que NO están "Finalizado"
+          .not('estado', 'eq', 'Finalizado')
           .maybeSingle();
 
-      return response !=
-          null; // Si encuentra al menos uno, tiene transporte activo
+      return response != null;
     } catch (e) {
-      print('Error al verificar transporte activo: $e');
       return false;
     }
   }
@@ -25,11 +22,11 @@ class TransportService {
     try {
       final hasActive = await hasActiveTransport(transport.idTransportador);
       if (hasActive) {
-        return false; // ❌ No permite crear si hay transportes NO finalizados
+        return false;
       }
 
       await supabase.from('transportes').insert(transport.toMap());
-      return true; // ✅ Transporte creado
+      return true;
     } catch (e) {
       print('Error al crear el transporte: $e');
       return false;
@@ -39,14 +36,15 @@ class TransportService {
   /// Obtiene todos los productos que pertenecen al productor autenticado
   Future<List<Transport>> fetchTransportsByTrucker(String idUsuario) async {
     try {
-      final response = await supabase.from('transportes').select('*').eq(
-          'idTransportador', idUsuario); // 🔥 Filtrar por ID del transportador
+      final response = await supabase
+          .from('transportes')
+          .select('*')
+          .eq('idTransportador', idUsuario);
 
       return response
           .map<Transport>((data) => Transport.fromMap(data))
           .toList();
     } catch (e) {
-      print('Error al obtener transportes: $e');
       return [];
     }
   }
@@ -65,14 +63,12 @@ class TransportService {
       final transportes = await supabase
           .from('transportes')
           .select('*')
-          .inFilter('idCompra',
-              idsCompras); // 🔥 Solo transportes con idCompra del comprador
+          .inFilter('idCompra', idsCompras);
 
       return transportes
           .map<Transport>((data) => Transport.fromMap(data))
           .toList();
     } catch (e) {
-      print('Error al obtener transportes del comprador: $e');
       return [];
     }
   }
@@ -84,7 +80,7 @@ class TransportService {
           .delete()
           .eq('idTransporte', idTransporte);
     } catch (e) {
-      print('Error al eliminar transporte: $e');
+      return;
     }
   }
 }

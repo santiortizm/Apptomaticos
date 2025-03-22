@@ -211,8 +211,8 @@ class _MyOrdersState extends State<MyOrders> {
                                   // Datos de la compra
 
                                   return FutureBuilder(
-                                      future: fetchCompraById(order
-                                          .idCompra), // 🔹 Obtener la compra
+                                      future: fetchCompraById(
+                                          order.idCompra), //  Obtener la compra
                                       builder: (context, compraSnapshot) {
                                         if (compraSnapshot.connectionState ==
                                             ConnectionState.waiting) {
@@ -230,7 +230,7 @@ class _MyOrdersState extends State<MyOrders> {
                                         if (compra['estadoCompra'] ==
                                             'Pagado') {
                                           return const SizedBox
-                                              .shrink(); // 🔹 Oculta la card
+                                              .shrink(); //  Oculta la card
                                         }
                                         return Padding(
                                           padding: const EdgeInsets.only(

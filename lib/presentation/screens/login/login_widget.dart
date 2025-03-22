@@ -120,9 +120,11 @@ class _LoginWidgetState extends State<LoginWidget> {
       final user = response.user;
       if (user == null) throw 'Error en la autenticación';
 
-      // ✅ Redirigir a AuthApp para que verifique el rol
+      // Redirigir a AuthApp para que verifique el rol
+      // ignore: use_build_context_synchronously
       GoRouter.of(context).go('/');
     } catch (e) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text(
@@ -133,7 +135,7 @@ class _LoginWidgetState extends State<LoginWidget> {
     } finally {
       if (mounted) {
         setState(() {
-          isLoading = false; // ⏳ Ocultar loading
+          isLoading = false; // Ocultar loading
         });
       }
     }
@@ -186,7 +188,7 @@ class _LoginWidgetState extends State<LoginWidget> {
     );
   }
 
-  /// 🔹 **Enlaces de "Olvidó su contraseña" y "Registrarse"**
+  /// **Enlaces de "Olvidó su contraseña" y "Registrarse"**
   Widget _buildFooterLinks() {
     return Column(
       children: [

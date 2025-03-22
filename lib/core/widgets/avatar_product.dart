@@ -26,7 +26,7 @@ class _AvatarProductState extends State<AvatarProduct> {
   final supabase = Supabase.instance.client;
   bool isLoading = false;
 
-  /// 🔹 **Mantiene la URL de la imagen actualizada**
+  ///  **Mantiene la URL de la imagen actualizada**
   late String? _currentImageUrl = widget.imageUrl;
 
   Future<void> _pickAndUploadImage() async {
@@ -59,7 +59,7 @@ class _AvatarProductState extends State<AvatarProduct> {
           "${supabase.storage.from('products').getPublicUrl(path)}?v=${DateTime.now().millisecondsSinceEpoch}";
 
       setState(() {
-        _currentImageUrl = imageUrl; // 🔥 Actualiza la imagen al instante
+        _currentImageUrl = imageUrl; //  Actualiza la imagen al instante
       });
 
       widget.onUpLoad(imageUrl); // Notificar cambio
@@ -78,7 +78,7 @@ class _AvatarProductState extends State<AvatarProduct> {
     }
   }
 
-  /// 🔹 **Confirma si el usuario quiere cambiar la imagen**
+  ///  **Confirma si el usuario quiere cambiar la imagen**
   Future<bool> _confirmImageChange() async {
     return await showDialog<bool>(
           context: context,

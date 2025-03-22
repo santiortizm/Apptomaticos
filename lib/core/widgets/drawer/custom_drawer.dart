@@ -34,7 +34,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
     );
   }
 
-  ///  Cabecera del Drawer (puedes personalizarlo con la info del usuario)
+  ///  Cabecera del Drawer
   Widget _buildHeader() {
     return DrawerHeader(
         decoration: BoxDecoration(color: redApp),
@@ -138,7 +138,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
     }
   }
 
-  ///  Genera cada ítem del Drawer
   Widget _drawerItem(
       Widget icon, String title, BuildContext context, String route) {
     final size = MediaQuery.of(context).size;

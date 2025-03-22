@@ -59,7 +59,6 @@ class _PriceScreenState extends State<PriceScreen> {
       }
 
       setState(() {
-        // 📊 Datos para la gráfica (Solo los máximos)
         salesData = productPrices.entries
             .map((entry) => {
                   'nombreProducto': entry.key,
@@ -67,7 +66,6 @@ class _PriceScreenState extends State<PriceScreen> {
                 })
             .toList();
 
-        // 📋 Datos para la tabla (Mínimo y Máximo)
         tableData = productPrices.entries
             .map((entry) => {
                   'nombreProducto': entry.key,
@@ -77,7 +75,7 @@ class _PriceScreenState extends State<PriceScreen> {
             .toList();
       });
     } catch (e) {
-      print('❌ Error al obtener datos de ventas: $e');
+      print(' Error al obtener datos de ventas: $e');
     }
   }
 
@@ -94,7 +92,7 @@ class _PriceScreenState extends State<PriceScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // 📊 Gráfica de precios unitarios máximos
+            //  Gráfica de precios unitarios máximos
             Expanded(
               flex: 1,
               child: salesData.isEmpty
@@ -131,7 +129,7 @@ class _PriceScreenState extends State<PriceScreen> {
             ),
             const SizedBox(height: 20),
 
-            // 📋 Tabla de Precios Unitarios (Mínimo y Máximo)
+            //  Tabla de Precios Unitarios (Mínimo y Máximo)
             Expanded(
               flex: 1,
               child: SingleChildScrollView(

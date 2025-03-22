@@ -124,7 +124,9 @@ class _TransportStatusState extends State<TransportStatus> {
                                 .from('transportes')
                                 .update({'estado': selectedEstado}).eq(
                                     'idTransporte', widget.idTransporte);
+                            // ignore: use_build_context_synchronously
                             GoRouter.of(context).go('/myTransports');
+                            // ignore: use_build_context_synchronously
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content:
@@ -133,6 +135,7 @@ class _TransportStatusState extends State<TransportStatus> {
                               ),
                             );
                           } catch (e) {
+                            // ignore: use_build_context_synchronously
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text('Error al actualizar estado: $e'),

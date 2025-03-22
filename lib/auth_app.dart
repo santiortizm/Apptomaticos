@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:App_Tomaticos/presentation/screens/loading/loading_screen.dart';
 import 'package:App_Tomaticos/presentation/screens/login/login_widget.dart';
 import 'package:App_Tomaticos/presentation/screens/menu/menu.dart';
 import 'package:App_Tomaticos/presentation/screens/menu_trucker/menu_trucker.dart';
@@ -65,7 +66,7 @@ class _AuthAppState extends State<AuthApp> {
     });
   }
 
-  /// ✅ Obtiene el rol del usuario desde la base de datos
+  ///  Obtiene el rol del usuario desde la base de datos
   Future<void> _fetchUserRole() async {
     if (user == null) return;
 
@@ -86,16 +87,14 @@ class _AuthAppState extends State<AuthApp> {
   @override
   void dispose() {
     _authSubscription
-        ?.cancel(); // ✅ Cancela la suscripción cuando el widget es eliminado
+        ?.cancel(); //  Cancela la suscripción cuando el widget es eliminado
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const LoadingScreen();
     }
 
     if (user == null) return const LoginWidget();
@@ -108,7 +107,7 @@ class _AuthAppState extends State<AuthApp> {
   }
 }
 
-/// ✅ Guarda el token de FCM en Supabase
+///  Guarda el token de FCM en Supabase
 Future<void> saveFcmToken() async {
   final user = Supabase.instance.client.auth.currentUser;
   if (user == null) return;
