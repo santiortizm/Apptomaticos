@@ -11,15 +11,16 @@ import 'package:intl/intl.dart';
 class CustomCardCounterOfferMerchant extends StatefulWidget {
   final String imagen;
   final String nombreProducto;
-  final String nombreOfertador;
+  final String idOfertador;
   final String cantidadOfertada;
   final String totalOferta;
   final VoidCallback acceptOffer;
+
   const CustomCardCounterOfferMerchant(
       {super.key,
       required this.imagen,
       required this.nombreProducto,
-      required this.nombreOfertador,
+      required this.idOfertador,
       required this.cantidadOfertada,
       required this.totalOferta,
       required this.acceptOffer});
@@ -32,6 +33,7 @@ class CustomCardCounterOfferMerchant extends StatefulWidget {
 class _CustomCardCounterOfferMerchantState
     extends State<CustomCardCounterOfferMerchant> {
   late int totalPrice = 0;
+
   late int valorUnitario = (double.tryParse(widget.totalOferta) ?? 0).toInt();
   void _calculateTotalPrice() {
     final int cantidad = int.tryParse(widget.cantidadOfertada) ?? 0;
@@ -89,13 +91,12 @@ class _CustomCardCounterOfferMerchantState
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   texTitletWidget(context, widget.nombreProducto, 22),
-                  texTitletWidget(context, widget.nombreOfertador, 16),
-                  moreInfo(context, 'Cantidad:', 12,
-                      '${widget.cantidadOfertada} Canastas', 12, 0.2, 0.22),
-                  moreInfo(context, 'Precio Unitario:', 12,
-                      formatPrice(valorUnitario), 12, 0.26, 0.15),
-                  moreInfo(context, 'Total compra:', 12,
-                      '\$${formatPrice(totalPrice)}', 12, 0.26, 0.15),
+                  moreInfo(context, 'Cantidad', 12,
+                      '${widget.cantidadOfertada} Canastas', 12, 0.22, 0.22),
+                  price(context, 'Precio Unitario:', 12,
+                      formatPrice(valorUnitario), 12, 0.025, 0.025),
+                  price(context, 'Total compra:', 12,
+                      '\$${formatPrice(totalPrice)}', 12, 0.025, 0.025),
                 ],
               ),
             ],
@@ -119,7 +120,7 @@ class _CustomCardCounterOfferMerchantState
                     'COMPRAR',
                     maxLines: 1,
                     maxFontSize: 17,
-                    minFontSize: 14,
+                    minFontSize: 4,
                     style: temaApp.textTheme.titleSmall!.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
@@ -144,7 +145,7 @@ class _CustomCardCounterOfferMerchantState
       child: AutoSizeText(
         textAlign: TextAlign.center,
         text,
-        minFontSize: 14,
+        minFontSize: 4,
         maxFontSize: maxFontSize,
         maxLines: 1,
         style: temaApp.textTheme.titleSmall!.copyWith(
@@ -166,15 +167,15 @@ class _CustomCardCounterOfferMerchantState
       double widthText) {
     final size = MediaQuery.of(context).size;
 
-    return Row(
+    return Column(
       children: [
         Container(
-          alignment: Alignment.centerLeft,
+          alignment: Alignment.center,
           width: size.width * widthTitle,
           child: AutoSizeText(
             textAlign: TextAlign.center,
             textTitleInfo,
-            minFontSize: 12,
+            minFontSize: 6,
             maxFontSize: maxFontSizeTitleInfo,
             maxLines: 1,
             style: temaApp.textTheme.titleSmall!.copyWith(
@@ -189,7 +190,56 @@ class _CustomCardCounterOfferMerchantState
           child: AutoSizeText(
             textAlign: TextAlign.center,
             textTextInfo,
-            minFontSize: 12,
+            minFontSize: 4,
+            maxFontSize: maxFontSizeTextInfo,
+            maxLines: 1,
+            style: temaApp.textTheme.titleSmall!.copyWith(
+              fontSize: 100,
+              fontWeight: FontWeight.w900,
+              color: Colors.black,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget price(
+      BuildContext context,
+      String textTitleInfo,
+      double maxFontSizeTitleInfo,
+      String textTextInfo,
+      double maxFontSizeTextInfo,
+      double sizeTitle,
+      double sizeText) {
+    final size = MediaQuery.of(context).size;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          alignment: Alignment.centerLeft,
+          height: size.height * sizeTitle,
+          child: AutoSizeText(
+            textAlign: TextAlign.center,
+            textTitleInfo,
+            minFontSize: 6,
+            maxFontSize: maxFontSizeTitleInfo,
+            maxLines: 1,
+            style: temaApp.textTheme.titleSmall!.copyWith(
+              fontSize: 100,
+              fontWeight: FontWeight.w900,
+              color: buttonGreen,
+            ),
+          ),
+        ),
+        Container(
+          alignment: Alignment.center,
+          height: size.height * sizeText,
+          child: AutoSizeText(
+            textAlign: TextAlign.center,
+            textTextInfo,
+            minFontSize: 8,
             maxFontSize: maxFontSizeTextInfo,
             maxLines: 1,
             style: temaApp.textTheme.titleSmall!.copyWith(

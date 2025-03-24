@@ -1,3 +1,4 @@
+import 'package:App_Tomaticos/core/constants/colors.dart';
 import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -26,6 +27,10 @@ class _DropDownFieldControllerState extends State<DropDownFieldController> {
       dropdownColor: Colors.white,
       decoration: InputDecoration(
         labelText: widget.labelText,
+        floatingLabelStyle:
+            temaApp.textTheme.titleSmall!.copyWith(color: redApp, fontSize: 12),
+        labelStyle: temaApp.textTheme.titleSmall!
+            .copyWith(color: Colors.black, fontSize: 12),
         filled: true,
         fillColor: Colors.white.withValues(alpha: 0.4),
         border: OutlineInputBorder(

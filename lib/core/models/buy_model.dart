@@ -1,5 +1,5 @@
 class Buy {
-  final int? id;
+  final int id;
   final DateTime createdAt;
   final String alternativaPago;
   final String nombreProducto;
@@ -13,7 +13,7 @@ class Buy {
   final String estadoCompra;
 
   Buy({
-    this.id,
+    required this.id,
     required this.alternativaPago,
     required this.createdAt,
     required this.nombreProducto,
@@ -30,6 +30,7 @@ class Buy {
   /// Convierte el modelo a un `Map<String, dynamic>` para insertarlo en Supabase
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'idProducto': idProducto,
       'created_at': createdAt.toIso8601String(),
       'nombreProducto': nombreProducto,

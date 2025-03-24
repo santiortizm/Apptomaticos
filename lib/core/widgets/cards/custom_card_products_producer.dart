@@ -65,7 +65,7 @@ class _CustomCardProductsProducerState
           borderRadius: BorderRadius.circular(24),
         ),
         child: Row(
-          spacing: 8,
+          spacing: 12,
           children: [
             Container(
               width: size.width * .3,
@@ -78,56 +78,69 @@ class _CustomCardProductsProducerState
                 ),
               ),
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Row(
+              spacing: 8,
               children: [
-                SizedBox(
-                  width: size.width * 0.27,
-                  child: AutoSizeText(
-                    widget.title,
-                    maxFontSize: 18,
-                    minFontSize: 17,
-                    maxLines: 2,
-                    style: temaApp.textTheme.titleSmall!.copyWith(
-                        fontSize: 22,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500),
-                  ),
-                ),
                 Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AutoSizeText(
-                      'Publicado',
-                      maxFontSize: 14,
-                      minFontSize: 12,
-                      maxLines: 1,
-                      style: temaApp.textTheme.titleSmall!
-                          .copyWith(fontSize: 14, color: buttoGreenSelected),
+                    Container(
+                      alignment: Alignment.center,
+                      width: size.width * 0.27,
+                      height: 40,
+                      child: AutoSizeText(
+                        widget.title,
+                        maxFontSize: 18,
+                        minFontSize: 4,
+                        maxLines: 2,
+                        style: temaApp.textTheme.titleSmall!.copyWith(
+                            fontSize: 22,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500),
+                      ),
                     ),
-                    AutoSizeText(
-                      DateFormat('dd/MM/yyyy').format(
-                          DateTime.parse(widget.date)), // Formato día/mes/año
-                      maxFontSize: 14,
-                      minFontSize: 12,
-                      maxLines: 1,
-                      style: temaApp.textTheme.titleSmall!
-                          .copyWith(fontSize: 14, color: buttoGreenSelected),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 20,
+                          child: AutoSizeText(
+                            'Publicado',
+                            maxFontSize: 14,
+                            minFontSize: 4,
+                            maxLines: 1,
+                            style: temaApp.textTheme.titleSmall!.copyWith(
+                                fontSize: 14, color: buttoGreenSelected),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                          child: AutoSizeText(
+                            DateFormat('dd/MM/yyyy').format(DateTime.parse(
+                                widget.date)), // Formato día/mes/año
+                            maxFontSize: 14,
+                            minFontSize: 4,
+                            maxLines: 1,
+                            style: temaApp.textTheme.titleSmall!.copyWith(
+                                fontSize: 14, color: buttoGreenSelected),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
+                GestureDetector(
+                  onTap: () async {
+                    _dialog(context);
+                  },
+                  child: Icon(
+                    Icons.delete,
+                    color: redApp,
+                    size: 26,
+                  ),
+                ),
               ],
-            ),
-            IconButton(
-              onPressed: () async {
-                _dialog(context);
-              },
-              icon: Icon(
-                Icons.delete,
-                color: redApp,
-                size: 26,
-              ),
             ),
           ],
         ),

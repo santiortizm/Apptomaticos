@@ -96,9 +96,9 @@ class _CustomCardTransportationInfoState
                 children: [
                   texTitletWidget(
                       context, compraData?['nombreProducto'] ?? '', 22),
-                  moreInfo(
-                      context, 'Cantidad:', 12, '10 Canastas', 12, 0.26, 0.22),
-                  moreInfo(context, 'Peso Carga:', 12, '${widget.pesoCarga} T',
+                  moreInfo(context, 'Cantidad', 12, compraData?['cantidad'], 12,
+                      0.26, 0.22),
+                  moreInfo(context, 'Peso Carga', 12, '${widget.pesoCarga} T',
                       12, 0.26, 0.22),
                   moreInfo(context, 'Total compra:', 12,
                       '\$${widget.valorTransporte}', 12, 0.26, 0.22),
@@ -341,7 +341,7 @@ class _CustomCardTransportationInfoState
       child: AutoSizeText(
         textAlign: TextAlign.center,
         text,
-        minFontSize: 14,
+        minFontSize: 8,
         maxFontSize: maxFontSize,
         maxLines: 1,
         style: temaApp.textTheme.titleSmall!.copyWith(
@@ -368,10 +368,11 @@ class _CustomCardTransportationInfoState
         Container(
           alignment: Alignment.centerLeft,
           width: size.width * widthTitle,
+          height: 20,
           child: AutoSizeText(
             textAlign: TextAlign.center,
             textTitleInfo,
-            minFontSize: 12,
+            minFontSize: 8,
             maxFontSize: maxFontSizeTitleInfo,
             maxLines: 1,
             style: temaApp.textTheme.titleSmall!.copyWith(
@@ -386,7 +387,7 @@ class _CustomCardTransportationInfoState
           child: AutoSizeText(
             textAlign: TextAlign.center,
             textTextInfo,
-            minFontSize: 12,
+            minFontSize: 8,
             maxFontSize: maxFontSizeTextInfo,
             maxLines: 1,
             style: temaApp.textTheme.titleSmall!.copyWith(
@@ -418,7 +419,7 @@ class _CustomCardTransportationInfoState
           child: AutoSizeText(
             textAlign: TextAlign.center,
             textTitleInfo,
-            minFontSize: 12,
+            minFontSize: 8,
             maxFontSize: maxFontSizeTitleInfo,
             maxLines: 1,
             style: temaApp.textTheme.titleSmall!.copyWith(
@@ -435,7 +436,7 @@ class _CustomCardTransportationInfoState
           child: AutoSizeText(
             textAlign: TextAlign.center,
             textTextInfo,
-            minFontSize: 12,
+            minFontSize: 8,
             maxFontSize: maxFontSizeTextInfo,
             maxLines: 1,
             style: temaApp.textTheme.titleSmall!.copyWith(

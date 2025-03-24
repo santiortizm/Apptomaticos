@@ -36,7 +36,6 @@ class CustomCardPurchasesMerchant extends StatelessWidget {
       padding: EdgeInsets.symmetric(
           horizontal: size.width * 0.025, vertical: size.height * 0.025),
       width: size.width * 0.8,
-      height: 160,
       decoration: BoxDecoration(
           color: Colors.white, borderRadius: BorderRadius.circular(18)),
       child: Column(
@@ -48,17 +47,14 @@ class CustomCardPurchasesMerchant extends StatelessWidget {
                 width: size.width * 0.28,
                 height: size.height * 0.16,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: CachedNetworkImage(
-                  imageUrl: cloudinaryService.getOptimizedImageUrl(
-                    imagen,
+                  image: DecorationImage(
+                    image: CachedNetworkImageProvider(
+                      cloudinaryService.getOptimizedImageUrl(
+                        imagen,
+                      ),
+                    ),
                   ),
-                  fit: BoxFit.scaleDown,
-                  placeholder: (context, url) =>
-                      const Center(child: CircularProgressIndicator()),
-                  errorWidget: (context, url, error) => Image.network(
-                      'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp'),
+                  borderRadius: BorderRadius.circular(4),
                 ),
               ),
               Column(
@@ -68,16 +64,22 @@ class CustomCardPurchasesMerchant extends StatelessWidget {
                   texTitletWidget(context, nombreProducto, 22),
                   moreInfo(
                       context,
-                      'Fecha compra :',
+                      'Fecha compra',
                       12,
                       DateFormat('dd/MM/yyyy').format(DateTime.parse(fecha)),
                       12,
-                      0.26,
-                      0.16),
-                  moreInfo(context, 'Cantidad :', 12, '$cantidad Canastas', 12,
-                      0.2, 0.22),
-                  moreInfo(context, 'Precio :', 12,
-                      '\$${formatPrice(double.parse(precio))}', 12, 0.18, 0.24),
+                      0.28,
+                      0.24),
+                  moreInfo(context, 'Cantidad', 12, '$cantidad Canastas', 12,
+                      0.2, 0.24),
+                  price(
+                      context,
+                      'Precio :',
+                      12,
+                      '\$${formatPrice(double.parse(precio))}',
+                      12,
+                      0.025,
+                      0.025),
                 ],
               ),
             ],
@@ -97,7 +99,7 @@ class CustomCardPurchasesMerchant extends StatelessWidget {
       child: AutoSizeText(
         textAlign: TextAlign.center,
         text,
-        minFontSize: 14,
+        minFontSize: 4,
         maxFontSize: maxFontSize,
         maxLines: 1,
         style: temaApp.textTheme.titleSmall!.copyWith(
@@ -119,15 +121,15 @@ class CustomCardPurchasesMerchant extends StatelessWidget {
       double widthText) {
     final size = MediaQuery.of(context).size;
 
-    return Row(
+    return Column(
       children: [
         Container(
-          alignment: Alignment.centerLeft,
+          alignment: Alignment.center,
           width: size.width * widthTitle,
           child: AutoSizeText(
             textAlign: TextAlign.center,
             textTitleInfo,
-            minFontSize: 8,
+            minFontSize: 6,
             maxFontSize: maxFontSizeTitleInfo,
             maxLines: 1,
             style: temaApp.textTheme.titleSmall!.copyWith(
@@ -139,6 +141,55 @@ class CustomCardPurchasesMerchant extends StatelessWidget {
         ),
         SizedBox(
           width: size.width * widthText,
+          child: AutoSizeText(
+            textAlign: TextAlign.center,
+            textTextInfo,
+            minFontSize: 4,
+            maxFontSize: maxFontSizeTextInfo,
+            maxLines: 1,
+            style: temaApp.textTheme.titleSmall!.copyWith(
+              fontSize: 100,
+              fontWeight: FontWeight.w900,
+              color: Colors.black,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget price(
+      BuildContext context,
+      String textTitleInfo,
+      double maxFontSizeTitleInfo,
+      String textTextInfo,
+      double maxFontSizeTextInfo,
+      double sizeTitle,
+      double sizeText) {
+    final size = MediaQuery.of(context).size;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          alignment: Alignment.centerLeft,
+          height: size.height * sizeTitle,
+          child: AutoSizeText(
+            textAlign: TextAlign.center,
+            textTitleInfo,
+            minFontSize: 6,
+            maxFontSize: maxFontSizeTitleInfo,
+            maxLines: 1,
+            style: temaApp.textTheme.titleSmall!.copyWith(
+              fontSize: 100,
+              fontWeight: FontWeight.w900,
+              color: buttonGreen,
+            ),
+          ),
+        ),
+        Container(
+          alignment: Alignment.center,
+          height: size.height * sizeText,
           child: AutoSizeText(
             textAlign: TextAlign.center,
             textTextInfo,

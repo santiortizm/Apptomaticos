@@ -2,6 +2,7 @@ import 'package:App_Tomaticos/core/constants/colors.dart';
 import 'package:App_Tomaticos/core/models/transport_model.dart';
 import 'package:App_Tomaticos/core/services/cloudinary_service.dart';
 import 'package:App_Tomaticos/core/services/transport_service.dart';
+import 'package:App_Tomaticos/core/widgets/custom_alert_dialog.dart';
 import 'package:App_Tomaticos/core/widgets/custom_button.dart';
 import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -110,35 +111,20 @@ class _CustomCardTransportState extends State<CustomCardTransport> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
+                  onTap: () async {
+                    final DateTime? newDate =
+                        await selectTransportDate(context);
+                    if (newDate != null) {
+                      setStateDialog(() {
+                        selectedCargaDate = newDate;
+                        entregaDate = newDate.add(const Duration(days: 1));
+                      });
+                    }
+                  },
                   readOnly: true,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Fecha de Cargue',
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.calendar_today),
-                      onPressed: () async {
-                        final DateTime now = DateTime.now();
-                        final DateTime firstDate = now.hour >= 16
-                            ? now.add(const Duration(days: 1))
-                            : now;
-                        final DateTime lastDate =
-                            now.add(const Duration(days: 2));
-
-                        final pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: firstDate,
-                          firstDate: firstDate,
-                          lastDate: lastDate,
-                        );
-
-                        if (pickedDate != null) {
-                          setStateDialog(() {
-                            selectedCargaDate = pickedDate;
-                            entregaDate =
-                                pickedDate.add(const Duration(days: 1));
-                          });
-                        }
-                      },
-                    ),
+                    suffixIcon: Icon(Icons.calendar_today),
                   ),
                   controller: TextEditingController(
                     text: selectedCargaDate != null
@@ -170,7 +156,7 @@ class _CustomCardTransportState extends State<CustomCardTransport> {
           TextButton(
             onPressed: () {
               if (selectedCargaDate != null) {
-                Navigator.pop(context);
+                Navigator.pop(context, selectedCargaDate);
                 _handleTransportCreation(selectedCargaDate!);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -404,5 +390,84 @@ class _CustomCardTransportState extends State<CustomCardTransport> {
         ),
       ),
     );
+  }
+
+  Future<DateTime?> selectTransportDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDialog<DateTime>(
+      context: context,
+      builder: (context) {
+        DateTime dateToSelect = DateTime.now();
+        final DateTime firstDate = dateToSelect.hour >= 16
+            ? dateToSelect.add(const Duration(days: 1))
+            : dateToSelect;
+        final DateTime lastDate = dateToSelect.add(const Duration(days: 2));
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: buttonGreen, // Color de la barra superior
+            hintColor: Colors.green, // Color del selector
+            colorScheme: ColorScheme.light(primary: buttonGreen),
+            buttonTheme:
+                const ButtonThemeData(textTheme: ButtonTextTheme.primary),
+          ),
+          child: StatefulBuilder(
+            builder: (context, setStateDialog) {
+              return CustomAlertDialog(
+                width: 300,
+                height: 600,
+                assetImage: './assets/images/calendario.png',
+                title: 'Seleccione una fecha',
+                content: CalendarDatePicker(
+                  initialDate: firstDate,
+                  firstDate: firstDate,
+                  lastDate: lastDate,
+                  onDateChanged: (date) {
+                    setStateDialog(() {
+                      dateToSelect = date;
+                    });
+                  },
+                ),
+                onPressedAcept: () async {
+                  bool confirm = await _confirmAction(context);
+                  if (confirm) {
+                    Navigator.pop(context, dateToSelect);
+                  }
+                },
+                onPressedCancel: () => Navigator.pop(context, null),
+              );
+            },
+          ),
+        );
+      },
+    );
+
+    return pickedDate;
+  }
+
+  Future<bool> _confirmAction(BuildContext context) async {
+    return await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return CustomAlertDialog(
+                width: 300,
+                height: 290,
+                assetImage: './assets/images/advertencia.png',
+                title: 'Alerta',
+                content: Container(
+                  alignment: Alignment.center,
+                  width: 250,
+                  child: AutoSizeText(
+                    'Debes asegurarte que la fecha sea la correcta',
+                    maxLines: 2,
+                    maxFontSize: 26,
+                    minFontSize: 4,
+                    style:
+                        temaApp.textTheme.titleSmall!.copyWith(fontSize: 100),
+                  ),
+                ),
+                onPressedAcept: () => Navigator.pop(context, true),
+                onPressedCancel: () => Navigator.pop(context, false),
+              );
+            }) ??
+        false;
   }
 }

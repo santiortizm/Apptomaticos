@@ -35,7 +35,7 @@ class CustomCardCounterOfferProducer extends StatefulWidget {
 class _CustomCardCounterOfferProducerState
     extends State<CustomCardCounterOfferProducer> {
   final supabase = Supabase.instance.client;
-  String? nombreOfertador;
+  String nombreOfertador = '';
   Future<void> nameUser() async {
     try {
       final response = await supabase
@@ -54,7 +54,7 @@ class _CustomCardCounterOfferProducerState
         });
       }
     } catch (e) {
-      print('❌ Error obteniendo nombre del ofertador: $e');
+      print(' Error obteniendo nombre del ofertador: $e');
       setState(() {
         nombreOfertador = 'Error';
       });
@@ -121,19 +121,19 @@ class _CustomCardCounterOfferProducerState
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   texTitletWidget(context, widget.nombreProducto, 22),
-                  texTitletWidget(context, nombreOfertador!, 16),
+                  texTitletWidget(context, nombreOfertador, 16),
                   moreInfo(context, 'Cantidad:', 12,
-                      '${widget.cantidadOfertada} Canastas', 12, 0.2, 0.22),
+                      '${widget.cantidadOfertada} Canastas', 12, 0.26, 0.26),
                   moreInfo(
                       context,
                       'Precio Unitario:',
                       12,
                       ' \$${formatValue(double.parse(widget.valorOferta))}',
                       12,
-                      0.26,
-                      0.15),
+                      0.40,
+                      0.26),
                   moreInfo(context, 'Total compra:', 12,
-                      '\$${formatValue(valorTotal)}', 12, 0.26, 0.15),
+                      '\$${formatValue(valorTotal)}', 12, 0.40, 0.26),
                 ],
               ),
             ],
@@ -144,44 +144,50 @@ class _CustomCardCounterOfferProducerState
               spacing: 8,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CustomButton(
-                  onPressed: widget.declineOffer,
-                  color: Colors.white,
-                  colorBorder: redApp,
-                  border: 18,
-                  width: 0.3,
-                  height: 0.05,
-                  elevation: 2,
-                  sizeBorder: 2,
-                  child: AutoSizeText(
-                    'RECHAZAR',
-                    maxLines: 1,
-                    maxFontSize: 17,
-                    minFontSize: 14,
-                    style: temaApp.textTheme.titleSmall!.copyWith(
-                        color: redApp,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 30),
+                SizedBox(
+                  width: 115,
+                  child: CustomButton(
+                    onPressed: widget.declineOffer,
+                    color: Colors.white,
+                    colorBorder: redApp,
+                    border: 18,
+                    width: 0.3,
+                    height: 0.05,
+                    elevation: 2,
+                    sizeBorder: 2,
+                    child: AutoSizeText(
+                      'RECHAZAR',
+                      maxLines: 1,
+                      maxFontSize: 17,
+                      minFontSize: 8,
+                      style: temaApp.textTheme.titleSmall!.copyWith(
+                          color: redApp,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 30),
+                    ),
                   ),
                 ),
-                CustomButton(
-                  onPressed: widget.acceptOffer,
-                  color: buttonGreen,
-                  colorBorder: Colors.transparent,
-                  border: 18,
-                  width: 0.3,
-                  height: 0.05,
-                  elevation: 2,
-                  sizeBorder: 0,
-                  child: AutoSizeText(
-                    'ACEPTAR',
-                    maxLines: 1,
-                    maxFontSize: 17,
-                    minFontSize: 14,
-                    style: temaApp.textTheme.titleSmall!.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 30),
+                SizedBox(
+                  width: 115,
+                  child: CustomButton(
+                    onPressed: widget.acceptOffer,
+                    color: buttonGreen,
+                    colorBorder: Colors.transparent,
+                    border: 18,
+                    width: 0.3,
+                    height: 0.05,
+                    elevation: 2,
+                    sizeBorder: 0,
+                    child: AutoSizeText(
+                      'ACEPTAR',
+                      maxLines: 1,
+                      maxFontSize: 17,
+                      minFontSize: 8,
+                      style: temaApp.textTheme.titleSmall!.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 30),
+                    ),
                   ),
                 ),
               ],
@@ -198,11 +204,11 @@ class _CustomCardCounterOfferProducerState
 
     return Container(
       alignment: Alignment.center,
-      width: size.width * .42,
+      width: size.width * .43,
       child: AutoSizeText(
         textAlign: TextAlign.center,
         text,
-        minFontSize: 14,
+        minFontSize: 8,
         maxFontSize: maxFontSize,
         maxLines: 1,
         style: temaApp.textTheme.titleSmall!.copyWith(
@@ -224,15 +230,15 @@ class _CustomCardCounterOfferProducerState
       double widthText) {
     final size = MediaQuery.of(context).size;
 
-    return Row(
+    return Column(
       children: [
         Container(
-          alignment: Alignment.centerLeft,
+          alignment: Alignment.center,
           width: size.width * widthTitle,
           child: AutoSizeText(
             textAlign: TextAlign.center,
             textTitleInfo,
-            minFontSize: 12,
+            minFontSize: 8,
             maxFontSize: maxFontSizeTitleInfo,
             maxLines: 1,
             style: temaApp.textTheme.titleSmall!.copyWith(

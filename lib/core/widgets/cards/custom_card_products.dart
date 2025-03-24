@@ -87,7 +87,6 @@ class _CustomCardProductsState extends State<CustomCardProducts> {
         padding: EdgeInsets.symmetric(
             vertical: size.height * 0.015, horizontal: size.width * 0.025),
         width: size.width * 1,
-        height: 380,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -107,12 +106,12 @@ class _CustomCardProductsState extends State<CustomCardProducts> {
                               as ImageProvider,
                 ),
                 SizedBox(
-                  width: size.width * 0.5,
+                  width: 180,
                   child: AutoSizeText(
                     producerName ?? 'Cargando...',
                     maxLines: 1,
                     maxFontSize: 14,
-                    minFontSize: 12,
+                    minFontSize: 4,
                     style: temaApp.textTheme.titleSmall!
                         .copyWith(color: Colors.black, fontSize: 14),
                   ),
@@ -142,20 +141,21 @@ class _CustomCardProductsState extends State<CustomCardProducts> {
             Padding(
               padding: EdgeInsets.only(
                   top: size.height * 0.015,
-                  left: size.width * 0.025,
-                  right: size.width * 0.025),
+                  left: size.width * 0.006,
+                  right: size.width * 0.006),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 4,
                     children: [
                       SizedBox(
-                        width: size.width * 0.4,
+                        width: 160,
                         child: AutoSizeText(
                           widget.title,
-                          minFontSize: 12,
-                          maxFontSize: 18,
+                          minFontSize: 4,
+                          maxFontSize: 16,
                           maxLines: 1,
                           style: temaApp.textTheme.titleSmall!.copyWith(
                               fontWeight: FontWeight.w700, fontSize: 18),
@@ -164,10 +164,10 @@ class _CustomCardProductsState extends State<CustomCardProducts> {
                       Row(
                         children: [
                           SizedBox(
-                            width: size.width * 0.17,
+                            width: 70,
                             child: AutoSizeText(
                               'Estado :',
-                              minFontSize: 12,
+                              minFontSize: 4,
                               maxFontSize: 18,
                               maxLines: 1,
                               style: temaApp.textTheme.titleSmall!.copyWith(
@@ -176,10 +176,11 @@ class _CustomCardProductsState extends State<CustomCardProducts> {
                           ),
                           Container(
                             alignment: Alignment.centerLeft,
-                            width: size.width * 0.27,
+                            height: 30,
+                            width: 92,
                             child: AutoSizeText(
                               widget.state,
-                              minFontSize: 12,
+                              minFontSize: 4,
                               maxFontSize: 16,
                               maxLines: 1,
                             ),
@@ -197,12 +198,12 @@ class _CustomCardProductsState extends State<CustomCardProducts> {
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
                             color: buttonGreen),
-                        width: size.width * 0.3,
-                        height: size.height * 0.05,
+                        width: 80,
+                        height: 35,
                         child: AutoSizeText(
                           textAlign: TextAlign.center,
                           '\$${formatPrice(widget.price)}',
-                          minFontSize: 12,
+                          minFontSize: 4,
                           maxFontSize: 16,
                           maxLines: 1,
                           style: temaApp.textTheme.titleSmall!.copyWith(

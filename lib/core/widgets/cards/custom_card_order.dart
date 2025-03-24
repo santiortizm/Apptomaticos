@@ -74,25 +74,25 @@ class CustomCardOrder extends StatelessWidget {
                   texTitletWidget(context, nombreProducto, 22),
                   moreInfo(
                       context,
-                      'Fecha entrega :',
+                      'Fecha entrega',
                       12,
                       DateFormat('dd/MM/yyyy')
                           .format(DateTime.parse(fechaEntrega)),
                       12,
-                      0.26,
-                      0.20),
-                  moreInfo(context, 'Cantidad :', 12, '$cantidad Canastas', 12,
-                      0.22, 0.24),
-                  moreInfo(
+                      0.30,
+                      0.26),
+                  moreInfo(context, 'Cantidad', 12, '$cantidad Canastas', 12,
+                      0.26, 0.26),
+                  price(
                       context,
                       'Valor Pago:',
                       12,
                       '\$${formatPrice(double.parse(totalAPagar))}',
                       12,
-                      0.22,
-                      0.24),
+                      0.026,
+                      0.026),
                   infoState(context, 'Estado del Transporte', 12, estado, 12,
-                      0.40, 0.40)
+                      0.42, 0.42)
                 ],
               ),
             ],
@@ -140,7 +140,7 @@ class CustomCardOrder extends StatelessWidget {
       child: AutoSizeText(
         textAlign: TextAlign.center,
         text,
-        minFontSize: 14,
+        minFontSize: 4,
         maxFontSize: maxFontSize,
         maxLines: 1,
         style: temaApp.textTheme.titleSmall!.copyWith(
@@ -162,15 +162,15 @@ class CustomCardOrder extends StatelessWidget {
       double widthText) {
     final size = MediaQuery.of(context).size;
 
-    return Row(
+    return Column(
       children: [
         Container(
-          alignment: Alignment.centerLeft,
+          alignment: Alignment.center,
           width: size.width * widthTitle,
           child: AutoSizeText(
             textAlign: TextAlign.center,
             textTitleInfo,
-            minFontSize: 10,
+            minFontSize: 6,
             maxFontSize: maxFontSizeTitleInfo,
             maxLines: 1,
             style: temaApp.textTheme.titleSmall!.copyWith(
@@ -183,7 +183,56 @@ class CustomCardOrder extends StatelessWidget {
         SizedBox(
           width: size.width * widthText,
           child: AutoSizeText(
-            textAlign: TextAlign.right,
+            textAlign: TextAlign.center,
+            textTextInfo,
+            minFontSize: 4,
+            maxFontSize: maxFontSizeTextInfo,
+            maxLines: 1,
+            style: temaApp.textTheme.titleSmall!.copyWith(
+              fontSize: 100,
+              fontWeight: FontWeight.w900,
+              color: Colors.black,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget price(
+      BuildContext context,
+      String textTitleInfo,
+      double maxFontSizeTitleInfo,
+      String textTextInfo,
+      double maxFontSizeTextInfo,
+      double sizeTitle,
+      double sizeText) {
+    final size = MediaQuery.of(context).size;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          alignment: Alignment.centerLeft,
+          height: size.height * sizeTitle,
+          child: AutoSizeText(
+            textAlign: TextAlign.center,
+            textTitleInfo,
+            minFontSize: 6,
+            maxFontSize: maxFontSizeTitleInfo,
+            maxLines: 1,
+            style: temaApp.textTheme.titleSmall!.copyWith(
+              fontSize: 100,
+              fontWeight: FontWeight.w900,
+              color: buttonGreen,
+            ),
+          ),
+        ),
+        Container(
+          alignment: Alignment.center,
+          height: size.height * sizeText,
+          child: AutoSizeText(
+            textAlign: TextAlign.center,
             textTextInfo,
             minFontSize: 8,
             maxFontSize: maxFontSizeTextInfo,
@@ -217,7 +266,7 @@ class CustomCardOrder extends StatelessWidget {
           child: AutoSizeText(
             textAlign: TextAlign.center,
             textTitleInfo,
-            minFontSize: 12,
+            minFontSize: 4,
             maxFontSize: maxFontSizeTitleInfo,
             maxLines: 1,
             style: temaApp.textTheme.titleSmall!.copyWith(
@@ -228,13 +277,14 @@ class CustomCardOrder extends StatelessWidget {
           ),
         ),
         Container(
+          padding: EdgeInsets.all(5),
           decoration: BoxDecoration(
               color: buttonGreen, borderRadius: BorderRadius.circular(16)),
           width: size.width * widthText,
           child: AutoSizeText(
             textAlign: TextAlign.center,
             textTextInfo,
-            minFontSize: 12,
+            minFontSize: 4,
             maxFontSize: maxFontSizeTextInfo,
             maxLines: 1,
             style: temaApp.textTheme.titleSmall!.copyWith(

@@ -1,4 +1,7 @@
 import 'package:App_Tomaticos/core/constants/colors.dart';
+import 'package:App_Tomaticos/core/widgets/custom_alert_dialog.dart';
+import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -20,6 +23,7 @@ class AddProductModel {
 
   // Método para seleccionar la fecha de cosecha usando el datepicker
   void selectHarvestDate(BuildContext context) async {
+    final size = MediaQuery.of(context).size;
     final DateTime? pickedDate = await showDialog<DateTime>(
       context: context,
       builder: (context) {
@@ -35,34 +39,30 @@ class AddProductModel {
           ),
           child: StatefulBuilder(
             builder: (context, setState) {
-              return AlertDialog(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                title: const Text("Selecciona una fecha"),
-                content: SizedBox(
-                  height: 300,
-                  child: CalendarDatePicker(
-                    initialDate: selectedDate,
-                    firstDate: DateTime(2025),
-                    lastDate: DateTime(2026),
-                    onDateChanged: (date) {
-                      setState(() {
-                        selectedDate = date;
-                      });
-                    },
-                  ),
+              return CustomAlertDialog(
+                width: 300,
+                height: 600,
+                assetImage: './assets/images/calendario.png',
+                title: 'Seleccione una fecha',
+                content: CalendarDatePicker(
+                  initialDate: selectedDate,
+                  firstDate: DateTime(2025),
+                  lastDate: DateTime(2026),
+                  onDateChanged: (date) {
+                    setState(() {
+                      selectedDate = date;
+                    });
+                  },
                 ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context, null),
-                    child: Text("Cancelar", style: TextStyle(color: redApp)),
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.pop(context, selectedDate),
-                    child:
-                        Text("Aceptar", style: TextStyle(color: buttonGreen)),
-                  ),
-                ],
+                onPressedAcept: () async {
+                  bool? confirm = await _confirmAction(context);
+                  if (confirm == true) {
+                    Navigator.pop(context, selectedDate);
+                  } else {
+                    return;
+                  }
+                },
+                onPressedCancel: () => Navigator.pop(context, null),
               );
             },
           ),
@@ -73,8 +73,7 @@ class AddProductModel {
     if (pickedDate != null) {
       final formattedDate = DateFormat.yMMMd().format(pickedDate);
       harvestDateController.text = formattedDate;
-      calculateExpirationDate(
-          pickedDate); // ✅ Actualiza la fecha de vencimiento
+      calculateExpirationDate(pickedDate); //  Actualiza la fecha de vencimiento
     }
   }
 
@@ -95,6 +94,34 @@ class AddProductModel {
     // Calcula la fecha de caducidad sumando días
     final expirationDate = harvestDate.add(Duration(days: 7 * weeksToAdd));
     expirationDateController.text = DateFormat.yMMMd().format(expirationDate);
+  }
+
+  Future<bool> _confirmAction(BuildContext context) async {
+    return await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return CustomAlertDialog(
+                width: 300,
+                height: 290,
+                assetImage: './assets/images/advertencia.png',
+                title: 'Alerta',
+                content: Container(
+                  alignment: Alignment.center,
+                  width: 250,
+                  child: AutoSizeText(
+                    'Debes asegurarte que la fecha sea la correcta',
+                    maxLines: 2,
+                    maxFontSize: 26,
+                    minFontSize: 4,
+                    style:
+                        temaApp.textTheme.titleSmall!.copyWith(fontSize: 100),
+                  ),
+                ),
+                onPressedAcept: () => Navigator.pop(context, true),
+                onPressedCancel: () => Navigator.pop(context, false),
+              );
+            }) ??
+        false;
   }
 
   // Método para limpiar los controladores

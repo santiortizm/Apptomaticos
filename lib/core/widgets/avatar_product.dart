@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:App_Tomaticos/core/constants/colors.dart';
 import 'package:App_Tomaticos/core/services/image_service.dart';
+import 'package:App_Tomaticos/core/widgets/custom_alert_dialog.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -78,37 +80,39 @@ class _AvatarProductState extends State<AvatarProduct> {
     }
   }
 
-  ///  **Confirma si el usuario quiere cambiar la imagen**
+  /// Confirma si el usuario quiere cambiar la imagen
   Future<bool> _confirmImageChange() async {
     return await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Confirmar cambio'),
-            content:
-                const Text('¿Estás seguro de que quieres cambiar la imagen?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancelar'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: const Text('Editar'),
-              ),
-            ],
-          ),
-        ) ??
+            context: context,
+            builder: (context) => CustomAlertDialog(
+                width: 300,
+                height: 300,
+                assetImage: './assets/images/camara.gif',
+                title: 'Confirmar cambio',
+                content: SizedBox(
+                  width: 250,
+                  child: AutoSizeText(
+                    '¿Estás seguro de que quieres cambiar la imagen?',
+                    maxLines: 2,
+                    maxFontSize: 35,
+                    minFontSize: 4,
+                    textAlign: TextAlign.justify,
+                  ),
+                ),
+                onPressedAcept: () => Navigator.pop(context, true),
+                onPressedCancel: () => Navigator.pop(context, false))) ??
         false;
   }
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
-    return Stack(
-      children: [
-        Center(
-          child: CircleAvatar(
+    return Container(
+      alignment: Alignment.center,
+      width: 150,
+      height: 140,
+      child: Stack(
+        children: [
+          CircleAvatar(
             backgroundImage:
                 (_currentImageUrl != null && _currentImageUrl!.isNotEmpty)
                     ? CachedNetworkImageProvider(_currentImageUrl!)
@@ -118,22 +122,22 @@ class _AvatarProductState extends State<AvatarProduct> {
                 ? const Icon(Icons.image, size: 50, color: Colors.grey)
                 : null,
           ),
-        ),
-        if (isLoading)
-          const Center(
-            child: CircularProgressIndicator(),
+          if (isLoading)
+            const Center(
+              child: CircularProgressIndicator(),
+            ),
+          Positioned(
+            top: 100,
+            right: 2.5,
+            child: IconButton(
+              icon: const Icon(Icons.camera_alt),
+              iconSize: 32,
+              color: redApp,
+              onPressed: isLoading ? null : _pickAndUploadImage,
+            ),
           ),
-        Container(
-          padding: EdgeInsets.only(top: size.height * 0.14),
-          alignment: const Alignment(0.3, 0),
-          child: IconButton(
-            icon: const Icon(Icons.camera_alt),
-            iconSize: 32,
-            color: redApp,
-            onPressed: isLoading ? null : _pickAndUploadImage,
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

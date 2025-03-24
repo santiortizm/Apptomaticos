@@ -120,7 +120,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
               Image(
                 image: AssetImage('./assets/images/transportes.png'),
               ),
-              'Historial de transportes',
+              'Historial Transportes',
               context,
               '/transportHistory'),
           widget.cerrarSesion,
@@ -146,20 +146,23 @@ class _CustomDrawerState extends State<CustomDrawer> {
         GoRouter.of(context).go(route);
       },
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.only(
+          bottom: 10,
+        ),
         child: Container(
+          padding: EdgeInsets.only(left: 10, right: 10),
           margin: EdgeInsets.symmetric(horizontal: size.width * 0.025),
           width: size.width * 0.8,
           height: size.height * 0.1,
           decoration: BoxDecoration(
               color: cardDrawer, borderRadius: BorderRadius.circular(20)),
           child: Row(
-            spacing: 10,
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
                 alignment: Alignment.center,
-                width: size.width * 0.6,
+                height: size.height * 0.04,
+                width: size.width * 0.62,
                 child: AutoSizeText(
                   title,
                   maxLines: 1,
@@ -170,7 +173,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 ),
               ),
               CircleAvatar(
-                  radius: 30, backgroundColor: Colors.white, child: icon),
+                  radius: 24, backgroundColor: Colors.transparent, child: icon),
             ],
           ),
         ),

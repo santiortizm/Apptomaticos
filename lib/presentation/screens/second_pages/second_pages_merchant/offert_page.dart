@@ -15,6 +15,7 @@ class OffertPage extends StatefulWidget {
   final double price;
   final String imageUrl;
   final int availableQuantity;
+  final int cantidad;
   final String productName;
   final String ownerId;
   const OffertPage({
@@ -25,6 +26,7 @@ class OffertPage extends StatefulWidget {
     required this.availableQuantity,
     required this.productName,
     required this.ownerId,
+    required this.cantidad,
   });
 
   @override
@@ -150,6 +152,8 @@ class _OffertPageState extends State<OffertPage> {
                       containerPrice(context, 'Precio Actual',
                           '\$${formatPrice(widget.price)}', 16),
                       textWidget(context, 'Cantidad a Ofertar:', 18),
+                      textWidget(context,
+                          '(Cantidad Disponible: ${widget.cantidad})', 14),
                       SizedBox(
                         width: size.width * 0.6,
                         child: textFormField(context, 'Cantidad en Canastas',
@@ -170,112 +174,121 @@ class _OffertPageState extends State<OffertPage> {
                           spacing: 20,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            CustomButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              color: Colors.white,
-                              colorBorder: redApp,
-                              border: 12,
-                              width: 0.35,
-                              height: 0.07,
-                              elevation: 2,
-                              sizeBorder: 2.5,
-                              child: AutoSizeText(
-                                'CANCELAR',
-                                maxLines: 1,
-                                maxFontSize: 18,
-                                minFontSize: 16,
-                                style: temaApp.textTheme.titleSmall!.copyWith(
-                                    color: redApp,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 30),
+                            SizedBox(
+                              width: 115,
+                              child: CustomButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                color: Colors.white,
+                                colorBorder: redApp,
+                                border: 12,
+                                width: 0.35,
+                                height: 0.07,
+                                elevation: 2,
+                                sizeBorder: 2.5,
+                                child: AutoSizeText(
+                                  'CANCELAR',
+                                  maxLines: 1,
+                                  maxFontSize: 18,
+                                  minFontSize: 4,
+                                  style: temaApp.textTheme.titleSmall!.copyWith(
+                                      color: redApp,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 30),
+                                ),
                               ),
                             ),
-                            CustomButton(
-                              onPressed: () async {
-                                final quantity =
-                                    int.tryParse(_quantityController.text) ?? 0;
-                                final offerPrice = double.tryParse(
-                                        _offerPriceController.text) ??
-                                    widget.price;
+                            SizedBox(
+                              width: 115,
+                              child: CustomButton(
+                                onPressed: () async {
+                                  final quantity =
+                                      int.tryParse(_quantityController.text) ??
+                                          0;
+                                  final offerPrice = double.tryParse(
+                                          _offerPriceController.text) ??
+                                      widget.price;
 
-                                if (quantity <= 0 ||
-                                    quantity > widget.availableQuantity ||
-                                    offerPrice <= 0) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text('Oferta no válida')),
+                                  if (quantity <= 0 ||
+                                      quantity > widget.availableQuantity ||
+                                      offerPrice <= 0) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text('Oferta no válida')),
+                                    );
+                                    return;
+                                  }
+
+                                  final supabase = Supabase.instance.client;
+                                  final userId = supabase.auth.currentUser
+                                      ?.id; // ID del usuario autenticado
+
+                                  if (userId == null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content:
+                                              Text('Usuario no autenticado')),
+                                    );
+                                    return;
+                                  }
+
+                                  final CounterOffer nuevaOferta = CounterOffer(
+                                    idProducto: widget.productId,
+                                    cantidad: quantity,
+                                    valorOferta: offerPrice,
+                                    estadoOferta: 'En Espera',
+                                    createdAt: DateTime.now(),
+                                    imagenProducto: widget.imageUrl,
+                                    nombreProducto: widget.productName,
+                                    idComprador: userId,
+                                    idPropietario: widget.ownerId,
                                   );
-                                  return;
-                                }
 
-                                final supabase = Supabase.instance.client;
-                                final userId = supabase.auth.currentUser
-                                    ?.id; // ID del usuario autenticado
+                                  final productService =
+                                      ProductService(supabase);
+                                  final counterOfferService =
+                                      CounterOfferService(
+                                          supabase, productService);
 
-                                if (userId == null) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content:
-                                            Text('Usuario no autenticado')),
-                                  );
-                                  return;
-                                }
+                                  bool success = await counterOfferService
+                                      .createContraOferta(nuevaOferta);
 
-                                final CounterOffer nuevaOferta = CounterOffer(
-                                  idProducto: widget.productId,
-                                  cantidad: quantity,
-                                  valorOferta: offerPrice,
-                                  estadoOferta: 'En Espera',
-                                  createdAt: DateTime.now(),
-                                  imagenProducto: widget.imageUrl,
-                                  nombreProducto: widget.productName,
-                                  idComprador: userId,
-                                  idPropietario: widget.ownerId,
-                                );
-
-                                final productService = ProductService(supabase);
-                                final counterOfferService = CounterOfferService(
-                                    supabase, productService);
-
-                                bool success = await counterOfferService
-                                    .createContraOferta(nuevaOferta);
-
-                                if (success) {
-                                  // ignore: use_build_context_synchronously
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content:
-                                            Text('Oferta enviada con éxito')),
-                                  );
-                                  // ignore: use_build_context_synchronously
-                                  context.pop();
-                                } else {
-                                  // ignore: use_build_context_synchronously
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content:
-                                            Text('Error al enviar la oferta')),
-                                  );
-                                }
-                              },
-                              color: buttonGreen,
-                              colorBorder: buttonGreen,
-                              border: 12,
-                              width: 0.35,
-                              height: 0.07,
-                              elevation: 1,
-                              sizeBorder: 0,
-                              child: AutoSizeText(
-                                'OFERTAR',
-                                maxLines: 1,
-                                maxFontSize: 20,
-                                minFontSize: 18,
-                                style: temaApp.textTheme.titleSmall!.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 30,
+                                  if (success) {
+                                    // ignore: use_build_context_synchronously
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content:
+                                              Text('Oferta enviada con éxito')),
+                                    );
+                                    // ignore: use_build_context_synchronously
+                                    context.pop();
+                                  } else {
+                                    // ignore: use_build_context_synchronously
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text(
+                                              'Error al enviar la oferta')),
+                                    );
+                                  }
+                                },
+                                color: buttonGreen,
+                                colorBorder: buttonGreen,
+                                border: 12,
+                                width: 0.35,
+                                height: 0.07,
+                                elevation: 1,
+                                sizeBorder: 0,
+                                child: AutoSizeText(
+                                  'OFERTAR',
+                                  maxLines: 1,
+                                  maxFontSize: 20,
+                                  minFontSize: 4,
+                                  style: temaApp.textTheme.titleSmall!.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 30,
+                                  ),
                                 ),
                               ),
                             ),
@@ -300,7 +313,7 @@ class _OffertPageState extends State<OffertPage> {
       width: size.width,
       child: AutoSizeText(
         text,
-        minFontSize: 14,
+        minFontSize: 4,
         maxFontSize: maxFontSize,
         maxLines: 1,
         style: temaApp.textTheme.titleSmall!.copyWith(
@@ -329,7 +342,7 @@ class _OffertPageState extends State<OffertPage> {
             width: size.width * 0.4,
             child: AutoSizeText(
               text1,
-              minFontSize: 14,
+              minFontSize: 4,
               maxFontSize: maxFontSize,
               maxLines: 1,
               style: temaApp.textTheme.titleSmall!.copyWith(
@@ -344,7 +357,7 @@ class _OffertPageState extends State<OffertPage> {
             width: size.width * 0.3,
             child: AutoSizeText(
               text2,
-              minFontSize: 14,
+              minFontSize: 4,
               maxFontSize: maxFontSize,
               maxLines: 1,
               style: temaApp.textTheme.titleSmall!.copyWith(

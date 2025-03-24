@@ -2,6 +2,7 @@ import 'package:App_Tomaticos/core/constants/colors.dart';
 import 'package:App_Tomaticos/core/models/product_model.dart';
 import 'package:App_Tomaticos/core/services/cloudinary_service.dart';
 import 'package:App_Tomaticos/core/services/product_service.dart';
+import 'package:App_Tomaticos/core/widgets/custom_alert_dialog.dart';
 import 'package:App_Tomaticos/core/widgets/custom_button.dart';
 import 'package:App_Tomaticos/presentation/screens/products/update_product.dart';
 import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
@@ -124,27 +125,24 @@ class _BuyProductPageState extends State<BuyProductPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Container(
-                                  margin:
-                                      EdgeInsets.only(top: size.height * 0.025),
-                                  alignment: Alignment.centerLeft,
-                                  width: size.width * .3,
-                                  child: TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Row(
-                                      spacing: size.width * 0.02,
-                                      children: [
-                                        const Icon(
-                                          size: 24,
-                                          Icons.arrow_back,
-                                          color: Colors.black,
-                                        ),
-                                        AutoSizeText(
-                                          'Atras',
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Row(
+                                    spacing: size.width * 0.02,
+                                    children: [
+                                      const Icon(
+                                        size: 24,
+                                        Icons.arrow_back,
+                                        color: Colors.black,
+                                      ),
+                                      SizedBox(
+                                        height: 30,
+                                        child: AutoSizeText(
+                                          'Atrás',
                                           maxLines: 1,
-                                          minFontSize: 16,
+                                          minFontSize: 4,
                                           maxFontSize: 18,
                                           style: temaApp.textTheme.titleSmall!
                                               .copyWith(
@@ -152,8 +150,8 @@ class _BuyProductPageState extends State<BuyProductPage> {
                                                   color: Colors.black,
                                                   fontSize: 28),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 if (isOwner)
@@ -161,64 +159,7 @@ class _BuyProductPageState extends State<BuyProductPage> {
                                     children: [
                                       IconButton(
                                         onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title:
-                                                    const Text('Advertencia'),
-                                                content: const Text(
-                                                    '¿Estás seguro de eliminar el producto?'),
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                    child: Text('Cancelar',
-                                                        style: TextStyle(
-                                                            color: redApp)),
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
-                                                  ),
-                                                  TextButton(
-                                                    child: Text('Aceptar',
-                                                        style: TextStyle(
-                                                            color:
-                                                                buttonGreen)),
-                                                    onPressed: () async {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                      final success =
-                                                          await productService
-                                                              .deleteProduct(
-                                                                  widget
-                                                                      .productId);
-
-                                                      if (success) {
-                                                        setState(
-                                                          () {
-                                                            productDetails =
-                                                                productService
-                                                                    .fetchProductDetails(
-                                                                        widget
-                                                                            .productId);
-                                                          },
-                                                        );
-                                                      } else {
-                                                        // ignore: use_build_context_synchronously
-                                                        ScaffoldMessenger.of(
-                                                                context)
-                                                            .showSnackBar(
-                                                          const SnackBar(
-                                                              content: Text(
-                                                                  'Error al eliminar el producto')),
-                                                        );
-                                                      }
-                                                    },
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
+                                          _deleteProduct();
                                         },
                                         icon: Icon(Icons.delete, color: redApp),
                                       ),
@@ -246,7 +187,8 @@ class _BuyProductPageState extends State<BuyProductPage> {
                             Container(
                               alignment: Alignment.topCenter,
                               padding: EdgeInsets.symmetric(
-                                  horizontal: size.width * 0.05),
+                                  horizontal: size.width * 0.05,
+                                  vertical: size.height * 0.025),
                               width: size.width * 1,
                               child: Column(
                                 spacing: 12,
@@ -263,23 +205,17 @@ class _BuyProductPageState extends State<BuyProductPage> {
                                     width: size.width * 0.85,
                                     height: size.height * 0.28,
                                     decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        fit: BoxFit.scaleDown,
+                                        image: CachedNetworkImageProvider(
+                                          cloudinaryService
+                                              .getOptimizedImageUrl(
+                                            productData.imagen ??
+                                                'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp',
+                                          ),
+                                        ),
+                                      ),
                                       borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    child: CachedNetworkImage(
-                                      imageUrl: cloudinaryService
-                                          .getOptimizedImageUrl(
-                                              productData.imagen ??
-                                                  'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp',
-                                              width: 300,
-                                              height: 300),
-                                      fit: BoxFit.scaleDown,
-                                      placeholder: (context, url) =>
-                                          const Center(
-                                              child:
-                                                  CircularProgressIndicator()),
-                                      errorWidget: (context, url, error) =>
-                                          Image.network(
-                                              'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp'),
                                     ),
                                   ),
                                   _cardInfo(
@@ -374,76 +310,96 @@ class _BuyProductPageState extends State<BuyProductPage> {
                                   else if (userRole == 'Comerciante') ...[
                                     Container(
                                       margin: const EdgeInsets.only(
-                                          top: 20, bottom: 40),
+                                        top: 20,
+                                      ),
                                       child: Row(
-                                        spacing: 40,
+                                        spacing: 30,
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
-                                          CustomButton(
-                                            onPressed: () => context
-                                                .push('/purchase', extra: {
-                                              'productId': widget.productId,
-                                              'imageUrl': productData.imagen,
-                                              'price': productData.precio,
-                                              'cantidad': productData.cantidad,
-                                              'availableQuantify':
-                                                  productData.cantidad,
-                                            }),
-                                            color: buttonGreen,
-                                            border: 8,
-                                            width: 0.2,
-                                            height: 0.06,
-                                            elevation: 1,
-                                            colorBorder: Colors.transparent,
-                                            sizeBorder: 0,
-                                            child: AutoSizeText(
-                                              'COMPRAR',
-                                              maxLines: 1,
-                                              maxFontSize: 18,
-                                              minFontSize: 14,
-                                              style: temaApp
-                                                  .textTheme.titleSmall!
-                                                  .copyWith(
-                                                      color: Colors.white,
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.bold),
+                                          SizedBox(
+                                            width: 110,
+                                            child: TextButton(
+                                              style: ButtonStyle(
+                                                  shape: WidgetStatePropertyAll(
+                                                      RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      16))),
+                                                  backgroundColor:
+                                                      WidgetStatePropertyAll(
+                                                          buttonGreen)),
+                                              onPressed: () => context
+                                                  .push('/purchase', extra: {
+                                                'productId': widget.productId,
+                                                'imageUrl': productData.imagen,
+                                                'price': productData.precio,
+                                                'cantidad':
+                                                    productData.cantidad,
+                                                'availableQuantify':
+                                                    productData.cantidad,
+                                              }),
+                                              child: AutoSizeText(
+                                                'COMPRAR',
+                                                maxLines: 1,
+                                                maxFontSize: 14,
+                                                minFontSize: 8,
+                                                style: temaApp
+                                                    .textTheme.titleSmall!
+                                                    .copyWith(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 30),
+                                              ),
                                             ),
                                           ),
-                                          CustomButton(
-                                            onPressed: () => context
-                                                .push('/offerProduct', extra: {
-                                              'productId':
-                                                  productData.idProducto,
-                                              'imageUrl': productData.imagen,
-                                              'price': productData.precio,
-                                              'availableQuantity':
-                                                  productData.cantidad,
-                                              'productName':
-                                                  productData.nombreProducto,
-                                              'ownerId':
-                                                  productData.idPropietario,
-                                            }),
-                                            color: Colors.white,
-                                            border: 8,
-                                            width: 0.2,
-                                            height: 0.06,
-                                            elevation: 1,
-                                            colorBorder: buttonGreen,
-                                            sizeBorder: 2,
-                                            child: AutoSizeText(
-                                              'OFERTAR',
-                                              maxLines: 1,
-                                              maxFontSize: 18,
-                                              minFontSize: 14,
-                                              style: temaApp
-                                                  .textTheme.titleSmall!
-                                                  .copyWith(
-                                                      color: buttonGreen,
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.bold),
+                                          SizedBox(
+                                            width: 110,
+                                            child: TextButton(
+                                              style: ButtonStyle(
+                                                shape: WidgetStatePropertyAll(
+                                                  RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            16),
+                                                    side: BorderSide(
+                                                        color: buttonGreen,
+                                                        width: 2),
+                                                  ),
+                                                ),
+                                              ),
+                                              onPressed: () => context.push(
+                                                  '/offerProduct',
+                                                  extra: {
+                                                    'productId':
+                                                        productData.idProducto,
+                                                    'imageUrl':
+                                                        productData.imagen,
+                                                    'price': productData.precio,
+                                                    'availableQuantity':
+                                                        productData.cantidad,
+                                                    'cantidad':
+                                                        productData.cantidad,
+                                                    'productName': productData
+                                                        .nombreProducto,
+                                                    'ownerId': productData
+                                                        .idPropietario,
+                                                  }),
+                                              child: AutoSizeText(
+                                                'OFERTAR',
+                                                maxLines: 1,
+                                                maxFontSize: 14,
+                                                minFontSize: 8,
+                                                style: temaApp
+                                                    .textTheme.titleSmall!
+                                                    .copyWith(
+                                                        color: buttonGreen,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 30),
+                                              ),
                                             ),
                                           ),
                                         ],
@@ -477,10 +433,10 @@ class _BuyProductPageState extends State<BuyProductPage> {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
+        return Dialog(
+          insetPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           backgroundColor: Colors.white,
-          title: const Text('Actualizar Datos'),
-          content: FutureBuilder<Product?>(
+          child: FutureBuilder<Product?>(
             future: productDetails,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -497,76 +453,73 @@ class _BuyProductPageState extends State<BuyProductPage> {
               priceController.text = productData.precio.toString();
               quantityController.text = productData.cantidad.toString();
 
-              return SizedBox(
-                width: MediaQuery.of(context).size.width * 1,
-                child: UpdateProduct(
-                  titleController: titleController,
-                  descriptionController: descriptionController,
-                  priceController: priceController,
-                  quantityController: quantityController,
-                  productId: widget.productId,
-                  imageUrl:
-                      "${productData.imagen}?v=${DateTime.now().millisecondsSinceEpoch}", // 🔥 Evita caché
-                  onUpLoad: (String imageUrl) async {
-                    final success = await productService.updateProductDetails(
-                      widget.productId,
-                      {
-                        'imagen': imageUrl,
-                        'updated_at': DateTime.now().toIso8601String(),
-                      },
-                    );
-
-                    if (success) {
-                      setState(() {
-                        productDetails = productService
-                            .fetchProductDetails(widget.productId);
-                      });
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Imagen actualizada')),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Error al actualizar la imagen')),
-                      );
-                    }
-                  },
-                  onPressedDecline: () {
-                    Navigator.of(context).pop();
-                  },
-                  onPressedAccept: () async {
-                    final updatedData = {
-                      'nombreProducto': titleController.text,
-                      'descripcion': descriptionController.text,
-                      'precio': double.tryParse(priceController.text),
-                      'cantidad': int.tryParse(quantityController.text),
+              return UpdateProduct(
+                titleController: titleController,
+                descriptionController: descriptionController,
+                priceController: priceController,
+                quantityController: quantityController,
+                productId: widget.productId,
+                imageUrl:
+                    "${productData.imagen}?v=${DateTime.now().millisecondsSinceEpoch}", // 🔥 Evita caché
+                onUpLoad: (String imageUrl) async {
+                  final success = await productService.updateProductDetails(
+                    widget.productId,
+                    {
+                      'imagen': imageUrl,
                       'updated_at': DateTime.now().toIso8601String(),
-                    };
+                    },
+                  );
 
-                    final success = await productService.updateProductDetails(
-                      widget.productId,
-                      updatedData,
+                  if (success) {
+                    setState(() {
+                      productDetails =
+                          productService.fetchProductDetails(widget.productId);
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Imagen actualizada')),
                     );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Error al actualizar la imagen')),
+                    );
+                  }
+                },
+                onPressedDecline: () {
+                  Navigator.of(context).pop();
+                },
+                onPressedAccept: () async {
+                  final updatedData = {
+                    'nombreProducto': titleController.text,
+                    'descripcion': descriptionController.text,
+                    'precio': double.tryParse(priceController.text),
+                    'cantidad': int.tryParse(quantityController.text),
+                    'updated_at': DateTime.now().toIso8601String(),
+                  };
 
-                    if (success) {
-                      setState(() {
-                        productDetails = productService
-                            .fetchProductDetails(widget.productId);
-                      });
-                      Navigator.of(context).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Producto actualizado exitosamente')),
-                      );
-                    } else {
-                      Navigator.of(context).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Error al actualizar el producto')),
-                      );
-                    }
-                  },
-                ),
+                  final success = await productService.updateProductDetails(
+                    widget.productId,
+                    updatedData,
+                  );
+
+                  if (success) {
+                    setState(() {
+                      productDetails =
+                          productService.fetchProductDetails(widget.productId);
+                    });
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Producto actualizado exitosamente')),
+                    );
+                  } else {
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Error al actualizar el producto')),
+                    );
+                  }
+                },
               );
             },
           ),
@@ -584,7 +537,6 @@ class _BuyProductPageState extends State<BuyProductPage> {
     return Container(
       padding: EdgeInsets.symmetric(
           horizontal: size.width * 0.025, vertical: size.height * 0.015),
-      height: size.height * 0.105,
       width: size.width * 1,
       decoration: BoxDecoration(
         color: cardInfo,
@@ -597,31 +549,86 @@ class _BuyProductPageState extends State<BuyProductPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 4,
             children: [
-              AutoSizeText(
-                titleInfo,
-                maxFontSize: 18,
-                minFontSize: 16,
-                maxLines: 1,
-                style: temaApp.textTheme.titleSmall!.copyWith(
-                    color: Colors.black,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700),
+              SizedBox(
+                height: 22,
+                child: AutoSizeText(
+                  titleInfo,
+                  maxFontSize: 18,
+                  minFontSize: 11,
+                  maxLines: 1,
+                  style: temaApp.textTheme.titleSmall!.copyWith(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700),
+                ),
               ),
-              AutoSizeText(
-                subTitle,
-                maxFontSize: 16,
-                minFontSize: 12,
-                maxLines: 1,
-                style: temaApp.textTheme.titleSmall!.copyWith(
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.normal),
+              SizedBox(
+                width: 200,
+                child: AutoSizeText(
+                  subTitle,
+                  maxFontSize: 14,
+                  minFontSize: 4,
+                  maxLines: 1,
+                  style: temaApp.textTheme.titleSmall!.copyWith(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal),
+                ),
               ),
             ],
           ),
           icon
         ],
       ),
+    );
+  }
+
+  Future<void> _deleteProduct() async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          width: 220,
+          height: 270,
+          assetImage: './assets/images/alert.gif',
+          title: 'Alerta',
+          content: Container(
+            width: 200,
+            alignment: Alignment.center,
+            child: AutoSizeText(
+              '¿Estás seguro de eliminar este producto?',
+              maxLines: 2,
+              minFontSize: 4,
+              maxFontSize: 18,
+              textAlign: TextAlign.justify,
+              style: temaApp.textTheme.titleSmall!
+                  .copyWith(color: Colors.black, fontSize: 18),
+            ),
+          ),
+          onPressedAcept: () async {
+            Navigator.of(context).pop();
+            final success =
+                await productService.deleteProduct(widget.productId);
+
+            if (success) {
+              setState(
+                () {
+                  productDetails =
+                      productService.fetchProductDetails(widget.productId);
+                },
+              );
+            } else {
+              // ignore: use_build_context_synchronously
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Error al eliminar el producto')),
+              );
+            }
+          },
+          onPressedCancel: () {
+            Navigator.of(context).pop();
+          },
+        );
+      },
     );
   }
 }

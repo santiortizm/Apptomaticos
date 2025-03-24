@@ -79,7 +79,7 @@ class _ListviewTransportationState extends State<ListviewTransportation> {
                       child: CustomCardTransport(
                           idUsuario: transport.idComprador,
                           imageUrlProduct: transport.imagenProducto,
-                          idCompra: transport.id!,
+                          idCompra: transport.id,
                           countTransport: transport.cantidad.toString()),
                     );
                   });

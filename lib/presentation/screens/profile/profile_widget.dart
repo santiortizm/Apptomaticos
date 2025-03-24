@@ -79,6 +79,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
         borderRadius: BorderRadius.circular(20),
       ),
       child: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 10),
         child: Column(
           spacing: 16,
           children: [
@@ -123,12 +124,8 @@ class _ProfileWidgetState extends State<ProfileWidget> {
     String titleInfo,
     String? subTitle,
   ) {
-    final size = MediaQuery.of(context).size;
     return Container(
-      padding: EdgeInsets.symmetric(
-          horizontal: size.width * 0.025, vertical: size.height * 0.015),
-      height: size.height * 0.105,
-      width: size.width * 0.75,
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: cardInfo,
         borderRadius: BorderRadius.circular(12),
@@ -138,27 +135,33 @@ class _ProfileWidgetState extends State<ProfileWidget> {
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 4,
+            spacing: 3,
             children: [
-              AutoSizeText(
-                titleInfo,
-                maxFontSize: 18,
-                minFontSize: 16,
-                maxLines: 1,
-                style: temaApp.textTheme.titleSmall!.copyWith(
-                    color: Colors.black,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700),
+              SizedBox(
+                width: 120,
+                child: AutoSizeText(
+                  titleInfo,
+                  maxFontSize: 18,
+                  minFontSize: 11,
+                  maxLines: 1,
+                  style: temaApp.textTheme.titleSmall!.copyWith(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700),
+                ),
               ),
-              AutoSizeText(
-                subTitle ?? 'No disponible',
-                maxFontSize: 16,
-                minFontSize: 12,
-                maxLines: 1,
-                style: temaApp.textTheme.titleSmall!.copyWith(
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.normal),
+              SizedBox(
+                width: 200,
+                child: AutoSizeText(
+                  subTitle ?? 'No disponible',
+                  maxFontSize: 14,
+                  minFontSize: 4,
+                  maxLines: 1,
+                  style: temaApp.textTheme.titleSmall!.copyWith(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal),
+                ),
               ),
             ],
           ),

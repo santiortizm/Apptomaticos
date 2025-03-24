@@ -81,8 +81,13 @@ class _ListviewProductsState extends State<ListviewProducts> {
                     child: CircularProgressIndicator(),
                   );
                 } else if (snapshot.hasError) {
-                  return const Center(
-                    child: Text('Error obteniendo productos'),
+                  return Center(
+                    child: Image.asset(
+                      fit: BoxFit.fill,
+                      './assets/images/loading.gif',
+                      width: 150,
+                      height: 150,
+                    ),
                   );
                 } else if (snapshot.hasData) {
                   final products = snapshot.data!;

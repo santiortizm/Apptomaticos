@@ -54,17 +54,40 @@ class _TransportStatusState extends State<TransportStatus> {
                 child: Column(
                   spacing: 12,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        IconButton(
-                          iconSize: 36,
-                          icon: const Icon(Icons.arrow_back),
-                          onPressed: () {
-                            GoRouter.of(context).go('/myTransports');
-                          },
-                        ),
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10, left: 10),
+                      child: Row(
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              GoRouter.of(context).go('/menuTrucker');
+                            },
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.arrow_back,
+                                  size: 30,
+                                  color: Colors.black,
+                                ),
+                                Container(
+                                  alignment: Alignment.centerLeft,
+                                  width: 70,
+                                  height: 35,
+                                  child: AutoSizeText('Atrás',
+                                      maxFontSize: 18,
+                                      minFontSize: 4,
+                                      maxLines: 1,
+                                      textAlign: TextAlign.center,
+                                      style: temaApp.textTheme.titleSmall!
+                                          .copyWith(
+                                              fontSize: 18,
+                                              color: Colors.black)),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                     AutoSizeText(
                       textAlign: TextAlign.center,

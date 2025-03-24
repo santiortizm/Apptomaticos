@@ -20,8 +20,8 @@ class CustomTabButton extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
-      width: size.width * 0.4,
-      height: size.height * 0.06,
+      width: 100,
+      height: 50,
       padding: EdgeInsets.symmetric(vertical: size.height * 0.02),
       alignment: Alignment.center,
       decoration: BoxDecoration(
@@ -41,7 +41,7 @@ class CustomTabButton extends StatelessWidget {
             label,
             style: textTheme.bodyMedium!.copyWith(color: Colors.white),
             maxLines: 1,
-            minFontSize: 12,
+            minFontSize: 4,
             maxFontSize: 16,
             overflow: TextOverflow.ellipsis,
           ),

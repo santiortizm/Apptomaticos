@@ -97,6 +97,7 @@ class AppRouter {
             imageUrl: extra['imageUrl'],
             price: extra['price'],
             availableQuantity: extra['availableQuantity'],
+            cantidad: extra['cantidad'],
             productName: extra['productName'],
             ownerId: extra['ownerId'],
           );

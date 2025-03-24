@@ -124,32 +124,39 @@ class _MyCounterOffersState extends State<MyCounterOffers> {
                         vertical: size.height * 0.025),
                     child: Column(
                       children: [
-                        Align(
-                          alignment: const Alignment(-0.9, 0),
-                          child: TextButton(
-                            onPressed: () {
-                              GoRouter.of(context).go('/menu');
-                            },
-                            child: Row(
-                              spacing: size.width * 0.02,
-                              children: [
-                                const Icon(
-                                  size: 24,
-                                  Icons.arrow_back,
-                                  color: Colors.black,
-                                ),
-                                AutoSizeText(
-                                  'Atras',
-                                  maxLines: 1,
-                                  minFontSize: 16,
-                                  maxFontSize: 18,
-                                  style: temaApp.textTheme.titleSmall!.copyWith(
-                                      fontWeight: FontWeight.normal,
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10, left: 10),
+                          child: Row(
+                            children: [
+                              TextButton(
+                                onPressed: () {
+                                  GoRouter.of(context).go('/menu');
+                                },
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.arrow_back,
+                                      size: 30,
                                       color: Colors.black,
-                                      fontSize: 28),
+                                    ),
+                                    Container(
+                                      alignment: Alignment.centerLeft,
+                                      width: 70,
+                                      height: 35,
+                                      child: AutoSizeText('Atrás',
+                                          maxFontSize: 18,
+                                          minFontSize: 4,
+                                          maxLines: 1,
+                                          textAlign: TextAlign.center,
+                                          style: temaApp.textTheme.titleSmall!
+                                              .copyWith(
+                                                  fontSize: 18,
+                                                  color: Colors.black)),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              )
+                            ],
                           ),
                         ),
                         AutoSizeText(
@@ -203,7 +210,7 @@ class _MyCounterOffersState extends State<MyCounterOffers> {
                                             ? '${oferta.imagenProducto}?v=${DateTime.now().millisecondsSinceEpoch}'
                                             : 'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp',
                                         nombreProducto: oferta.nombreProducto,
-                                        nombreOfertador: oferta.idComprador,
+                                        idOfertador: oferta.idComprador,
                                         cantidadOfertada:
                                             oferta.cantidad.toString(),
                                         totalOferta:

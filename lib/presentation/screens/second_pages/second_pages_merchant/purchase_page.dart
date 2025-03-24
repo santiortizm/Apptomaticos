@@ -149,74 +149,82 @@ class _PurchasePageState extends State<PurchasePage> {
                       containerPrice(context, 'Total a Pagar:',
                           formatPrice(_totalPrice), 16),
                       Container(
+                        alignment: Alignment.center,
                         margin:
                             EdgeInsets.symmetric(vertical: size.height * 0.025),
                         child: Row(
-                          spacing: 20,
+                          spacing: 15,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            CustomButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              color: Colors.white,
-                              colorBorder: redApp,
-                              border: 12,
-                              width: 0.35,
-                              height: 0.07,
-                              elevation: 2,
-                              sizeBorder: 2.5,
-                              child: AutoSizeText(
-                                'CANCELAR',
-                                maxLines: 1,
-                                maxFontSize: 18,
-                                minFontSize: 16,
-                                style: temaApp.textTheme.titleSmall!.copyWith(
-                                    color: redApp,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 30),
+                            SizedBox(
+                              width: 120,
+                              child: CustomButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                color: Colors.white,
+                                colorBorder: redApp,
+                                border: 12,
+                                width: 0.35,
+                                height: 0.07,
+                                elevation: 2,
+                                sizeBorder: 2.5,
+                                child: AutoSizeText(
+                                  'CANCELAR',
+                                  maxLines: 1,
+                                  maxFontSize: 18,
+                                  minFontSize: 4,
+                                  style: temaApp.textTheme.titleSmall!.copyWith(
+                                      color: redApp,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 30),
+                                ),
                               ),
                             ),
-                            CustomButton(
-                              onPressed: () {
-                                final quantity =
-                                    int.tryParse(_quantityController.text) ?? 0;
-                                if (quantity <= 0 ||
-                                    quantity > widget.availableQuantify) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text('Cantidad no válida')),
-                                  );
-                                  return;
-                                }
+                            SizedBox(
+                              width: 120,
+                              child: CustomButton(
+                                onPressed: () {
+                                  final quantity =
+                                      int.tryParse(_quantityController.text) ??
+                                          0;
+                                  if (quantity <= 0 ||
+                                      quantity > widget.availableQuantify) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text('Cantidad no válida')),
+                                    );
+                                    return;
+                                  }
 
-                                // Navegar a la pantalla de métodos de pago con los datos de la compra
-                                context.push(
-                                  '/paymentAlternatives',
-                                  extra: {
-                                    'productId': widget.productId,
-                                    'quantity': quantity,
-                                    'totalPrice': _totalPrice,
-                                    'imageProduct': widget.imageUrl,
-                                  },
-                                );
-                              },
-                              color: buttonGreen,
-                              colorBorder: buttonGreen,
-                              border: 12,
-                              width: 0.35,
-                              height: 0.07,
-                              elevation: 1,
-                              sizeBorder: 0,
-                              child: AutoSizeText(
-                                'COMPRAR',
-                                maxLines: 1,
-                                maxFontSize: 20,
-                                minFontSize: 18,
-                                style: temaApp.textTheme.titleSmall!.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 30,
+                                  // Navegar a la pantalla de métodos de pago con los datos de la compra
+                                  context.push(
+                                    '/paymentAlternatives',
+                                    extra: {
+                                      'productId': widget.productId,
+                                      'quantity': quantity,
+                                      'totalPrice': _totalPrice,
+                                      'imageProduct': widget.imageUrl,
+                                    },
+                                  );
+                                },
+                                color: buttonGreen,
+                                colorBorder: buttonGreen,
+                                border: 12,
+                                width: 0.35,
+                                height: 0.07,
+                                elevation: 1,
+                                sizeBorder: 0,
+                                child: AutoSizeText(
+                                  'COMPRAR',
+                                  maxLines: 1,
+                                  maxFontSize: 20,
+                                  minFontSize: 4,
+                                  style: temaApp.textTheme.titleSmall!.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 30,
+                                  ),
                                 ),
                               ),
                             ),
@@ -242,7 +250,7 @@ class _PurchasePageState extends State<PurchasePage> {
       width: size.width * 1,
       child: AutoSizeText(
         text,
-        minFontSize: 14,
+        minFontSize: 4,
         maxFontSize: maxFontSize,
         maxLines: 1,
         style: temaApp.textTheme.titleSmall!.copyWith(
@@ -272,7 +280,7 @@ class _PurchasePageState extends State<PurchasePage> {
             width: size.width * 0.4,
             child: AutoSizeText(
               text1,
-              minFontSize: 14,
+              minFontSize: 4,
               maxFontSize: maxFontSize,
               maxLines: 1,
               style: temaApp.textTheme.titleSmall!.copyWith(
@@ -287,7 +295,7 @@ class _PurchasePageState extends State<PurchasePage> {
             width: size.width * 0.3,
             child: AutoSizeText(
               text2,
-              minFontSize: 14,
+              minFontSize: 4,
               maxFontSize: maxFontSize,
               maxLines: 1,
               style: temaApp.textTheme.titleSmall!.copyWith(

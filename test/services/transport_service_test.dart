@@ -37,9 +37,9 @@ void main() {
     final newProduct = Product(
       idProducto: createdProductId,
       createdAt: DateTime.now(),
-      nombreProducto: 'Tomates Cherry',
-      cantidad: 100,
-      descripcion: 'Tomates cherry frescos y orgánicos.',
+      nombreProducto: 'Tomate Chonto',
+      cantidad: 500,
+      descripcion: 'Tomates frescos y orgánicos.',
       maduracion: 'Maduro',
       fertilizantes: 'Sin Etileno',
       fechaCosecha: '2024-04-10',
@@ -69,7 +69,7 @@ void main() {
     final newBuy = Buy(
       id: createdBuyId,
       createdAt: DateTime.now(),
-      alternativaPago: 'Contra Entrega',
+      alternativaPago: 'PAGO CONTRA ENTREGA',
       nombreProducto: 'Tomate Cherry',
       cantidad: 5,
       total: 60000,
@@ -138,7 +138,46 @@ void main() {
 
     expect(updateResponse['estado'], equals('En camino'));
     expect(updateResponse['valorTransporte'], equals(1600));
-    print('🟢 Estado del transporte actualizado correctamente.');
+    print('🟢 Estado del transporte actualizado a En Camino.');
+  });
+  test('✅ Actualizar estado del transporte a En Central de abastos', () async {
+    expect(createdTransportId, isNotNull,
+        reason: 'El ID del transporte no puede ser nulo.');
+
+    final updateTransport = {
+      'estado': 'En Central de abastos',
+      'valorTransporte': 1600
+    };
+
+    final updateResponse = await supabaseClient
+        .from('transportes')
+        .update(updateTransport)
+        .eq('idTransporte', createdTransportId)
+        .select()
+        .single();
+
+    expect(updateResponse['estado'], equals('En Central de abastos'));
+    expect(updateResponse['valorTransporte'], equals(1600));
+    print('🟢 Estado del transporte actualizado a En Central de abastos.');
+  });
+
+  test('✅ Como Comerciante quiero cambiar el estado del transporte a Entregado',
+      () async {
+    expect(createdTransportId, isNotNull,
+        reason: 'El ID del transporte no puede ser nulo.');
+
+    final updateTransport = {'estado': 'Entregado', 'valorTransporte': 1600};
+
+    final updateResponse = await supabaseClient
+        .from('transportes')
+        .update(updateTransport)
+        .eq('idTransporte', createdTransportId)
+        .select()
+        .single();
+
+    expect(updateResponse['estado'], equals('Entregado'));
+    expect(updateResponse['valorTransporte'], equals(1600));
+    print('🟢 Estado del transporte actualizado a Entregado.');
   });
 
   test('❌ Manejo de error al crear un transporte con datos inválidos',

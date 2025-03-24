@@ -1,6 +1,8 @@
 import 'package:App_Tomaticos/core/constants/colors.dart';
 import 'package:App_Tomaticos/core/models/add_product_model.dart';
+import 'package:App_Tomaticos/core/widgets/custom_alert_dialog.dart';
 import 'package:App_Tomaticos/core/widgets/custom_button.dart';
+import 'package:App_Tomaticos/core/widgets/custom_notification.dart';
 import 'package:App_Tomaticos/core/widgets/drop_down_field/drop_down_field_controller.dart';
 import 'package:App_Tomaticos/core/widgets/text_form_field_widget.dart';
 import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
@@ -54,9 +56,7 @@ class _AddProductPageState extends State<AddProductPage> {
                 spacing: 12,
                 children: [
                   Container(
-                    padding: EdgeInsets.symmetric(
-                        vertical: size.height * 0.015,
-                        horizontal: size.width * 0.025),
+                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 14),
                     margin: EdgeInsets.only(bottom: size.height * 0.025),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -74,7 +74,7 @@ class _AddProductPageState extends State<AddProductPage> {
                         AutoSizeText(
                           '¡ Hola, este espacio fue diseñado para que pueda publicar sus productos !',
                           maxFontSize: 18,
-                          minFontSize: 14,
+                          minFontSize: 4,
                           maxLines: 2,
                           textAlign: TextAlign.center,
                           style: temaApp.textTheme.titleMedium!.copyWith(
@@ -100,24 +100,49 @@ class _AddProductPageState extends State<AddProductPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            IconButton(
-                              iconSize: 36,
-                              icon: const Icon(Icons.arrow_back),
+                            TextButton(
                               onPressed: () {
                                 GoRouter.of(context).go('/menu');
                               },
-                            ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.arrow_back,
+                                    size: 30,
+                                    color: Colors.black,
+                                  ),
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    width: 70,
+                                    height: 35,
+                                    child: AutoSizeText('Atrás',
+                                        maxFontSize: 18,
+                                        minFontSize: 4,
+                                        maxLines: 1,
+                                        textAlign: TextAlign.center,
+                                        style: temaApp.textTheme.titleSmall!
+                                            .copyWith(
+                                                fontSize: 18,
+                                                color: Colors.black)),
+                                  ),
+                                ],
+                              ),
+                            )
                           ],
                         ),
                         Padding(
                           padding: EdgeInsets.only(bottom: size.height * 0.025),
-                          child: AutoSizeText(
-                            'Registro de Producto',
-                            maxFontSize: 22,
-                            minFontSize: 18,
-                            maxLines: 1,
-                            style: temaApp.textTheme.titleSmall!.copyWith(
-                                fontSize: 22, fontWeight: FontWeight.w600),
+                          child: SizedBox(
+                            width: 300,
+                            child: AutoSizeText(
+                              'Registro de Producto',
+                              maxFontSize: 22,
+                              minFontSize: 4,
+                              maxLines: 1,
+                              textAlign: TextAlign.center,
+                              style: temaApp.textTheme.titleSmall!.copyWith(
+                                  fontSize: 22, fontWeight: FontWeight.w600),
+                            ),
                           ),
                         ),
                         TextFormFieldWidget(
@@ -185,120 +210,112 @@ class _AddProductPageState extends State<AddProductPage> {
                           spacing: 16,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            CustomButton(
-                              onPressed: () {
-                                _alertForCancelAction(context);
-                              },
-                              color: redApp,
-                              border: 18,
-                              width: 0.2,
-                              height: 0.07,
-                              elevation: 0,
-                              colorBorder: Colors.transparent,
-                              sizeBorder: 0,
-                              child: AutoSizeText(
-                                'Cancelar',
-                                style: temaApp.textTheme.titleSmall!.copyWith(
-                                    fontSize: 18, color: Colors.white),
-                                maxFontSize: 18,
-                                minFontSize: 14,
+                            SizedBox(
+                              width: 130,
+                              child: CustomButton(
+                                onPressed: () {
+                                  _alertForCancelAction(context);
+                                },
+                                color: redApp,
+                                border: 18,
+                                width: 0.2,
+                                height: 0.07,
+                                elevation: 0,
+                                colorBorder: Colors.transparent,
+                                sizeBorder: 0,
+                                child: AutoSizeText(
+                                  'Cancelar',
+                                  style: temaApp.textTheme.titleSmall!.copyWith(
+                                      fontSize: 18, color: Colors.white),
+                                  maxFontSize: 18,
+                                  minFontSize: 4,
+                                  maxLines: 1,
+                                ),
                               ),
                             ),
-                            CustomButton(
-                              onPressed: () async {
-                                try {
-                                  if (_model.nameController.text.isEmpty ||
-                                      _model.quantityController.text.isEmpty ||
-                                      _model
-                                          .harvestDateController.text.isEmpty ||
-                                      _model.expirationDateController.text
-                                          .isEmpty ||
-                                      _model.priceController.text.isEmpty ||
-                                      _model.selectedMaturity == null ||
-                                      _model.selectedFertilizer == null) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                            'Por favor complete todos los campos requeridos.'),
-                                      ),
-                                    );
-                                    return;
-                                  }
-                                  final idUsuario =
-                                      supabase.auth.currentUser!.id;
-                                  // Insertar producto y obtener datos
-                                  final response =
-                                      await supabase.from('productos').insert({
-                                    'nombreProducto':
-                                        _model.nameController.text,
-                                    'cantidad': int.parse(
-                                        _model.quantityController.text),
-                                    'descripcion':
-                                        _model.descriptionController.text,
-                                    'maduracion': _model.selectedMaturity,
-                                    'fertilizantes': _model.selectedFertilizer,
-                                    'fechaCosecha':
-                                        _model.harvestDateController.text,
-                                    'fechaCaducidad':
-                                        _model.expirationDateController.text,
-                                    'imagen':
-                                        'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp',
-                                    'precio': double.parse(
-                                        _model.priceController.text),
-                                    'idPropietario': idUsuario,
-                                  }).select();
-                                  // Verificar si response contiene datos
-                                  if (response.isNotEmpty) {
-                                    // Limpiar campos
-                                    _model.nameController.clear();
-                                    _model.quantityController.clear();
-                                    _model.descriptionController.clear();
-                                    _model.harvestDateController.clear();
-                                    _model.expirationDateController.clear();
-                                    _model.priceController.clear();
-                                    setState(() {
-                                      _model.selectedMaturity = null;
-                                      _model.selectedFertilizer = null;
-                                    });
+                            SizedBox(
+                              width: 130,
+                              child: CustomButton(
+                                onPressed: () async {
+                                  try {
+                                    if (_model.nameController.text.isEmpty ||
+                                        _model
+                                            .quantityController.text.isEmpty ||
+                                        _model.harvestDateController.text
+                                            .isEmpty ||
+                                        _model.expirationDateController.text
+                                            .isEmpty ||
+                                        _model.priceController.text.isEmpty ||
+                                        _model.selectedMaturity == null ||
+                                        _model.selectedFertilizer == null) {
+                                      _errorCampos(context);
+                                      return;
+                                    }
+                                    final idUsuario =
+                                        supabase.auth.currentUser!.id;
+                                    // Insertar producto y obtener datos
+                                    final response = await supabase
+                                        .from('productos')
+                                        .insert({
+                                      'nombreProducto':
+                                          _model.nameController.text,
+                                      'cantidad': int.parse(
+                                          _model.quantityController.text),
+                                      'descripcion':
+                                          _model.descriptionController.text,
+                                      'maduracion': _model.selectedMaturity,
+                                      'fertilizantes':
+                                          _model.selectedFertilizer,
+                                      'fechaCosecha':
+                                          _model.harvestDateController.text,
+                                      'fechaCaducidad':
+                                          _model.expirationDateController.text,
+                                      'imagen':
+                                          'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp',
+                                      'precio': double.parse(
+                                          _model.priceController.text),
+                                      'idPropietario': idUsuario,
+                                    }).select();
+                                    // Verificar si response contiene datos
+                                    if (response.isNotEmpty) {
+                                      // Limpiar campos
+                                      _model.nameController.clear();
+                                      _model.quantityController.clear();
+                                      _model.descriptionController.clear();
+                                      _model.harvestDateController.clear();
+                                      _model.expirationDateController.clear();
+                                      _model.priceController.clear();
+                                      setState(() {
+                                        _model.selectedMaturity = null;
+                                        _model.selectedFertilizer = null;
+                                      });
 
+                                      // ignore: use_build_context_synchronously
+                                      _alertAddProduct(context);
+                                    } else {
+                                      // ignore: use_build_context_synchronously
+                                      _error(context);
+                                    }
+                                  } catch (e) {
                                     // ignore: use_build_context_synchronously
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text(
-                                              'Producto agregado correctamente')),
-                                    );
-
-                                    // ignore: use_build_context_synchronously
-                                    GoRouter.of(context).go('/menu');
-                                  } else {
-                                    // ignore: use_build_context_synchronously
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text(
-                                              'No se devolvieron datos de la inserción')),
-                                    );
+                                    _error(context);
                                   }
-                                } catch (e) {
-                                  // ignore: use_build_context_synchronously
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text('Error inesperado: $e')),
-                                  );
-                                }
-                              },
-                              color: buttonGreen,
-                              border: 18,
-                              width: 0.2,
-                              height: 0.07,
-                              elevation: 0,
-                              colorBorder: Colors.transparent,
-                              sizeBorder: 0,
-                              child: AutoSizeText(
-                                'Aceptar',
-                                style: temaApp.textTheme.titleSmall!.copyWith(
-                                    fontSize: 18, color: Colors.white),
-                                maxFontSize: 18,
-                                minFontSize: 14,
+                                },
+                                color: buttonGreen,
+                                border: 18,
+                                width: 0.2,
+                                height: 0.07,
+                                elevation: 0,
+                                colorBorder: Colors.transparent,
+                                sizeBorder: 0,
+                                child: AutoSizeText(
+                                  'Aceptar',
+                                  style: temaApp.textTheme.titleSmall!.copyWith(
+                                      fontSize: 18, color: Colors.white),
+                                  maxFontSize: 18,
+                                  minFontSize: 4,
+                                  maxLines: 1,
+                                ),
                               ),
                             ),
                           ],
@@ -319,23 +336,160 @@ class _AddProductPageState extends State<AddProductPage> {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Alerta'),
-            content: const Text('Estás seguro de cancelar esta operacion?'),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('Cancelar'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
+          return CustomAlertDialog(
+            width: 300,
+            height: 290,
+            assetImage: './assets/images/advertencia.png',
+            title: 'Alerta',
+            content: Container(
+              alignment: Alignment.center,
+              width: 250,
+              child: AutoSizeText(
+                'Estás seguro de cancelar esta operacion?',
+                maxLines: 2,
+                maxFontSize: 26,
+                minFontSize: 4,
+                style: temaApp.textTheme.titleSmall!.copyWith(fontSize: 100),
               ),
-              TextButton(
-                child: const Text('Aceptar'),
-                onPressed: () {
-                  GoRouter.of(context).go('/menu');
-                },
+            ),
+            onPressedAcept: () {
+              GoRouter.of(context).go('/menu');
+            },
+            onPressedCancel: () {
+              Navigator.of(context).pop();
+            },
+          );
+        });
+  }
+
+  Future<void> _errorCampos(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomNotification(
+            width: 300,
+            height: 300,
+            assetImage: './assets/images/error.gif',
+            title: 'Error',
+            content: Container(
+              alignment: Alignment.center,
+              width: 250,
+              child: AutoSizeText(
+                'Debes llenar todos los campos para añadir un producto',
+                maxLines: 2,
+                maxFontSize: 26,
+                minFontSize: 4,
+                style: temaApp.textTheme.titleSmall!.copyWith(fontSize: 100),
               ),
-            ],
+            ),
+            button: Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll(buttonGreen),
+                    ),
+                    onPressed: () => Navigator.pop(context),
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: 80,
+                      height: 28,
+                      child: AutoSizeText('Aceptar',
+                          maxLines: 1,
+                          maxFontSize: 14,
+                          minFontSize: 4,
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  Future<void> _error(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomNotification(
+            width: 300,
+            height: 300,
+            assetImage: './assets/images/error.gif',
+            title: 'Error',
+            content: Container(
+              alignment: Alignment.center,
+              width: 250,
+              child: AutoSizeText(
+                'Ha sucedido un error inesperado, por favor intente de nuevo',
+                maxLines: 2,
+                maxFontSize: 26,
+                minFontSize: 4,
+                style: temaApp.textTheme.titleSmall!.copyWith(fontSize: 100),
+              ),
+            ),
+            button: Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll(buttonGreen),
+                    ),
+                    onPressed: () => Navigator.pop(context),
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: 80,
+                      height: 28,
+                      child: AutoSizeText('Aceptar',
+                          maxLines: 1,
+                          maxFontSize: 14,
+                          minFontSize: 4,
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  Future<void> _alertAddProduct(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          Future.delayed(const Duration(seconds: 5), () {
+            // ignore: use_build_context_synchronously
+            if (Navigator.of(context).canPop()) {
+              // ignore: use_build_context_synchronously
+              Navigator.of(context).pop(); // Cierra el diálogo
+              // ignore: use_build_context_synchronously
+              GoRouter.of(context).go('/menu');
+            }
+          });
+          return CustomNotification(
+            width: 300,
+            height: 250,
+            assetImage: './assets/images/producto_agregado.gif',
+            title: 'Producto agregado',
+            content: Container(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              alignment: Alignment.center,
+              width: 250,
+              child: AutoSizeText(
+                'El producto ha sido agregado exitosamente!',
+                maxLines: 2,
+                maxFontSize: 26,
+                minFontSize: 4,
+                textAlign: TextAlign.justify,
+                style: temaApp.textTheme.titleSmall!.copyWith(fontSize: 100),
+              ),
+            ),
+            button: SizedBox.shrink(),
           );
         });
   }

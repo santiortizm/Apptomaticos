@@ -58,6 +58,7 @@ class _PaymentAlternativesState extends State<PaymentAlternatives> {
 
       // Crear el modelo de compra
       final Buy compra = Buy(
+        id: DateTime.now().millisecondsSinceEpoch,
         idProducto: widget.productId,
         createdAt: now,
         cantidad: widget.quantity,
@@ -130,6 +131,7 @@ class _PaymentAlternativesState extends State<PaymentAlternatives> {
               padding: EdgeInsets.symmetric(
                   horizontal: size.width * 0.05, vertical: size.height * 0.03),
               child: Container(
+                padding: EdgeInsets.only(bottom: size.height * 0.025),
                 width: size.width,
                 height: size.height,
                 decoration: BoxDecoration(
@@ -171,7 +173,7 @@ class _PaymentAlternativesState extends State<PaymentAlternatives> {
                           ),
                         ),
                       ),
-                      texTitletWidget(context, 'Alternativas de Pago', 28),
+                      texTitletWidget(context, 'Alternativas\nde Pago', 28),
                       textWidget(
                           context,
                           'Ofrecemos dos opciones para tu comodidad:\n\nPago Contra Entrega: Realiza el pago al recibir tus tomates, asegurando la calidad del producto antes de pagar.\n\nPago Inmediato: Paga al momento de hacer tu pedido y disfruta de un proceso de compra rápido y sencillo.',
@@ -260,7 +262,7 @@ class _PaymentAlternativesState extends State<PaymentAlternatives> {
       child: AutoSizeText(
         textAlign: TextAlign.center,
         text,
-        minFontSize: 14,
+        minFontSize: 4,
         maxFontSize: maxFontSize,
         maxLines: 2,
         style: temaApp.textTheme.titleSmall!.copyWith(
@@ -281,7 +283,7 @@ class _PaymentAlternativesState extends State<PaymentAlternatives> {
       child: AutoSizeText(
         textAlign: TextAlign.justify,
         text,
-        minFontSize: 14,
+        minFontSize: 4,
         maxFontSize: maxFontSize,
         maxLines: 16,
         style: temaApp.textTheme.titleSmall!.copyWith(

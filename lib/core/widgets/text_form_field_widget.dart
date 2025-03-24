@@ -29,6 +29,8 @@ class TextFormFieldWidget extends StatelessWidget {
       cursorErrorColor: redApp,
       decoration: InputDecoration(
         labelText: labelText,
+        floatingLabelStyle: TextStyle(fontSize: 12, color: redApp),
+        labelStyle: TextStyle(fontSize: 12, color: Colors.black),
         prefixIcon: Icon(icon, color: redApp),
         filled: true,
         fillColor: Colors.white.withValues(alpha: 0.9),

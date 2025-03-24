@@ -114,6 +114,7 @@ void main() {
   test('❌ Manejo de error al crear una compra con datos inválidos', () async {
     try {
       final invalidBuy = Buy(
+        id: createdBuyId,
         createdAt: DateTime.now(),
         alternativaPago: '',
         nombreProducto: '',

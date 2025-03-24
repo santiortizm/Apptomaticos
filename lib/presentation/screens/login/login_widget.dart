@@ -1,4 +1,5 @@
 import 'package:App_Tomaticos/core/constants/colors.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:go_router/go_router.dart';
@@ -48,20 +49,42 @@ class _LoginWidgetState extends State<LoginWidget> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                        'Iniciar Sesión',
-                        style:
-                            Theme.of(context).textTheme.displayLarge?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.18,
+                            child: AutoSizeText(
+                              'Iniciar\nSesión',
+                              maxLines: 2,
+                              maxFontSize: 84,
+                              minFontSize: 12,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displayLarge
+                                  ?.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 100),
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(height: size.height * 0.02),
-                      Text(
-                        'Utilice su cuenta para iniciar sesión',
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: const Color.fromARGB(255, 255, 255, 255),
-                            ),
+                      SizedBox(
+                        child: AutoSizeText(
+                          'Utilice su cuenta para iniciar sesión',
+                          maxLines: 2,
+                          maxFontSize: 20,
+                          minFontSize: 12,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.copyWith(
+                                fontSize: 100,
+                                color: const Color.fromARGB(255, 255, 255, 255),
+                              ),
+                        ),
                       ),
                       SizedBox(height: size.height * 0.05),
                       _buildUsernameField(),
@@ -83,8 +106,11 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
-                              child: const Text(
+                              child: AutoSizeText(
                                 'Iniciar Sesión',
+                                maxLines: 1,
+                                maxFontSize: 14,
+                                minFontSize: 10,
                                 style: TextStyle(
                                     fontSize: 18, color: Colors.white),
                               ),
@@ -192,24 +218,48 @@ class _LoginWidgetState extends State<LoginWidget> {
   Widget _buildFooterLinks() {
     return Column(
       children: [
-        GestureDetector(
-          onTap: () {},
-          child: const Text('¿Olvidó su contraseña?',
-              style: TextStyle(color: Colors.white)),
+        Container(
+          alignment: Alignment.center,
+          width: 280,
+          child: GestureDetector(
+            onTap: () {},
+            child: AutoSizeText('¿Olvidó su contraseña?',
+                maxFontSize: 16,
+                minFontSize: 8,
+                maxLines: 1,
+                style: TextStyle(color: Colors.white, fontSize: 100)),
+          ),
         ),
         const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('¿Aún no tienes una cuenta?',
-                style: TextStyle(color: Colors.white)),
-            const SizedBox(width: 4),
-            GestureDetector(
-              onTap: () {},
-              child: const Text(
-                'Regístrate',
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            Container(
+              alignment: Alignment.center,
+              width: 180,
+              child: AutoSizeText(
+                '¿Aún no tienes una cuenta?',
+                maxFontSize: 16,
+                minFontSize: 4,
+                maxLines: 1,
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
+            ),
+            Container(
+              alignment: Alignment.center,
+              width: 70,
+              child: GestureDetector(
+                onTap: () {},
+                child: AutoSizeText(
+                  'Regístrate',
+                  maxFontSize: 16,
+                  minFontSize: 4,
+                  maxLines: 1,
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
+                ),
               ),
             ),
           ],

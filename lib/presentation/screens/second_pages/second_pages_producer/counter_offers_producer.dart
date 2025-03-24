@@ -2,7 +2,6 @@ import 'package:App_Tomaticos/core/models/counter_offer_model.dart';
 import 'package:App_Tomaticos/core/services/counter_offer_service.dart';
 import 'package:App_Tomaticos/core/services/product_service.dart';
 import 'package:App_Tomaticos/core/widgets/cards/custom_card_counter_offer_producer.dart';
-import 'package:App_Tomaticos/core/widgets/custom_button.dart';
 import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -124,39 +123,39 @@ class _CounterOffersProducerState extends State<CounterOffersProducer> {
                   child: Column(
                     children: [
                       // Botón Atrás
-                      Align(
-                        alignment: const Alignment(-0.9, 0),
-                        child: SizedBox(
-                          width: size.width * 0.35,
-                          child: CustomButton(
-                            onPressed: () {
-                              GoRouter.of(context).go('/menu');
-                            },
-                            color: Colors.white.withValues(alpha: 0.05),
-                            border: 20,
-                            width: 0.2,
-                            height: 0.1,
-                            elevation: 0,
-                            colorBorder: Colors.transparent,
-                            sizeBorder: 0,
-                            child: Row(
-                              spacing: size.width * 0.02,
-                              children: [
-                                const Icon(Icons.arrow_back,
-                                    color: Colors.black),
-                                AutoSizeText(
-                                  'Atrás',
-                                  maxFontSize: 18,
-                                  minFontSize: 14,
-                                  maxLines: 1,
-                                  style: temaApp.textTheme.titleSmall!.copyWith(
-                                    fontSize: 18,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10, left: 10),
+                        child: Row(
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                GoRouter.of(context).go('/menu');
+                              },
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.arrow_back,
+                                    size: 30,
                                     color: Colors.black,
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    width: 70,
+                                    height: 35,
+                                    child: AutoSizeText('Atrás',
+                                        maxFontSize: 18,
+                                        minFontSize: 4,
+                                        maxLines: 1,
+                                        textAlign: TextAlign.center,
+                                        style: temaApp.textTheme.titleSmall!
+                                            .copyWith(
+                                                fontSize: 18,
+                                                color: Colors.black)),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
                         ),
                       ),
                       Padding(
