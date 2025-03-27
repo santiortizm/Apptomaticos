@@ -3,7 +3,7 @@ import 'package:App_Tomaticos/core/widgets/custom_button.dart';
 import 'package:App_Tomaticos/core/widgets/drawer/custom_drawer.dart';
 import 'package:App_Tomaticos/presentation/screens/price/price_page.dart';
 import 'package:App_Tomaticos/presentation/screens/products/listview_products.dart';
-import 'package:App_Tomaticos/presentation/screens/profile/profile_widget.dart';
+import 'package:App_Tomaticos/presentation/screens/profile/profile.dart';
 import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -161,7 +161,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                         padding: EdgeInsets.symmetric(
                             horizontal: size.width * 0.05,
                             vertical: size.height * 0.025),
-                        child: const ProfileWidget(),
+                        child: const Profile(),
                       ),
                     ],
                   ),
@@ -183,7 +183,9 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
         indicatorColor: Colors.transparent,
         tabs: [
           CustomTabButton(
-              label: 'Home', icon: Icons.home, isSelected: _selectedIndex == 0),
+              label: 'Inicio',
+              icon: Icons.home,
+              isSelected: _selectedIndex == 0),
           CustomTabButton(
               label: 'Precios',
               icon: Icons.attach_money,

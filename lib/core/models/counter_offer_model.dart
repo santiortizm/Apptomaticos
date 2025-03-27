@@ -1,5 +1,5 @@
 class CounterOffer {
-  final int? idContraOferta;
+  final int idContraOferta;
   final DateTime createdAt;
   final int cantidad;
   final double valorOferta;
@@ -12,7 +12,7 @@ class CounterOffer {
   final String idPropietario;
 
   CounterOffer({
-    this.idContraOferta,
+    required this.idContraOferta,
     required this.createdAt,
     required this.cantidad,
     required this.valorOferta,
@@ -43,6 +43,7 @@ class CounterOffer {
 
   Map<String, dynamic> toMap() {
     return {
+      'idContraOferta': idContraOferta,
       'created_at': createdAt.toIso8601String(),
       'cantidad': cantidad,
       'valorOferta': valorOferta,

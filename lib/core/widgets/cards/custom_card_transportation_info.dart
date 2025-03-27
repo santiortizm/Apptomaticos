@@ -96,8 +96,8 @@ class _CustomCardTransportationInfoState
                 children: [
                   texTitletWidget(
                       context, compraData?['nombreProducto'] ?? '', 22),
-                  moreInfo(context, 'Cantidad', 12, compraData?['cantidad'], 12,
-                      0.26, 0.22),
+                  moreInfo(context, 'Cantidad', 12,
+                      compraData?['cantidad'].toString() ?? '', 12, 0.26, 0.22),
                   moreInfo(context, 'Peso Carga', 12, '${widget.pesoCarga} T',
                       12, 0.26, 0.22),
                   moreInfo(context, 'Total compra:', 12,

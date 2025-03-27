@@ -5,14 +5,14 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class ProfileWidget extends StatefulWidget {
-  const ProfileWidget({super.key});
+class Profile extends StatefulWidget {
+  const Profile({super.key});
 
   @override
-  State<ProfileWidget> createState() => _ProfileWidgetState();
+  State<Profile> createState() => _ProfileState();
 }
 
-class _ProfileWidgetState extends State<ProfileWidget> {
+class _ProfileState extends State<Profile> {
   final supabase = Supabase.instance.client;
 
   String? _imageUrl;
@@ -83,31 +83,40 @@ class _ProfileWidgetState extends State<ProfileWidget> {
         child: Column(
           spacing: 16,
           children: [
-            Stack(
-              children: [
-                Avatar(
-                  imageUrl: _imageUrl,
-                  onUpLoad: (imageUrl) {
-                    setState(() {
-                      _imageUrl = imageUrl;
-                    });
-                  },
-                ),
-                Positioned(
-                  top: 10,
-                  right: 10,
-                  child: IconButton(
-                    onPressed: () {
-                      Scaffold.of(context).openDrawer();
-                    },
-                    icon: Icon(
-                      Icons.list,
-                      size: 50,
-                      color: redApp,
+            Container(
+              width: 350,
+              alignment: Alignment.center,
+              child: Stack(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Avatar(
+                        imageUrl: _imageUrl,
+                        onUpLoad: (imageUrl) {
+                          setState(() {
+                            _imageUrl = imageUrl;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                  Positioned(
+                    top: 10,
+                    right: 8,
+                    child: IconButton(
+                      onPressed: () {
+                        Scaffold.of(context).openDrawer();
+                      },
+                      icon: Icon(
+                        Icons.list,
+                        size: 50,
+                        color: redApp,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             _cardInfo('Nombre', _userInfo?['nombre']),
             _cardInfo('Apellido', _userInfo?['apellido']),

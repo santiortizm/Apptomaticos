@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:App_Tomaticos/presentation/screens/loading/loading_screen.dart';
 import 'package:App_Tomaticos/presentation/screens/login/login_widget.dart';
 import 'package:App_Tomaticos/presentation/screens/menu/menu.dart';
@@ -7,6 +6,7 @@ import 'package:App_Tomaticos/presentation/screens/menu_trucker/menu_trucker.dar
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class AuthApp extends StatefulWidget {
   const AuthApp({super.key});
@@ -33,6 +33,7 @@ class _AuthAppState extends State<AuthApp> {
 
     if (user != null) {
       await _fetchUserRole();
+      await _requestPermissions(); //  Pedir permisos al iniciar sesión
     } else {
       if (mounted) {
         setState(() => isLoading = false);
@@ -63,6 +64,7 @@ class _AuthAppState extends State<AuthApp> {
       await FirebaseMessaging.instance.requestPermission();
       await saveFcmToken();
       await _fetchUserRole();
+      await _requestPermissions(); //  Pedir permisos cuando el usuario inicia sesión
     });
   }
 
@@ -82,6 +84,14 @@ class _AuthAppState extends State<AuthApp> {
         isLoading = false;
       });
     }
+  }
+
+  ///  Solicita permisos de notificaciones, cámara y almacenamiento
+  Future<void> _requestPermissions() async {
+    await Permission.notification.request();
+    await Permission.camera.request();
+    await Permission.photos.request();
+    await Permission.storage.request();
   }
 
   @override

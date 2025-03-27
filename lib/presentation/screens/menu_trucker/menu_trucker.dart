@@ -2,8 +2,8 @@ import 'package:App_Tomaticos/core/constants/colors.dart';
 import 'package:App_Tomaticos/core/widgets/custom_button.dart';
 import 'package:App_Tomaticos/core/widgets/custom_tabbar_button.dart';
 import 'package:App_Tomaticos/core/widgets/drawer/custom_drawer.dart';
-import 'package:App_Tomaticos/presentation/screens/profile/profile_widget.dart';
-import 'package:App_Tomaticos/presentation/screens/transportation/listview_transportation.dart';
+import 'package:App_Tomaticos/presentation/screens/profile/profile.dart';
+import 'package:App_Tomaticos/presentation/screens/transports/listview_transports.dart';
 import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -131,13 +131,13 @@ class _MenuTruckerState extends State<MenuTrucker>
                         padding: EdgeInsets.symmetric(
                             horizontal: size.width * 0.05,
                             vertical: size.height * 0.025),
-                        child: const ListviewTransportation(),
+                        child: const ListviewTransports(),
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: size.width * 0.05,
                             vertical: size.height * 0.025),
-                        child: const ProfileWidget(),
+                        child: const Profile(),
                       ),
                     ],
                   ),
@@ -159,7 +159,7 @@ class _MenuTruckerState extends State<MenuTrucker>
         indicatorColor: Colors.transparent,
         tabs: [
           CustomTabButton(
-            label: 'Home',
+            label: 'Inicio',
             icon: Icons.home,
             isSelected: _selectedIndex == 0,
           ),

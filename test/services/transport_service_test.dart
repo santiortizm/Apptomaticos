@@ -95,13 +95,44 @@ void main() {
     expect(registerPurchase['total'], equals(newBuy.total));
     expect(registerPurchase['estadoCompra'], equals(newBuy.estadoCompra));
   });
-  test('✅ Crear un transporte y validar los datos', () async {
+  test('✅ Obtener e imprimir todas las compras disponibles para transportar',
+      () async {
+    final purchases = await supabaseClient
+        .from('compras')
+        .select('*')
+        .eq('estadoCompra', 'En Curso');
+
+    // Verifica que la lista no esté vacía
+    expect(purchases, isNotNull);
+    expect(purchases, isA<List<dynamic>>());
+
+    if (purchases.isEmpty) {
+      print('No hay compras en estado "En Curso".');
+    } else {
+      print('🟢 Compras en estado "En Curso" obtenidas de la base de datos:');
+      for (var purchase in purchases) {
+        print(
+            ' ID: ${purchase['id']}, Producto: ${purchase['nombreProducto']}, Total: ${purchase['total']}');
+      }
+    }
+
+    // Verifica que cada compra tenga datos válidos
+    for (var purchase in purchases) {
+      expect(purchase['id'], isNotNull);
+      expect(purchase['nombreProducto'], isNotEmpty);
+      expect(purchase['total'], isNotNull);
+      expect(purchase['estadoCompra'], equals('En Curso'));
+    }
+  });
+
+  test('✅ Crear un transporte y actualizar estado de la compra a Transportando',
+      () async {
     final newTransport = Transport(
       idTransporte: createdTransportId,
       createdAt: DateTime.now(),
       fechaCargue: '2024-03-10',
       fechaEntrega: '2024-03-11',
-      estado: 'Pendiente',
+      estado: 'Aceptado',
       pesoCarga: 200.5,
       valorTransporte: 1500,
       idCompra: createdBuyId,
@@ -109,18 +140,36 @@ void main() {
           '093b55d0-ac41-41f0-81bd-234a5ba16293', // ID de transportador
     );
 
+    //Insertar el transporte en la base de datos
     final regiterTransport = await supabaseClient
         .from('transportes')
         .insert(newTransport.toMap())
         .select()
         .single();
+
+    //Obtener el ID generado
     createdTransportId = regiterTransport['idTransporte'];
 
-    // Validar que los datos insertados sean correctos
+    // Actualizar el estado de la compra a "Transportando"
+    final updatePurchaseResponse = await supabaseClient
+        .from('compras')
+        .update({'estadoCompra': 'Transportando'})
+        .eq('id', createdBuyId)
+        .select()
+        .single(); // Obtener el objeto actualizado
+
+    //Validaciones
     expect(createdTransportId, isNotNull);
     expect(createdTransportId, isA<int>());
     expect(regiterTransport['estado'], equals(newTransport.estado));
     expect(regiterTransport['pesoCarga'], equals(newTransport.pesoCarga));
+
+    //Verificar que la compra se haya actualizado correctamente
+    expect(updatePurchaseResponse, isNotNull);
+    expect(updatePurchaseResponse['estadoCompra'], equals('Transportando'));
+
+    print(
+        '🟢 Transporte registrado y estado de compra actualizado a "Transportando".');
   });
 
   test('✅ Actualizar estado del transporte', () async {
@@ -178,6 +227,42 @@ void main() {
     expect(updateResponse['estado'], equals('Entregado'));
     expect(updateResponse['valorTransporte'], equals(1600));
     print('🟢 Estado del transporte actualizado a Entregado.');
+  });
+  test(
+      '✅ Actualizar estado de la compra a "Pagado" y estado del transporte a "Finalizado"',
+      () async {
+    //Validar que la compra y el transporte existen
+    expect(createdBuyId, isNotNull,
+        reason: 'El ID de la compra no puede ser nulo.');
+    expect(createdTransportId, isNotNull,
+        reason: 'El ID del transporte no puede ser nulo.');
+
+    //Actualizar estado de la compra a "Pagado"
+    final updatePurchaseResponse = await supabaseClient
+        .from('compras')
+        .update({'estadoCompra': 'Pagado'})
+        .eq('id', createdBuyId)
+        .select()
+        .single(); // Obtener la compra actualizada
+
+    //Actualizar estado del transporte a "Finalizado"
+    final updateTransportResponse = await supabaseClient
+        .from('transportes')
+        .update({'estado': 'Finalizado'})
+        .eq('idTransporte', createdTransportId)
+        .select()
+        .single(); // Obtener el transporte actualizado
+
+    //Verificaciones para la compra
+    expect(updatePurchaseResponse, isNotNull);
+    expect(updatePurchaseResponse['estadoCompra'], equals('Pagado'));
+
+    //Verificaciones para el transporte
+    expect(updateTransportResponse, isNotNull);
+    expect(updateTransportResponse['estado'], equals('Finalizado'));
+
+    print(
+        '🟢 Estado de la compra actualizado a "Pagado" y estado del transporte actualizado a "Finalizado".');
   });
 
   test('❌ Manejo de error al crear un transporte con datos inválidos',

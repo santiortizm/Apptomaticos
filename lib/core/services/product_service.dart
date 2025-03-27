@@ -10,7 +10,10 @@ class ProductService {
   /// Muestra todos los productos disponibles
   Future<List<Product>> fetchAllProducts() async {
     try {
-      final response = await supabaseClient.from('productos').select('*');
+      final response = await supabase
+          .from('productos')
+          .select()
+          .order('created_at', ascending: false);
       return response.map((data) => Product.fromMap(data)).toList();
     } catch (e) {
       return [];

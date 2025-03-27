@@ -234,6 +234,8 @@ class _OffertPageState extends State<OffertPage> {
                                   }
 
                                   final CounterOffer nuevaOferta = CounterOffer(
+                                    idContraOferta:
+                                        DateTime.now().millisecondsSinceEpoch,
                                     idProducto: widget.productId,
                                     cantidad: quantity,
                                     valorOferta: offerPrice,

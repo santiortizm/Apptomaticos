@@ -1,3 +1,4 @@
+import 'package:App_Tomaticos/core/models/buy_model.dart';
 import 'package:App_Tomaticos/core/models/transport_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -30,6 +31,20 @@ class TransportService {
     } catch (e) {
       print('Error al crear el transporte: $e');
       return false;
+    }
+  }
+
+  //Obtiene los transportes que estan listos para transportar
+  Future<List<Buy>> fetchAllTransports() async {
+    try {
+      final response = await supabase
+          .from('compras')
+          .select('*')
+          .order('created_at', ascending: false);
+
+      return response.map((data) => Buy.fromJson(data)).toList();
+    } catch (e) {
+      return [];
     }
   }
 

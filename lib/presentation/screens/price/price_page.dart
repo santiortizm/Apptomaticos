@@ -1,4 +1,4 @@
-import 'package:App_Tomaticos/core/constants/colors.dart';
+import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart';
@@ -81,66 +81,86 @@ class _PriceScreenState extends State<PriceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-          title: AutoSizeText(
-        textAlign: TextAlign.center,
-        'Precios de Productos Vendidos',
-        maxLines: 2,
-      )),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+    final size = MediaQuery.of(context).size;
+    return Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          color: Colors.white.withValues(alpha: 0.8)),
+      width: size.width * 1,
+      height: size.width * 1,
+      padding: const EdgeInsets.all(10.0),
+      child: SingleChildScrollView(
         child: Column(
+          spacing: 20,
           children: [
-            //  Gráfica de precios unitarios máximos
-            Expanded(
-              flex: 1,
-              child: salesData.isEmpty
-                  ? const Center(child: CircularProgressIndicator())
-                  : Chart(
-                      data: salesData,
-                      variables: {
-                        'nombreProducto': Variable(
-                          accessor: (Map map) =>
-                              map['nombreProducto'] as String,
-                          scale: OrdinalScale(),
-                        ),
-                        'precio': Variable(
-                          scale: LinearScale(
-                              max: 20000, min: 1000, title: 'Valor'),
-                          accessor: (Map map) => map['precio'] as double,
-                        ),
-                      },
-                      marks: [
-                        IntervalMark(
-                          position: Varset('nombreProducto') * Varset('precio'),
-                          color: ColorEncode(value: buttonGreen),
-                          shape: ShapeEncode(value: RectShape()),
-                        ),
-                      ],
-                      axes: [
-                        Defaults.horizontalAxis,
-                        Defaults.verticalAxis,
-                      ],
-                      selections: {
-                        'tap': PointSelection(dim: Dim.x),
-                      },
-                    ),
+            Container(
+              width: 300,
+              height: 70,
+              alignment: Alignment.center,
+              child: AutoSizeText(
+                'Precios de venta\nde Tomate de Carne',
+                maxLines: 2,
+                maxFontSize: 22,
+                minFontSize: 8,
+                textAlign: TextAlign.center,
+                style: temaApp.textTheme.titleSmall!.copyWith(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
+              ),
             ),
-            const SizedBox(height: 20),
+            //  Gráfica de precios unitarios máximos
+            Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(6),
+                width: 400,
+                height: 300,
+                child: salesData.isEmpty
+                    ? Text('No hay ventas aun realizadas')
+                    : Chart(
+                        data: salesData,
+                        variables: {
+                          'nombreProducto': Variable(
+                            accessor: (Map map) =>
+                                map['nombreProducto'] as String,
+                            scale: OrdinalScale(),
+                          ),
+                          'precio': Variable(
+                            scale: LinearScale(
+                                max: 15000, min: 1000, title: 'Valor'),
+                            accessor: (Map map) => map['precio'] as double,
+                          ),
+                        },
+                        marks: [
+                          IntervalMark(
+                            position:
+                                Varset('nombreProducto') * Varset('precio'),
+                            color: ColorEncode(
+                                value: const Color.fromARGB(255, 164, 39, 39)),
+                            shape: ShapeEncode(value: RectShape()),
+                          ),
+                        ],
+                        axes: [
+                          Defaults.horizontalAxis,
+                          Defaults.verticalAxis,
+                        ],
+                        selections: {
+                          'tap': PointSelection(dim: Dim.x),
+                        },
+                      )),
 
             //  Tabla de Precios Unitarios (Mínimo y Máximo)
-            Expanded(
-              flex: 1,
+            SizedBox(
+              width: 400,
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: DataTable(
                   headingRowColor: WidgetStateColor.resolveWith(
-                      (states) => Colors.grey[200]!),
+                      (states) => const Color.fromARGB(204, 227, 159, 159)),
                   columns: const [
                     DataColumn(label: Text('Nombre Producto')),
-                    DataColumn(label: Text('Precio Mínimo')),
-                    DataColumn(label: Text('Precio Máximo')),
+                    DataColumn(label: Text('Mín')),
+                    DataColumn(label: Text('Máx')),
                   ],
                   rows: tableData.map((data) {
                     return DataRow(cells: [

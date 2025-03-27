@@ -32,7 +32,7 @@ class _ShoppingMerchantState extends State<ShoppingMerchant> {
   Future<void> _initialize() async {
     await _fetchIdUsuario();
     _subscribeToProductChanges();
-    _refreshProducts();
+    _refreshPurchase();
   }
 
   @override
@@ -63,19 +63,19 @@ class _ShoppingMerchantState extends State<ShoppingMerchant> {
   /// Suscripción en tiempo real a los cambios en `productos`
   void _subscribeToProductChanges() {
     _channel = supabase
-        .channel('public:productos')
+        .channel('public:compras')
         .onPostgresChanges(
           event: PostgresChangeEvent.all,
           schema: 'public',
           table: 'compras',
           callback: (payload, [ref]) {
-            _refreshProducts();
+            _refreshPurchase();
           },
         )
         .subscribe();
   }
 
-  Future<void> _refreshProducts() async {
+  Future<void> _refreshPurchase() async {
     if (idUsuario != null) {
       setState(() {
         purchaseMerchantFuture = purchasetService.fetchPurchasesByUser();
@@ -192,7 +192,7 @@ class _ShoppingMerchantState extends State<ShoppingMerchant> {
                             }
                             final purchase = snapshot.data!;
                             return RefreshIndicator(
-                              onRefresh: _refreshProducts,
+                              onRefresh: _refreshPurchase,
                               child: ListView.builder(
                                 padding: EdgeInsets.symmetric(
                                     horizontal: size.width * 0.05),

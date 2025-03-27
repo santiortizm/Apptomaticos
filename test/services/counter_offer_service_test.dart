@@ -33,9 +33,9 @@ void main() {
     final newProduct = Product(
       idProducto: createdProductId,
       createdAt: DateTime.now(),
-      nombreProducto: 'Tomates Cherry',
+      nombreProducto: 'Tomates Chonto',
       cantidad: 100,
-      descripcion: 'Tomates cherry frescos y orgánicos.',
+      descripcion: 'Tomates frescos y orgánicos.',
       maduracion: 'Maduro',
       fertilizantes: 'Sin Etileno',
       fechaCosecha: '2024-04-10',
@@ -68,10 +68,10 @@ void main() {
       createdAt: DateTime.now(),
       cantidad: 10,
       valorOferta: 12000,
-      estadoOferta: 'Pendiente',
+      estadoOferta: 'En Espera',
       estadoPago: null,
       imagenProducto: 'https://example.com/product.jpg',
-      nombreProducto: 'Tomate Cherry',
+      nombreProducto: 'Tomate Chonto',
       idProducto: createdProductId,
       idComprador: 'd51f845f-86c2-4cd8-a483-05e2a8e576e7',
       idPropietario: 'c5de83d8-4805-4831-8a11-068020004369',
@@ -92,14 +92,16 @@ void main() {
         equals(newCounterOffer.valorOferta));
     expect(registerCounterOffer['estadoOferta'],
         equals(newCounterOffer.estadoOferta));
+    print('🟢 Crontra Oferta creada correctamente.');
   });
 
   test('✅ Actualizar estado oferta', () async {
     expect(createdCounterOfferId, isNotNull,
         reason: 'El ID de la contraoferta no puede ser nulo.');
-
+    // El estado de la contra oferta puede ser Aceptada o Rechazada
     final updateCounterOffer = {
       'estadoOferta': 'Aceptada',
+      'estadoPago': 'En Espera'
     };
 
     final updateResponse = await supabaseClient
@@ -117,6 +119,7 @@ void main() {
       () async {
     try {
       final invalidCounterOffer = CounterOffer(
+        idContraOferta: createdCounterOfferId,
         createdAt: DateTime.now(),
         cantidad: -5, // Valor inválido
         valorOferta: -100.0, // Valor inválido

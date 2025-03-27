@@ -59,7 +59,7 @@ class _MySalesState extends State<MySales> {
                   width: size.width,
                   height: size.height * 0.9,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha: 0.7),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Column(

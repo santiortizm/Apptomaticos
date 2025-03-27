@@ -318,18 +318,8 @@ class _BuyProductPageState extends State<BuyProductPage> {
                                             MainAxisAlignment.center,
                                         children: [
                                           SizedBox(
-                                            width: 110,
-                                            child: TextButton(
-                                              style: ButtonStyle(
-                                                  shape: WidgetStatePropertyAll(
-                                                      RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      16))),
-                                                  backgroundColor:
-                                                      WidgetStatePropertyAll(
-                                                          buttonGreen)),
+                                            width: 120,
+                                            child: CustomButton(
                                               onPressed: () => context
                                                   .push('/purchase', extra: {
                                                 'productId': widget.productId,
@@ -340,36 +330,31 @@ class _BuyProductPageState extends State<BuyProductPage> {
                                                 'availableQuantify':
                                                     productData.cantidad,
                                               }),
+                                              color: buttonGreen,
+                                              colorBorder: buttonGreen,
+                                              border: 12,
+                                              width: 0.35,
+                                              height: 0.07,
+                                              elevation: 1,
+                                              sizeBorder: 0,
                                               child: AutoSizeText(
                                                 'COMPRAR',
                                                 maxLines: 1,
-                                                maxFontSize: 14,
-                                                minFontSize: 8,
+                                                maxFontSize: 20,
+                                                minFontSize: 4,
                                                 style: temaApp
                                                     .textTheme.titleSmall!
                                                     .copyWith(
-                                                        color: Colors.white,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontSize: 30),
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 30,
+                                                ),
                                               ),
                                             ),
                                           ),
                                           SizedBox(
-                                            width: 110,
-                                            child: TextButton(
-                                              style: ButtonStyle(
-                                                shape: WidgetStatePropertyAll(
-                                                  RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            16),
-                                                    side: BorderSide(
-                                                        color: buttonGreen,
-                                                        width: 2),
-                                                  ),
-                                                ),
-                                              ),
+                                            width: 120,
+                                            child: CustomButton(
                                               onPressed: () => context.push(
                                                   '/offerProduct',
                                                   extra: {
@@ -387,11 +372,18 @@ class _BuyProductPageState extends State<BuyProductPage> {
                                                     'ownerId': productData
                                                         .idPropietario,
                                                   }),
+                                              color: Colors.white,
+                                              colorBorder: buttonGreen,
+                                              border: 12,
+                                              width: 0.35,
+                                              height: 0.07,
+                                              elevation: 2,
+                                              sizeBorder: 2.5,
                                               child: AutoSizeText(
                                                 'OFERTAR',
                                                 maxLines: 1,
-                                                maxFontSize: 14,
-                                                minFontSize: 8,
+                                                maxFontSize: 18,
+                                                minFontSize: 4,
                                                 style: temaApp
                                                     .textTheme.titleSmall!
                                                     .copyWith(
@@ -600,7 +592,7 @@ class _BuyProductPageState extends State<BuyProductPage> {
               maxLines: 2,
               minFontSize: 4,
               maxFontSize: 18,
-              textAlign: TextAlign.justify,
+              textAlign: TextAlign.center,
               style: temaApp.textTheme.titleSmall!
                   .copyWith(color: Colors.black, fontSize: 18),
             ),
@@ -615,12 +607,15 @@ class _BuyProductPageState extends State<BuyProductPage> {
                 () {
                   productDetails =
                       productService.fetchProductDetails(widget.productId);
+                  Navigator.of(context).pop();
                 },
               );
             } else {
               // ignore: use_build_context_synchronously
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Error al eliminar el producto')),
+                SnackBar(
+                    backgroundColor: redApp,
+                    content: Text('Error al eliminar el producto')),
               );
             }
           },

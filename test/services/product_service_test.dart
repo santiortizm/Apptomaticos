@@ -28,9 +28,9 @@ void main() {
     final newProduct = Product(
       idProducto: createdProductId,
       createdAt: DateTime.now(),
-      nombreProducto: 'Tomates Cherry',
+      nombreProducto: 'Tomates Chonto',
       cantidad: 100,
-      descripcion: 'Tomates cherry frescos y orgánicos.',
+      descripcion: 'Tomates frescos y orgánicos.',
       maduracion: 'Maduro',
       fertilizantes: 'Sin Etileno',
       fechaCosecha: '2024-04-10',
@@ -54,7 +54,7 @@ void main() {
     expect(
         registerProduct['nombreProducto'], equals(newProduct.nombreProducto));
     expect(registerProduct['precio'], equals(newProduct.precio));
-    print('🟢 Producto creado correctamente.');
+    print('🟢 Producto Publicado.');
   });
 
   test('✅ Obtener detalles del producto', () async {

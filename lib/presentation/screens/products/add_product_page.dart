@@ -458,39 +458,43 @@ class _AddProductPageState extends State<AddProductPage> {
         });
   }
 
-  Future<void> _alertAddProduct(BuildContext context) {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          Future.delayed(const Duration(seconds: 5), () {
-            // ignore: use_build_context_synchronously
-            if (Navigator.of(context).canPop()) {
-              // ignore: use_build_context_synchronously
-              Navigator.of(context).pop(); // Cierra el diálogo
-              // ignore: use_build_context_synchronously
-              GoRouter.of(context).go('/menu');
-            }
-          });
-          return CustomNotification(
-            width: 300,
-            height: 250,
-            assetImage: './assets/images/producto_agregado.gif',
-            title: 'Producto agregado',
-            content: Container(
-              padding: EdgeInsets.symmetric(vertical: 20),
-              alignment: Alignment.center,
-              width: 250,
-              child: AutoSizeText(
-                'El producto ha sido agregado exitosamente!',
-                maxLines: 2,
-                maxFontSize: 26,
-                minFontSize: 4,
-                textAlign: TextAlign.justify,
-                style: temaApp.textTheme.titleSmall!.copyWith(fontSize: 100),
-              ),
+  Future<void> _alertAddProduct(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return CustomNotification(
+          width: 300,
+          height: 250,
+          assetImage: './assets/images/producto_agregado.gif',
+          title: 'Producto agregado',
+          content: Container(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            alignment: Alignment.center,
+            width: 250,
+            child: AutoSizeText(
+              'El producto ha sido agregado exitosamente!',
+              maxLines: 2,
+              maxFontSize: 26,
+              minFontSize: 4,
+              textAlign: TextAlign.justify,
+              style: temaApp.textTheme.titleSmall!.copyWith(fontSize: 100),
             ),
-            button: SizedBox.shrink(),
-          );
-        });
+          ),
+          button: const SizedBox.shrink(),
+        );
+      },
+    );
+
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (mounted && Navigator.of(context).canPop()) {
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).pop(); // Cierra el diálogo
+    }
+
+    if (mounted) {
+      // ignore: use_build_context_synchronously
+      GoRouter.of(context).go('/menu'); // Navega a '/menu'
+    }
   }
 }

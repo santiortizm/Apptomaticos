@@ -29,6 +29,25 @@ void main() {
     buyService = BuyService(ProductService(supabaseClient));
     productService = ProductService(supabaseClient);
   });
+  test('✅ Obtener todos los productos de la base de datos', () async {
+    final List<Product> productos = await productService.fetchAllProducts();
+
+    expect(productos, isA<List<Product>>(),
+        reason: "Debe devolver una lista de productos.");
+
+    if (productos.isNotEmpty) {
+      print('🟢 Productos encontrados:');
+      for (var producto in productos) {
+        print(
+            '📦 Producto: ${producto.nombreProducto} - Cantidad: ${producto.cantidad} - Precio: ${producto.precio}');
+      }
+    } else {
+      print('🔴 No hay productos en la base de datos.');
+    }
+
+    expect(productos.isNotEmpty, isTrue,
+        reason: "Debe haber al menos un producto en la base de datos.");
+  });
 
   test('✅ Crear un producto y validar los datos', () async {
     final newProduct = Product(
@@ -62,12 +81,13 @@ void main() {
     expect(registerProduct['precio'], equals(newProduct.precio));
     print('🟢 Producto creado correctamente.');
   });
+
   test('✅ Crear una compra y validar los datos', () async {
     final newBuy = Buy(
       id: createdBuyId,
       createdAt: DateTime.now(),
-      alternativaPago: 'Contra Entrega',
-      nombreProducto: 'Tomate Cherry',
+      alternativaPago: 'PAGO CONTRA ENTREGA',
+      nombreProducto: 'Tomate Chonto',
       cantidad: 5,
       total: 60000,
       fecha: DateTime.now(),
@@ -75,7 +95,7 @@ void main() {
       idComprador: 'd51f845f-86c2-4cd8-a483-05e2a8e576e7',
       idPropietario: 'c5de83d8-4805-4831-8a11-068020004369',
       imagenProducto: 'https://example.com/product.jpg',
-      estadoCompra: 'Pendiente',
+      estadoCompra: 'En Curso',
     );
 
     final registerPurchase = await supabaseClient
@@ -91,13 +111,14 @@ void main() {
     expect(registerPurchase['cantidad'], equals(newBuy.cantidad));
     expect(registerPurchase['total'], equals(newBuy.total));
     expect(registerPurchase['estadoCompra'], equals(newBuy.estadoCompra));
+    print('🟢Compra realizada y notificada al productor y transportador.');
   });
 
   test('✅ Actualizar una compra', () async {
     expect(createdBuyId, isNotNull,
         reason: 'El ID de la compra no puede ser nulo.');
 
-    final updatePurchase = {'estadoCompra': 'Completada', 'total': 60.0};
+    final updatePurchase = {'estadoCompra': 'Transportando', 'total': 60.0};
 
     final updateResponse = await supabaseClient
         .from('compras')
@@ -106,7 +127,7 @@ void main() {
         .select()
         .single();
 
-    expect(updateResponse['estadoCompra'], equals('Completada'));
+    expect(updateResponse['estadoCompra'], equals('Transportando'));
     expect(updateResponse['total'], equals(60.0));
     print('🟢 Compra actualizada correctamente.');
   });

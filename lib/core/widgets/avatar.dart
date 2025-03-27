@@ -4,6 +4,7 @@ import 'package:App_Tomaticos/core/services/image_service.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class Avatar extends StatefulWidget {
   final String? imageUrl;
@@ -24,10 +25,10 @@ class _AvatarState extends State<Avatar> {
   @override
   void initState() {
     super.initState();
-    _fetchUserProfileImage(); //  Cargar la imagen de perfil al iniciar
+    _fetchUserProfileImage();
   }
 
-  ///  Obtiene la imagen actualizada desde Supabase
+  /// Obtiene la imagen de perfil desde Supabase
   Future<void> _fetchUserProfileImage() async {
     final userId = supabase.auth.currentUser?.id;
     if (userId == null) return;
@@ -37,15 +38,36 @@ class _AvatarState extends State<Avatar> {
         supabase.storage.from('profiles').getPublicUrl(path);
 
     setState(() {
-      _imageUrl =
-          "$imageUrl?v=${DateTime.now().millisecondsSinceEpoch}"; //  Evita caché
+      _imageUrl = "$imageUrl?v=${DateTime.now().millisecondsSinceEpoch}";
     });
   }
 
-  ///  Permite seleccionar y subir una nueva imagen
-  Future<void> _pickAndUploadImage() async {
+  /// ✅ Verifica y solicita permisos antes de abrir la cámara o galería
+  Future<bool> _checkPermissions(ImageSource source) async {
+    Permission permission =
+        (source == ImageSource.camera) ? Permission.camera : Permission.photos;
+
+    var status = await permission.status;
+
+    if (status.isGranted) {
+      return true;
+    } else if (status.isDenied) {
+      status = await permission.request();
+      return status.isGranted;
+    } else if (status.isPermanentlyDenied) {
+      return await _showSettingsDialog();
+    }
+
+    return false;
+  }
+
+  /// ✅ Abre la cámara o la galería si tiene permisos
+  Future<void> _pickImage(ImageSource source) async {
+    bool hasPermission = await _checkPermissions(source);
+    if (!hasPermission) return;
+
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await picker.pickImage(source: source);
 
     if (image == null) return;
 
@@ -75,8 +97,7 @@ class _AvatarState extends State<Avatar> {
           supabase.storage.from('profiles').getPublicUrl(path);
 
       setState(() {
-        _imageUrl =
-            "$imageUrl?v=${DateTime.now().millisecondsSinceEpoch}"; //  Evita caché
+        _imageUrl = "$imageUrl?v=${DateTime.now().millisecondsSinceEpoch}";
       });
 
       widget.onUpLoad(_imageUrl!);
@@ -97,7 +118,62 @@ class _AvatarState extends State<Avatar> {
     }
   }
 
-  ///  Confirma si el usuario quiere cambiar la imagen actual
+  /// ✅ Muestra un modal para elegir entre galería o cámara
+  void _showImagePickerOptions() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Tomar foto'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Seleccionar desde galería'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.gallery);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// ✅ Si los permisos están bloqueados, muestra una alerta para abrir configuración
+  Future<bool> _showSettingsDialog() async {
+    return await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Permisos requeridos'),
+            content: const Text(
+                'Para continuar, habilita el acceso en la configuración.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancelar'),
+              ),
+              TextButton(
+                onPressed: () {
+                  openAppSettings();
+                  Navigator.pop(context, true);
+                },
+                child: const Text('Abrir configuración'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+  }
+
+  /// Confirma si el usuario quiere cambiar la imagen actual
   Future<bool> _confirmImageChange() async {
     return await showDialog<bool>(
           context: context,
@@ -122,39 +198,45 @@ class _AvatarState extends State<Avatar> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Center(
-          child: CircleAvatar(
-            backgroundImage: (_imageUrl != null && _imageUrl!.isNotEmpty)
-                ? NetworkImage(_imageUrl!)
-                : null,
-            radius: 70,
-            child: (_imageUrl == null || _imageUrl!.isEmpty)
-                ? Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.person, size: 60, color: Colors.grey),
-                      const SizedBox(height: 8),
-                      Text('Agregar Imagen',
-                          style: TextStyle(color: Colors.grey[700])),
-                    ],
-                  )
-                : null,
+    return Container(
+      alignment: Alignment.center,
+      width: 150,
+      height: 150,
+      child: Stack(
+        children: [
+          Center(
+            child: CircleAvatar(
+              backgroundImage: (_imageUrl != null && _imageUrl!.isNotEmpty)
+                  ? NetworkImage(_imageUrl!)
+                  : const AssetImage('./assets/images/profile.png')
+                      as ImageProvider,
+              radius: 70,
+              child: (_imageUrl == null || _imageUrl!.isEmpty)
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.person, size: 60, color: Colors.grey),
+                        const SizedBox(height: 8),
+                        Text('Agregar Imagen',
+                            style: TextStyle(color: Colors.grey[700])),
+                      ],
+                    )
+                  : null,
+            ),
           ),
-        ),
-        if (isLoading) const Center(child: CircularProgressIndicator()),
-        Positioned(
-          bottom: 1,
-          right: 80,
-          child: IconButton(
-            icon: const Icon(Icons.camera_alt),
-            iconSize: 32,
-            color: redApp,
-            onPressed: isLoading ? null : _pickAndUploadImage,
+          if (isLoading) const Center(child: CircularProgressIndicator()),
+          Positioned(
+            bottom: 2,
+            right: 8,
+            child: IconButton(
+              icon: const Icon(Icons.camera_alt),
+              iconSize: 32,
+              color: redApp,
+              onPressed: isLoading ? null : _showImagePickerOptions,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

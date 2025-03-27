@@ -1,6 +1,7 @@
 import 'package:App_Tomaticos/core/constants/colors.dart';
 import 'package:App_Tomaticos/core/models/product_model.dart';
 import 'package:App_Tomaticos/core/services/product_service.dart';
+import 'package:App_Tomaticos/core/widgets/custom_alert_dialog.dart';
 import 'package:App_Tomaticos/presentation/screens/products/buy_product_page.dart';
 import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -152,47 +153,48 @@ class _CustomCardProductsProducerState
     return showDialog<void>(
       context: parentContext,
       builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: const Text('Advertencia'),
-          content: const Text('¿Estás seguro de eliminar el producto?'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancelar'),
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-              },
+        return CustomAlertDialog(
+          width: 220,
+          height: 270,
+          assetImage: './assets/images/alert.gif',
+          title: 'Alerta',
+          content: Container(
+            width: 200,
+            alignment: Alignment.center,
+            child: AutoSizeText(
+              '¿Estás seguro de eliminar este producto?',
+              maxLines: 2,
+              minFontSize: 4,
+              maxFontSize: 18,
+              textAlign: TextAlign.center,
+              style: temaApp.textTheme.titleSmall!
+                  .copyWith(color: Colors.black, fontSize: 18),
             ),
-            TextButton(
-              child: const Text('Aceptar'),
-              onPressed: () async {
-                Navigator.of(dialogContext).pop();
-                final success =
-                    await productService.deleteProduct(widget.productId);
+          ),
+          onPressedAcept: () async {
+            Navigator.of(context).pop();
+            final success =
+                await productService.deleteProduct(widget.productId);
 
-                if (success) {
-                  setState(() {
-                    productDetails = productService.fetchProductsByProducer();
-                  });
-
-                  widget.isDelete();
-
-                  // ignore: use_build_context_synchronously
-                  ScaffoldMessenger.of(parentContext).showSnackBar(
-                    const SnackBar(
-                      content: Text('Producto eliminado exitosamente'),
-                    ),
-                  );
-                } else {
-                  // ignore: use_build_context_synchronously
-                  ScaffoldMessenger.of(parentContext).showSnackBar(
-                    const SnackBar(
-                      content: Text('Error al eliminar el producto'),
-                    ),
-                  );
-                }
-              },
-            ),
-          ],
+            if (success) {
+              setState(
+                () {
+                  productDetails = productService.fetchProductsByProducer();
+                  Navigator.of(context).pop();
+                },
+              );
+            } else {
+              // ignore: use_build_context_synchronously
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                    backgroundColor: redApp,
+                    content: Text('Error al eliminar el producto')),
+              );
+            }
+          },
+          onPressedCancel: () {
+            Navigator.of(context).pop();
+          },
         );
       },
     );

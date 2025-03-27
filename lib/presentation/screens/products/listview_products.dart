@@ -71,53 +71,52 @@ class _ListviewProductsState extends State<ListviewProducts> {
       child: Stack(
         children: [
           RefreshIndicator(
-            onRefresh:
-                _refreshProducts, // 🔄 Función que se ejecuta al hacer pull-to-refresh
+            onRefresh: _refreshProducts,
             child: StreamBuilder<List<Product>>(
               stream: productStream,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (snapshot.hasError) {
-                  return Center(
-                    child: Image.asset(
-                      fit: BoxFit.fill,
-                      './assets/images/loading.gif',
-                      width: 150,
-                      height: 150,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image(
+                          image: AssetImage('./assets/images/no_products.png'),
+                          width: 80,
+                          height: 80,
+                        ),
+                        Text('No hay productos disponibles'),
+                      ],
                     ),
                   );
-                } else if (snapshot.hasData) {
-                  final products = snapshot.data!;
-                  return ListView.builder(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 10),
-                      itemCount: products.length,
-                      itemBuilder: (context, index) {
-                        final product = products[index];
-
-                        // Ocultar productos con cantidad 0
-                        if (product.cantidad == 0) {
-                          return const SizedBox.shrink();
-                        }
-
-                        return CustomCardProducts(
-                          idUsuario: product.idPropietario,
-                          title: product.nombreProducto,
-                          state: product.maduracion,
-                          price: product.precio,
-                          imageUrl: product.imagen ??
-                              'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp',
-                          productId: product.idProducto,
-                        );
-                      });
-                } else {
-                  return const Center(
-                    child: Text('No hay productos disponibles'),
-                  );
                 }
+
+                final products = snapshot.data!;
+                return RefreshIndicator(
+                  onRefresh: _refreshProducts,
+                  child: ListView.builder(
+                    padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                    itemCount: products.length,
+                    itemBuilder: (context, index) {
+                      final product = products[index];
+                      return CustomCardProducts(
+                        idUsuario: product.idPropietario,
+                        title: product.nombreProducto,
+                        state: product.maduracion,
+                        price: product.precio,
+                        imageUrl: product.imagen ??
+                            'https://aqrtkpecnzicwbmxuswn.supabase.co/storage/v1/object/public/products/product/img_portada.webp',
+                        productId: product.idProducto,
+                      );
+                    },
+                  ),
+                );
               },
             ),
           ),
