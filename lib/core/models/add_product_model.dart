@@ -1,5 +1,5 @@
 import 'package:App_Tomaticos/core/constants/colors.dart';
-import 'package:App_Tomaticos/core/widgets/custom_alert_dialog.dart';
+import 'package:App_Tomaticos/core/widgets/dialogs/custom_alert_dialog.dart';
 import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +23,6 @@ class AddProductModel {
 
   // Método para seleccionar la fecha de cosecha usando el datepicker
   void selectHarvestDate(BuildContext context) async {
-    final size = MediaQuery.of(context).size;
     final DateTime? pickedDate = await showDialog<DateTime>(
       context: context,
       builder: (context) {

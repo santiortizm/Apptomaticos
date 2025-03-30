@@ -91,7 +91,7 @@ class _ListviewProductsState extends State<ListviewProducts> {
                           width: 80,
                           height: 80,
                         ),
-                        Text('No hay productos disponibles'),
+                        Text('No hay productos publicados'),
                       ],
                     ),
                   );

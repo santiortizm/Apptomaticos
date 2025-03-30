@@ -2,6 +2,7 @@ import 'package:App_Tomaticos/core/models/counter_offer_model.dart';
 import 'package:App_Tomaticos/core/services/counter_offer_service.dart';
 import 'package:App_Tomaticos/core/services/product_service.dart';
 import 'package:App_Tomaticos/core/widgets/cards/custom_card_counter_offer_producer.dart';
+import 'package:App_Tomaticos/core/widgets/dialogs/more_info.dart';
 import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,7 @@ class _CounterOffersProducerState extends State<CounterOffersProducer> {
     super.dispose();
   }
 
-  /// Obtiene el `idUsuario` del usuario autenticado
+  /// Obtiene el idUsuario del usuario autenticado
   Future<void> _fetchIdUsuario() async {
     final user = supabase.auth.currentUser;
     if (user == null) return;
@@ -50,8 +51,7 @@ class _CounterOffersProducerState extends State<CounterOffersProducer> {
       final response = await supabase
           .from('usuarios')
           .select('idUsuario')
-          .eq('idUsuario',
-              user.id) // Corregido: Usa 'idAuth' en lugar de 'idUsuario'
+          .eq('idUsuario', user.id)
           .single();
 
       setState(() {
@@ -172,6 +172,11 @@ class _CounterOffersProducerState extends State<CounterOffersProducer> {
                           ),
                         ),
                       ),
+                      MoreInfo(
+                          width: 300,
+                          height: 250,
+                          text:
+                              'Aquí se mostrarán las ofertas realizadas por los comerciantes. Estas estarán visibles solo 30 minutos. Si no responde en ese tiempo, la oferta será rechazada automáticamente y el comerciante será notificado.'),
                       Expanded(
                         child: FutureBuilder<List<CounterOffer>>(
                           future: producerOffersFuture,
@@ -226,7 +231,7 @@ class _CounterOffersProducerState extends State<CounterOffersProducer> {
                                                 'estadoOferta': 'Aceptado',
                                                 'estadoPago': 'En Espera'
                                               }).eq('idContraOferta',
-                                                      oferta.idContraOferta!);
+                                                      oferta.idContraOferta);
 
                                               setState(() {});
                                             } catch (e) {
@@ -239,7 +244,7 @@ class _CounterOffersProducerState extends State<CounterOffersProducer> {
                                                 .update({
                                               'estadoOferta': 'Rechazado'
                                             }).eq('idContraOferta',
-                                                    oferta.idContraOferta!);
+                                                    oferta.idContraOferta);
                                           },
                                         ),
                                         if (oferta.estadoOferta == 'Aceptado')

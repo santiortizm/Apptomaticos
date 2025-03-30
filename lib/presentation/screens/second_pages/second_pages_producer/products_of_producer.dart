@@ -119,6 +119,7 @@ class _ProductsOfProducerState extends State<ProductsOfProducer> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Column(
+                    spacing: 12,
                     children: [
                       // Botón Atrás
                       Padding(
@@ -183,8 +184,14 @@ class _ProductsOfProducerState extends State<ProductsOfProducer> {
                             if (snapshot.data == null ||
                                 snapshot.data!.isEmpty) {
                               return const Center(
-                                  child:
-                                      Text('No tienes productos disponibles.'));
+                                child: SizedBox(
+                                  width: 240,
+                                  child: Text(
+                                    'Actualmente no tiene productos publicados. Para comenzar a vender, publique un producto desde la pantalla de inicio.',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              );
                             }
 
                             final productos = snapshot.data!;

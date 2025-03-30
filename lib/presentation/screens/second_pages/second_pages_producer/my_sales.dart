@@ -103,7 +103,7 @@ class _MySalesState extends State<MySales> {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 20.0),
                         child: AutoSizeText(
-                          'Mis Ventas Finalizadas',
+                          'Mis Ventas',
                           maxFontSize: 26,
                           minFontSize: 18,
                           maxLines: 1,

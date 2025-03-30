@@ -1,6 +1,6 @@
 import 'package:App_Tomaticos/core/constants/colors.dart';
 import 'package:App_Tomaticos/core/services/cloudinary_service.dart';
-import 'package:App_Tomaticos/core/widgets/custom_button.dart';
+import 'package:App_Tomaticos/core/widgets/button/custom_button.dart';
 import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';

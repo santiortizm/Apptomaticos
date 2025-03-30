@@ -1,6 +1,6 @@
 import 'package:App_Tomaticos/core/constants/colors.dart';
-import 'package:App_Tomaticos/core/widgets/avatar_product.dart';
-import 'package:App_Tomaticos/core/widgets/text_form_field_widget.dart';
+import 'package:App_Tomaticos/core/widgets/avatars/avatar_product.dart';
+import 'package:App_Tomaticos/core/widgets/textfield/text_form_field_widget.dart';
 import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';

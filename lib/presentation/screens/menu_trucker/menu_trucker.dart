@@ -1,6 +1,6 @@
 import 'package:App_Tomaticos/core/constants/colors.dart';
-import 'package:App_Tomaticos/core/widgets/custom_button.dart';
-import 'package:App_Tomaticos/core/widgets/custom_tabbar_button.dart';
+import 'package:App_Tomaticos/core/widgets/button/custom_button.dart';
+import 'package:App_Tomaticos/core/widgets/tabbar/custom_tabbar_button.dart';
 import 'package:App_Tomaticos/core/widgets/drawer/custom_drawer.dart';
 import 'package:App_Tomaticos/presentation/screens/profile/profile.dart';
 import 'package:App_Tomaticos/presentation/screens/transports/listview_transports.dart';

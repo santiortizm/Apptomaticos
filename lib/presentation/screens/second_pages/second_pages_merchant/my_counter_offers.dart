@@ -224,7 +224,7 @@ class _MyCounterOffersState extends State<MyCounterOffers> {
                                                 .update({
                                               'estadoPago': 'Finalizado'
                                             }).eq('idContraOferta',
-                                                    oferta.idContraOferta!);
+                                                    oferta.idContraOferta);
                                             final totalOferta =
                                                 oferta.cantidad *
                                                     oferta.valorOferta;

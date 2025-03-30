@@ -1,7 +1,7 @@
 import 'package:App_Tomaticos/core/constants/colors.dart';
 import 'package:App_Tomaticos/core/models/product_model.dart';
 import 'package:App_Tomaticos/core/services/product_service.dart';
-import 'package:App_Tomaticos/core/widgets/custom_alert_dialog.dart';
+import 'package:App_Tomaticos/core/widgets/dialogs/custom_alert_dialog.dart';
 import 'package:App_Tomaticos/presentation/screens/products/buy_product_page.dart';
 import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -180,7 +180,6 @@ class _CustomCardProductsProducerState
               setState(
                 () {
                   productDetails = productService.fetchProductsByProducer();
-                  Navigator.of(context).pop();
                 },
               );
             } else {

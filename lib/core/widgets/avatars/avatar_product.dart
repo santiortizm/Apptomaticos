@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:App_Tomaticos/core/constants/colors.dart';
 import 'package:App_Tomaticos/core/services/image_service.dart';
-import 'package:App_Tomaticos/core/widgets/custom_alert_dialog.dart';
+import 'package:App_Tomaticos/core/widgets/dialogs/custom_alert_dialog.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
