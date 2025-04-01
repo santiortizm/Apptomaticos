@@ -101,7 +101,7 @@ class _ProductsOfProducerState extends State<ProductsOfProducer> {
               height: size.height,
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/fondo_2.jpg'),
+                  image: AssetImage('assets/images/background/fondo_2.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -184,12 +184,23 @@ class _ProductsOfProducerState extends State<ProductsOfProducer> {
                             if (snapshot.data == null ||
                                 snapshot.data!.isEmpty) {
                               return const Center(
-                                child: SizedBox(
-                                  width: 240,
-                                  child: Text(
-                                    'Actualmente no tiene productos publicados. Para comenzar a vender, publique un producto desde la pantalla de inicio.',
-                                    textAlign: TextAlign.center,
-                                  ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image(
+                                      image: AssetImage(
+                                          './assets/images/more_icons/no_products.png'),
+                                      width: 60,
+                                      height: 60,
+                                    ),
+                                    SizedBox(
+                                      width: 240,
+                                      child: Text(
+                                        'Actualmente no tiene productos publicados. Para comenzar a vender, publique un producto desde la pantalla de inicio.',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               );
                             }

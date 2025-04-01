@@ -2,6 +2,7 @@ import 'package:App_Tomaticos/core/models/counter_offer_model.dart';
 import 'package:App_Tomaticos/core/services/counter_offer_service.dart';
 import 'package:App_Tomaticos/core/services/product_service.dart';
 import 'package:App_Tomaticos/core/widgets/cards/custom_card_counter_offer_merchant.dart';
+import 'package:App_Tomaticos/core/widgets/dialogs/more_info.dart';
 import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -99,7 +100,7 @@ class _MyCounterOffersState extends State<MyCounterOffers> {
               height: size.height * 1,
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/fondo_2.jpg'),
+                  image: AssetImage('assets/images/background/fondo_2.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -120,7 +121,7 @@ class _MyCounterOffersState extends State<MyCounterOffers> {
                   ),
                   child: Padding(
                     padding: EdgeInsets.symmetric(
-                        horizontal: size.width * 0.05,
+                        horizontal: size.width * 0.025,
                         vertical: size.height * 0.025),
                     child: Column(
                       children: [
@@ -159,16 +160,24 @@ class _MyCounterOffersState extends State<MyCounterOffers> {
                             ],
                           ),
                         ),
-                        AutoSizeText(
-                          'Mis Contra Ofertas',
-                          maxFontSize: 26,
-                          minFontSize: 18,
-                          maxLines: 1,
-                          style: temaApp.textTheme.titleSmall!.copyWith(
-                              fontSize: 26,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w700),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: AutoSizeText(
+                            'Mis Contra Ofertas',
+                            maxFontSize: 26,
+                            minFontSize: 18,
+                            maxLines: 1,
+                            style: temaApp.textTheme.titleSmall!.copyWith(
+                                fontSize: 26,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w700),
+                          ),
                         ),
+                        MoreInfo(
+                            width: 300,
+                            height: 340,
+                            text:
+                                'En esta sección solo verá las contraofertas aceptadas por el productor. Si no son aceptadas en 30 minutos, se rechazarán automáticamente y se le notificará. Una vez aceptadas, tendrá 30 minutos para finalizar la compra; de lo contrario, las canastas solicitadas volverán a estar disponibles.'),
                         Expanded(
                           child: FutureBuilder<List<CounterOffer>>(
                             future: producerOffersFuture,
@@ -185,7 +194,18 @@ class _MyCounterOffersState extends State<MyCounterOffers> {
                               if (snapshot.data == null ||
                                   snapshot.data!.isEmpty) {
                                 return const Center(
-                                    child: Text('No tienes contra ofertas.'));
+                                    child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image(
+                                      image: AssetImage(
+                                          './assets/images/more_icons/contra_oferta.png'),
+                                      width: 60,
+                                      height: 60,
+                                    ),
+                                    Text('No tienes contra ofertas.'),
+                                  ],
+                                ));
                               }
 
                               final ofertas = snapshot.data!
@@ -202,7 +222,6 @@ class _MyCounterOffersState extends State<MyCounterOffers> {
                                   itemCount: ofertas.length,
                                   itemBuilder: (context, index) {
                                     final oferta = ofertas[index];
-
                                     return Padding(
                                       padding: const EdgeInsets.only(bottom: 8),
                                       child: CustomCardCounterOfferMerchant(

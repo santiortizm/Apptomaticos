@@ -33,42 +33,40 @@ class _MoreInfoState extends State<MoreInfo> {
                   alignment: Alignment.center,
                   width: widget.width,
                   height: widget.height,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Container(
-                              margin: EdgeInsets.only(right: 10),
-                              child: IconButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  icon: Icon(
-                                    Icons.close_rounded,
-                                    size: 28,
-                                  )),
-                            ),
-                          ],
-                        ),
-                        Container(
-                          alignment: Alignment.center,
-                          width: 250,
-                          child: AutoSizeText(
-                            textAlign: TextAlign.justify,
-                            widget.text,
-                            maxLines: 8,
-                            maxFontSize: 28,
-                            minFontSize: 4,
-                            style: temaApp.textTheme.titleSmall!
-                                .copyWith(fontSize: 100),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(right: 10),
+                            child: IconButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                icon: Icon(
+                                  Icons.close_rounded,
+                                  size: 28,
+                                )),
                           ),
+                        ],
+                      ),
+                      Container(
+                        alignment: Alignment.topCenter,
+                        width: 250,
+                        child: AutoSizeText(
+                          textAlign: TextAlign.justify,
+                          widget.text,
+                          maxLines: 14,
+                          maxFontSize: 16,
+                          minFontSize: 4,
+                          style: temaApp.textTheme.titleSmall!
+                              .copyWith(fontSize: 100),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               );

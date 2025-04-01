@@ -61,21 +61,22 @@ class _CustomDrawerState extends State<CustomDrawer> {
         return [
           _drawerItem(
               Image(
-                image: AssetImage('./assets/images/tomate.png'),
+                image: AssetImage('./assets/images/icons_drawer/tomate.png'),
               ),
               'Mis Productos',
               context,
               '/myProducts'),
           _drawerItem(
               Image(
-                image: AssetImage('./assets/images/ventas.png'),
+                image: AssetImage('./assets/images/icons_drawer/ventas.png'),
               ),
               'Mis Ventas',
               context,
               '/mySales'),
           _drawerItem(
               Image(
-                image: AssetImage('./assets/images/contra_oferta.png'),
+                image: AssetImage(
+                    './assets/images/icons_drawer/contra_ofertas.png'),
               ),
               'Mis Contra Ofertas',
               context,
@@ -86,21 +87,22 @@ class _CustomDrawerState extends State<CustomDrawer> {
         return [
           _drawerItem(
               Image(
-                image: AssetImage('./assets/images/ventas.png'),
+                image: AssetImage('./assets/images/icons_drawer/ventas.png'),
               ),
               'Mis Compras',
               context,
               '/shoppingMerchant'),
           _drawerItem(
               Image(
-                image: AssetImage('./assets/images/contra_oferta.png'),
+                image: AssetImage(
+                    './assets/images/icons_drawer/contra_ofertas.png'),
               ),
               'Mis Contra Ofertas',
               context,
               '/counterOfferMerchant'),
           _drawerItem(
               Image(
-                image: AssetImage('./assets/images/pedido.png'),
+                image: AssetImage('./assets/images/icons_drawer/pedido.png'),
               ),
               'Mis Pedidos',
               context,
@@ -111,14 +113,16 @@ class _CustomDrawerState extends State<CustomDrawer> {
         return [
           _drawerItem(
               Image(
-                image: AssetImage('./assets/images/transportes.png'),
+                image:
+                    AssetImage('./assets/images/icons_drawer/transportes.png'),
               ),
               'Mis Transportes',
               context,
               '/myTransports'),
           _drawerItem(
               Image(
-                image: AssetImage('./assets/images/transportes.png'),
+                image:
+                    AssetImage('./assets/images/icons_drawer/transportes.png'),
               ),
               'Historial Transportes',
               context,
@@ -129,7 +133,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
         return [
           _drawerItem(
               Image(
-                image: AssetImage('./assets/images/tomate.png'),
+                image: AssetImage('./assets/images/icons_drawer/tomate.png'),
               ),
               'Rol no reconocido',
               context,

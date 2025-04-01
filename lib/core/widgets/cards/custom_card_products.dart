@@ -102,7 +102,8 @@ class _CustomCardProductsState extends State<CustomCardProducts> {
                   backgroundImage:
                       (producerImage != null && producerImage!.isNotEmpty)
                           ? NetworkImage(producerImage!)
-                          : const AssetImage("./assets/images/user.png")
+                          : const AssetImage(
+                                  "./assets/images/icon_user/profile.png")
                               as ImageProvider,
                 ),
                 SizedBox(

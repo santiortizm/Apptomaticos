@@ -99,7 +99,7 @@ class _ShoppingMerchantState extends State<ShoppingMerchant> {
               height: size.height,
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/fondo_2.jpg'),
+                  image: AssetImage('assets/images/background/fondo_2.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -188,7 +188,18 @@ class _ShoppingMerchantState extends State<ShoppingMerchant> {
                             if (snapshot.data == null ||
                                 snapshot.data!.isEmpty) {
                               return const Center(
-                                  child: Text('No hay compras realizadas'));
+                                  child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image(
+                                    image: AssetImage(
+                                        './assets/images/more_icons/no_hay_compras.png'),
+                                    width: 50,
+                                    height: 50,
+                                  ),
+                                  Text('No hay compras realizadas'),
+                                ],
+                              ));
                             }
                             final purchase = snapshot.data!;
                             return RefreshIndicator(

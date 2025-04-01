@@ -256,7 +256,8 @@ class _CustomCardTransportState extends State<CustomCardTransport> {
                   backgroundImage:
                       (buyerImage != null && buyerImage!.isNotEmpty)
                           ? NetworkImage(buyerImage!)
-                          : const AssetImage("./assets/images/user.png")
+                          : const AssetImage(
+                                  "./assets/images/icon_user/profile.png")
                               as ImageProvider,
                 ),
                 SizedBox(
@@ -376,7 +377,7 @@ class _CustomCardTransportState extends State<CustomCardTransport> {
                               fontSize: 30),
                         ),
                         Image.asset(
-                          './assets/images/camion.png',
+                          './assets/images/icon_button/camion.png',
                           width: 25,
                           height: 25,
                         )
@@ -414,7 +415,7 @@ class _CustomCardTransportState extends State<CustomCardTransport> {
               return CustomAlertDialog(
                 width: 300,
                 height: 600,
-                assetImage: './assets/images/calendario.png',
+                assetImage: './assets/images/more_icons/calendario.png',
                 title: 'Seleccione una fecha',
                 content: CalendarDatePicker(
                   initialDate: firstDate,
@@ -450,7 +451,7 @@ class _CustomCardTransportState extends State<CustomCardTransport> {
               return CustomAlertDialog(
                 width: 300,
                 height: 290,
-                assetImage: './assets/images/advertencia.png',
+                assetImage: './assets/images/more_icons/advertencia.png',
                 title: 'Alerta',
                 content: Container(
                   alignment: Alignment.center,

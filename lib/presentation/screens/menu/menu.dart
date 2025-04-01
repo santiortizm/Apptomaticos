@@ -131,7 +131,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
               height: size.height,
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/fondo1.jpg'),
+                  image: AssetImage('assets/images/background/fondo1.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),

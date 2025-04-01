@@ -29,7 +29,6 @@ class TransportService {
       await supabase.from('transportes').insert(transport.toMap());
       return true;
     } catch (e) {
-      print('Error al crear el transporte: $e');
       return false;
     }
   }

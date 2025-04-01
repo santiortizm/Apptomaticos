@@ -87,9 +87,10 @@ class _ListviewProductsState extends State<ListviewProducts> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image(
-                          image: AssetImage('./assets/images/no_products.png'),
-                          width: 80,
-                          height: 80,
+                          image: AssetImage(
+                              './assets/images/more_icons/no_products.png'),
+                          width: 60,
+                          height: 60,
                         ),
                         Text('No hay productos publicados'),
                       ],
@@ -133,7 +134,7 @@ class _ListviewProductsState extends State<ListviewProducts> {
                     height: 55,
                     fit: BoxFit.fill,
                     image: AssetImage(
-                      './assets/images/vender.png',
+                      './assets/images/icon_button/vender.png',
                     ),
                   ),
                 ),

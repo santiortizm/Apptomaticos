@@ -66,12 +66,19 @@ class _AvatarProductState extends State<AvatarProduct> {
 
       widget.onUpLoad(imageUrl); // Notificar cambio
 
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Imagen actualizada correctamente')),
       );
     } catch (e) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al subir la imagen: $e')),
+        SnackBar(
+          content: Text(
+            'Error al subir la imagen: $e',
+          ),
+          backgroundColor: redApp,
+        ),
       );
     } finally {
       setState(() {
@@ -87,7 +94,7 @@ class _AvatarProductState extends State<AvatarProduct> {
             builder: (context) => CustomAlertDialog(
                 width: 300,
                 height: 300,
-                assetImage: './assets/images/camara.gif',
+                assetImage: './assets/gifts/camara.gif',
                 title: 'Confirmar cambio',
                 content: SizedBox(
                   width: 250,

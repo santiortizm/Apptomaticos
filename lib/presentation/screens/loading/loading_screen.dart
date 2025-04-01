@@ -20,7 +20,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
           height: size.height,
           decoration: BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage('./assets/images/img_portada.webp'),
+                  image:
+                      AssetImage('./assets/images/background/img_portada.webp'),
                   fit: BoxFit.cover,
                   opacity: 0.6),
               color: Colors.black),

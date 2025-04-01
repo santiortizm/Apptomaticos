@@ -103,7 +103,7 @@ class _CounterOffersProducerState extends State<CounterOffersProducer> {
               height: size.height,
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/fondo_2.jpg'),
+                  image: AssetImage('assets/images/background/fondo_2.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -193,7 +193,18 @@ class _CounterOffersProducerState extends State<CounterOffersProducer> {
                             if (snapshot.data == null ||
                                 snapshot.data!.isEmpty) {
                               return const Center(
-                                  child: Text('No tienes contra ofertas.'));
+                                  child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image(
+                                    image: AssetImage(
+                                        './assets/images/more_icons/contra_oferta.png'),
+                                    width: 60,
+                                    height: 60,
+                                  ),
+                                  Text('No tienes contra ofertas.'),
+                                ],
+                              ));
                             }
 
                             final ofertas = snapshot.data!

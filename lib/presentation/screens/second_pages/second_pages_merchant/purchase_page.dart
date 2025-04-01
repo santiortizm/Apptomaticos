@@ -1,5 +1,6 @@
 import 'package:App_Tomaticos/core/constants/colors.dart';
 import 'package:App_Tomaticos/core/widgets/button/custom_button.dart';
+import 'package:App_Tomaticos/core/widgets/dialogs/custom_notification.dart';
 import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -65,7 +66,7 @@ class _PurchasePageState extends State<PurchasePage> {
               height: size.height,
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/fondo_2.jpg'),
+                  image: AssetImage('assets/images/background/fondo_2.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -185,6 +186,9 @@ class _PurchasePageState extends State<PurchasePage> {
                               width: 120,
                               child: CustomButton(
                                 onPressed: () {
+                                  if (_quantityController.text.isEmpty) {
+                                    _errorCampos(context);
+                                  }
                                   final quantity =
                                       int.tryParse(_quantityController.text) ??
                                           0;
@@ -334,5 +338,53 @@ class _PurchasePageState extends State<PurchasePage> {
         ),
       ),
     );
+  }
+
+  Future<void> _errorCampos(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomNotification(
+            width: 300,
+            height: 300,
+            assetImage: './assets/gifts/error.gif',
+            title: 'Error',
+            content: Container(
+              alignment: Alignment.center,
+              width: 250,
+              child: AutoSizeText(
+                'Debes llenar todos los campos para realizar',
+                maxLines: 2,
+                maxFontSize: 26,
+                minFontSize: 4,
+                style: temaApp.textTheme.titleSmall!.copyWith(fontSize: 100),
+              ),
+            ),
+            button: Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll(buttonGreen),
+                    ),
+                    onPressed: () => Navigator.pop(context),
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: 80,
+                      height: 28,
+                      child: AutoSizeText('Aceptar',
+                          maxLines: 1,
+                          maxFontSize: 14,
+                          minFontSize: 4,
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
   }
 }

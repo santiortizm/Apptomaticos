@@ -45,7 +45,7 @@ class _CustomNotificationState extends State<CustomNotification> {
               ),
               Container(
                 alignment: Alignment.center,
-                height: 50,
+                height: 45,
                 child: AutoSizeText(
                   widget.title,
                   maxLines: 1,

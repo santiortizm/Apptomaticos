@@ -56,6 +56,7 @@ class AddProductModel {
                 onPressedAcept: () async {
                   bool? confirm = await _confirmAction(context);
                   if (confirm == true) {
+                    // ignore: use_build_context_synchronously
                     Navigator.pop(context, selectedDate);
                   } else {
                     return;

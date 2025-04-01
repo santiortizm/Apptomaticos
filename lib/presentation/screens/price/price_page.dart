@@ -98,7 +98,7 @@ class _PriceScreenState extends State<PriceScreen> {
               height: 70,
               alignment: Alignment.center,
               child: AutoSizeText(
-                'Precios de venta\nde Tomate de Carne',
+                'Grafica de ventas\nregistradas en la aplicación',
                 maxLines: 2,
                 maxFontSize: 22,
                 minFontSize: 8,
@@ -116,7 +116,7 @@ class _PriceScreenState extends State<PriceScreen> {
                 width: 400,
                 height: 300,
                 child: salesData.isEmpty
-                    ? Text('No hay ventas aun realizadas')
+                    ? Text('No hay ventas realizadas')
                     : Chart(
                         data: salesData,
                         variables: {
@@ -158,9 +158,24 @@ class _PriceScreenState extends State<PriceScreen> {
                   headingRowColor: WidgetStateColor.resolveWith(
                       (states) => const Color.fromARGB(204, 227, 159, 159)),
                   columns: const [
-                    DataColumn(label: Text('Nombre Producto')),
-                    DataColumn(label: Text('Mín')),
-                    DataColumn(label: Text('Máx')),
+                    DataColumn(
+                      label: Text(
+                        'Nombre Producto',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    DataColumn(
+                      label: Text(
+                        'Mín',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    DataColumn(
+                      label: Text(
+                        'Máx',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
                   ],
                   rows: tableData.map((data) {
                     return DataRow(cells: [

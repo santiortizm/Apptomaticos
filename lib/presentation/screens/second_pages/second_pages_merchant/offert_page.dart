@@ -3,6 +3,7 @@ import 'package:App_Tomaticos/core/models/counter_offer_model.dart';
 import 'package:App_Tomaticos/core/services/counter_offer_service.dart';
 import 'package:App_Tomaticos/core/services/product_service.dart';
 import 'package:App_Tomaticos/core/widgets/button/custom_button.dart';
+import 'package:App_Tomaticos/core/widgets/dialogs/custom_notification.dart';
 import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -82,7 +83,7 @@ class _OffertPageState extends State<OffertPage> {
               height: size.height,
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/fondo_2.jpg'),
+                  image: AssetImage('assets/images/background/fondo_2.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -258,20 +259,10 @@ class _OffertPageState extends State<OffertPage> {
 
                                   if (success) {
                                     // ignore: use_build_context_synchronously
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content:
-                                              Text('Oferta enviada con éxito')),
-                                    );
-                                    // ignore: use_build_context_synchronously
-                                    context.pop();
+                                    _alertConfirmOffer(context);
                                   } else {
                                     // ignore: use_build_context_synchronously
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text(
-                                              'Error al enviar la oferta')),
-                                    );
+                                    _error(context);
                                   }
                                 },
                                 color: buttonGreen,
@@ -389,5 +380,93 @@ class _OffertPageState extends State<OffertPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _error(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomNotification(
+            width: 300,
+            height: 300,
+            assetImage: './assets/gifts/error.gif',
+            title: 'Error',
+            content: Container(
+              alignment: Alignment.center,
+              width: 250,
+              child: AutoSizeText(
+                'Ha sucedido un error inesperado, por favor intente de nuevo',
+                maxLines: 2,
+                maxFontSize: 26,
+                minFontSize: 4,
+                style: temaApp.textTheme.titleSmall!.copyWith(fontSize: 100),
+              ),
+            ),
+            button: Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll(buttonGreen),
+                    ),
+                    onPressed: () => Navigator.pop(context),
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: 80,
+                      height: 28,
+                      child: AutoSizeText('Aceptar',
+                          maxLines: 1,
+                          maxFontSize: 14,
+                          minFontSize: 4,
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  Future<void> _alertConfirmOffer(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return CustomNotification(
+          width: 300,
+          height: 250,
+          assetImage: './assets/gifts/oferta.gif',
+          title: 'Oferta realizada',
+          content: Container(
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            alignment: Alignment.topCenter,
+            width: 250,
+            child: AutoSizeText(
+              'La oferta se realizo correctamente!',
+              maxLines: 2,
+              maxFontSize: 18,
+              minFontSize: 4,
+              textAlign: TextAlign.center,
+              style: temaApp.textTheme.titleSmall!.copyWith(fontSize: 100),
+            ),
+          ),
+          button: const SizedBox.shrink(),
+        );
+      },
+    );
+
+    await Future.delayed(const Duration(seconds: 3));
+
+    if (mounted && Navigator.of(context).canPop()) {
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).pop(); // Cierra el diálogo
+    }
+
+    if (mounted) {
+      // ignore: use_build_context_synchronously
+      GoRouter.of(context).go('/menu'); // Navega a '/menu'
+    }
   }
 }

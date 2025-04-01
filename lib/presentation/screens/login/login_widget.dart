@@ -32,7 +32,8 @@ class _LoginWidgetState extends State<LoginWidget> {
             height: size.height,
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/img_inicio_sesion.png'),
+                image: AssetImage(
+                    'assets/images/background/img_inicio_sesion.png'),
                 fit: BoxFit.cover,
               ),
             ),

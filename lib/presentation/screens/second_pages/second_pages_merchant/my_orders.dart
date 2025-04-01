@@ -1,6 +1,7 @@
 import 'package:App_Tomaticos/core/models/transport_model.dart';
 import 'package:App_Tomaticos/core/services/transport_service.dart';
 import 'package:App_Tomaticos/core/widgets/cards/custom_card_order.dart';
+import 'package:App_Tomaticos/core/widgets/dialogs/more_info.dart';
 import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -109,7 +110,7 @@ class _MyOrdersState extends State<MyOrders> {
             Container(
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/fondo_2.jpg'),
+                  image: AssetImage('assets/images/background/fondo_2.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -178,6 +179,12 @@ class _MyOrdersState extends State<MyOrders> {
                           ),
                         ),
                       ),
+                      MoreInfo(
+                        width: 300,
+                        height: 190,
+                        text:
+                            'Sus pedidos aparecerán aquí cuando un transportador los acepte. Una vez asignado, podrá ver toda la información del envío.',
+                      ),
                       Expanded(
                         child: FutureBuilder<List<Transport>>(
                           future: transportsFuture,
@@ -194,7 +201,18 @@ class _MyOrdersState extends State<MyOrders> {
                             if (snapshot.data == null ||
                                 snapshot.data!.isEmpty) {
                               return const Center(
-                                  child: Text('No hay pedidos realizadas'));
+                                  child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image(
+                                    image: AssetImage(
+                                        './assets/images/more_icons/no_hay_pedidos.png'),
+                                    width: 60,
+                                    height: 60,
+                                  ),
+                                  Text('No hay pedidos realizadas'),
+                                ],
+                              ));
                             }
                             final orders = snapshot.data!
                                 .where((o) => o.estado != 'Finalizado')

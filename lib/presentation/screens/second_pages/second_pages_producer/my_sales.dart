@@ -46,7 +46,7 @@ class _MySalesState extends State<MySales> {
               height: size.height,
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/fondo_2.jpg'),
+                  image: AssetImage('assets/images/background/fondo_2.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -130,7 +130,18 @@ class _MySalesState extends State<MySales> {
                             if (snapshot.data == null ||
                                 snapshot.data!.isEmpty) {
                               return const Center(
-                                  child: Text('No hay ventas finalizadas.'));
+                                  child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image(
+                                    image: AssetImage(
+                                        './assets/images/more_icons/ventas_no_realizadas.png'),
+                                    width: 50,
+                                    height: 50,
+                                  ),
+                                  Text('No hay ventas finalizadas.'),
+                                ],
+                              ));
                             }
 
                             final sales = snapshot.data!;

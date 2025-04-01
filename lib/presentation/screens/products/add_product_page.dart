@@ -43,7 +43,7 @@ class _AddProductPageState extends State<AddProductPage> {
                 color: Colors.black.withValues(alpha: 0.3),
                 image: const DecorationImage(
                   fit: BoxFit.cover,
-                  image: AssetImage('assets/images/fondo1.jpg'),
+                  image: AssetImage('assets/images/background/fondo1.jpg'),
                 ),
               ),
             ),
@@ -339,7 +339,7 @@ class _AddProductPageState extends State<AddProductPage> {
           return CustomAlertDialog(
             width: 300,
             height: 290,
-            assetImage: './assets/images/advertencia.png',
+            assetImage: './assets/images/more_icons/advertencia.png',
             title: 'Alerta',
             content: Container(
               alignment: Alignment.center,
@@ -369,7 +369,7 @@ class _AddProductPageState extends State<AddProductPage> {
           return CustomNotification(
             width: 300,
             height: 300,
-            assetImage: './assets/images/error.gif',
+            assetImage: './assets/gifts/error.gif',
             title: 'Error',
             content: Container(
               alignment: Alignment.center,
@@ -377,7 +377,7 @@ class _AddProductPageState extends State<AddProductPage> {
               child: AutoSizeText(
                 'Debes llenar todos los campos para añadir un producto',
                 maxLines: 2,
-                maxFontSize: 26,
+                maxFontSize: 18,
                 minFontSize: 4,
                 style: temaApp.textTheme.titleSmall!.copyWith(fontSize: 100),
               ),
@@ -417,7 +417,7 @@ class _AddProductPageState extends State<AddProductPage> {
           return CustomNotification(
             width: 300,
             height: 300,
-            assetImage: './assets/images/error.gif',
+            assetImage: './assets/gifts/error.gif',
             title: 'Error',
             content: Container(
               alignment: Alignment.center,
@@ -425,7 +425,7 @@ class _AddProductPageState extends State<AddProductPage> {
               child: AutoSizeText(
                 'Ha sucedido un error inesperado, por favor intente de nuevo',
                 maxLines: 2,
-                maxFontSize: 26,
+                maxFontSize: 18,
                 minFontSize: 4,
                 style: temaApp.textTheme.titleSmall!.copyWith(fontSize: 100),
               ),
@@ -465,7 +465,7 @@ class _AddProductPageState extends State<AddProductPage> {
         return CustomNotification(
           width: 300,
           height: 250,
-          assetImage: './assets/images/producto_agregado.gif',
+          assetImage: './assets/gifts/producto_agregado.gif',
           title: 'Producto agregado',
           content: Container(
             padding: const EdgeInsets.symmetric(vertical: 20),
@@ -474,9 +474,9 @@ class _AddProductPageState extends State<AddProductPage> {
             child: AutoSizeText(
               'El producto ha sido agregado exitosamente!',
               maxLines: 2,
-              maxFontSize: 26,
+              maxFontSize: 18,
               minFontSize: 4,
-              textAlign: TextAlign.justify,
+              textAlign: TextAlign.center,
               style: temaApp.textTheme.titleSmall!.copyWith(fontSize: 100),
             ),
           ),

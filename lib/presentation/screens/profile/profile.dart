@@ -47,8 +47,7 @@ class _ProfileState extends State<Profile> {
         imageUrl = supabase.storage.from('profiles').getPublicUrl(imagePath);
       }
 
-      if (!mounted)
-        return; //  Evita llamar `setState` si el widget ya no está en el árbol
+      if (!mounted) return;
 
       setState(() {
         _userInfo = roleResponse;
@@ -56,8 +55,7 @@ class _ProfileState extends State<Profile> {
         _imageUrl = "$imageUrl?v=${DateTime.now().millisecondsSinceEpoch}";
       });
     } catch (e) {
-      if (!mounted) return; //Verifica `mounted` antes de actualizar el estado
-      print('Error cargando datos de usuario: $e');
+      if (!mounted) return;
     }
   }
 
@@ -102,16 +100,17 @@ class _ProfileState extends State<Profile> {
                     ],
                   ),
                   Positioned(
-                    top: 10,
+                    top: 20,
                     right: 8,
-                    child: IconButton(
-                      onPressed: () {
+                    child: GestureDetector(
+                      onTap: () {
                         Scaffold.of(context).openDrawer();
                       },
-                      icon: Icon(
-                        Icons.list,
-                        size: 50,
-                        color: redApp,
+                      child: Image(
+                        width: 50,
+                        height: 40,
+                        image:
+                            AssetImage('./assets/images/icon_button/menu.png'),
                       ),
                     ),
                   ),

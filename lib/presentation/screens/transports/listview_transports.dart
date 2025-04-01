@@ -63,6 +63,7 @@ class _ListviewTransportsState extends State<ListviewTransports> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Container(
+      padding: EdgeInsets.symmetric(vertical: 10),
       width: size.width * 0.9,
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.55),
@@ -83,9 +84,10 @@ class _ListviewTransportsState extends State<ListviewTransports> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Image(
-                    image: AssetImage('./assets/images/no_transports.png'),
-                    width: 80,
-                    height: 80,
+                    image: AssetImage(
+                        './assets/images/more_icons/no_transports.png'),
+                    width: 60,
+                    height: 60,
                   ),
                   Text('No hay transportes disponibles'),
                 ],
@@ -97,14 +99,18 @@ class _ListviewTransportsState extends State<ListviewTransports> {
           return RefreshIndicator(
             onRefresh: _refreshTransports,
             child: ListView.builder(
+              padding: EdgeInsets.only(left: 10, right: 10),
               itemCount: transports.length,
               itemBuilder: (context, index) {
                 final transport = transports[index];
-                return CustomCardTransport(
-                  idUsuario: transport.idComprador,
-                  imageUrlProduct: transport.imagenProducto,
-                  idCompra: transport.id,
-                  countTransport: transport.cantidad.toString(),
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: CustomCardTransport(
+                    idUsuario: transport.idComprador,
+                    imageUrlProduct: transport.imagenProducto,
+                    idCompra: transport.id,
+                    countTransport: transport.cantidad.toString(),
+                  ),
                 );
               },
             ),

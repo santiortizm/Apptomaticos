@@ -118,7 +118,7 @@ class _AvatarState extends State<Avatar> {
     }
   }
 
-  /// ✅ Muestra un modal para elegir entre galería o cámara
+  ///  Muestra un modal para elegir entre galería o cámara
   void _showImagePickerOptions() {
     showModalBottomSheet(
       context: context,
@@ -147,7 +147,7 @@ class _AvatarState extends State<Avatar> {
     );
   }
 
-  /// ✅ Si los permisos están bloqueados, muestra una alerta para abrir configuración
+  ///  Si los permisos están bloqueados, muestra una alerta para abrir configuración
   Future<bool> _showSettingsDialog() async {
     return await showDialog<bool>(
           context: context,
@@ -208,7 +208,7 @@ class _AvatarState extends State<Avatar> {
             child: CircleAvatar(
               backgroundImage: (_imageUrl != null && _imageUrl!.isNotEmpty)
                   ? NetworkImage(_imageUrl!)
-                  : const AssetImage('./assets/images/profile.png')
+                  : const AssetImage('./assets/images/icon_user/profile.png')
                       as ImageProvider,
               radius: 70,
               child: (_imageUrl == null || _imageUrl!.isEmpty)

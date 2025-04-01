@@ -156,7 +156,7 @@ class _CustomCardProductsProducerState
         return CustomAlertDialog(
           width: 220,
           height: 270,
-          assetImage: './assets/images/alert.gif',
+          assetImage: './assets/gifts/alert.gif',
           title: 'Alerta',
           content: Container(
             width: 200,

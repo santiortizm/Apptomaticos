@@ -105,7 +105,7 @@ class _BuyProductPageState extends State<BuyProductPage> {
                       image: DecorationImage(
                         opacity: 0.4,
                         image: AssetImage(
-                          'assets/images/fondo1.jpg',
+                          'assets/images/background/fondo1.jpg',
                         ),
                         fit: BoxFit.cover,
                       ),
@@ -582,7 +582,7 @@ class _BuyProductPageState extends State<BuyProductPage> {
         return CustomAlertDialog(
           width: 220,
           height: 270,
-          assetImage: './assets/images/alert.gif',
+          assetImage: './assets/gifts/alert.gif',
           title: 'Alerta',
           content: Container(
             width: 200,

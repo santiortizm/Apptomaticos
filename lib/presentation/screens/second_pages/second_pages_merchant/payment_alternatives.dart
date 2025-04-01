@@ -3,6 +3,7 @@ import 'package:App_Tomaticos/core/models/buy_model.dart';
 import 'package:App_Tomaticos/core/services/buy_service.dart';
 import 'package:App_Tomaticos/core/services/product_service.dart';
 import 'package:App_Tomaticos/core/widgets/button/custom_button.dart';
+import 'package:App_Tomaticos/core/widgets/dialogs/custom_notification.dart';
 import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -30,82 +31,6 @@ class _PaymentAlternativesState extends State<PaymentAlternatives> {
   final supabase = Supabase.instance.client;
   final BuyService buyService =
       BuyService(ProductService(Supabase.instance.client));
-  Future<void> _handleCashOnDelivery() async {
-    try {
-      final userId = supabase.auth.currentUser?.id;
-      if (userId == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Debe iniciar sesión')),
-        );
-        return;
-      }
-
-      final now = DateTime.now();
-
-      // Obtener detalles del producto antes de la compra
-      final productResponse = await supabase
-          .from('productos')
-          .select('idPropietario, imagen, nombreProducto')
-          .eq('idProducto', widget.productId)
-          .maybeSingle();
-
-      if (productResponse == null) {
-        return;
-      }
-
-      final String nombreProducto = productResponse['nombreProducto'];
-      final String idPropietario = productResponse['idPropietario'];
-
-      // Crear el modelo de compra
-      final Buy compra = Buy(
-        id: DateTime.now().millisecondsSinceEpoch,
-        idProducto: widget.productId,
-        createdAt: now,
-        cantidad: widget.quantity,
-        alternativaPago: 'PAGO CONTRA ENTREGA',
-        idComprador: userId,
-        fecha: now,
-        nombreProducto: nombreProducto,
-        total: widget.totalPrice,
-        idPropietario: idPropietario,
-        imagenProducto: widget.imageProduct,
-        estadoCompra: 'En Curso',
-      );
-
-      // Registrar la compra
-      final bool success = await buyService.createPurchase(compra);
-
-      if (!success) {
-        throw Exception('No se pudo completar la compra.');
-      }
-
-      // Obtener el ID de la compra recién creada
-      final response = await supabase
-          .from('compras')
-          .select('id')
-          .eq('idComprador', userId)
-          .eq('idProducto', widget.productId)
-          .order('fecha', ascending: false)
-          .limit(1)
-          .maybeSingle();
-
-      if (response == null || response['id'] == null) {
-        throw Exception('No se encontró la compra recién creada.');
-      }
-
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Compra registradacon éxito')),
-      );
-      context.pushReplacement('/menu');
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -119,7 +44,7 @@ class _PaymentAlternativesState extends State<PaymentAlternatives> {
               height: size.height,
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/fondo_2.jpg'),
+                  image: AssetImage('assets/images/background/fondo_2.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -200,7 +125,65 @@ class _PaymentAlternativesState extends State<PaymentAlternatives> {
                         ),
                       ),
                       CustomButton(
-                        onPressed: _handleCashOnDelivery,
+                        onPressed: () async {
+                          try {
+                            final userId = supabase.auth.currentUser?.id;
+                            if (userId == null) {
+                              _error(context);
+                              return;
+                            }
+
+                            final now = DateTime.now();
+
+                            // Obtener detalles del producto antes de la compra
+                            final productResponse = await supabase
+                                .from('productos')
+                                .select('idPropietario, imagen, nombreProducto')
+                                .eq('idProducto', widget.productId)
+                                .maybeSingle();
+
+                            if (productResponse == null) {
+                              // ignore: use_build_context_synchronously
+                              _error(context);
+                              return;
+                            }
+
+                            final String nombreProducto =
+                                productResponse['nombreProducto'];
+                            final String idPropietario =
+                                productResponse['idPropietario'];
+
+                            // Crear el modelo de compra
+                            final Buy compra = Buy(
+                              id: DateTime.now().millisecondsSinceEpoch,
+                              idProducto: widget.productId,
+                              createdAt: now,
+                              cantidad: widget.quantity,
+                              alternativaPago: 'PAGO CONTRA ENTREGA',
+                              idComprador: userId,
+                              fecha: now,
+                              nombreProducto: nombreProducto,
+                              total: widget.totalPrice,
+                              idPropietario: idPropietario,
+                              imagenProducto: widget.imageProduct,
+                              estadoCompra: 'En Curso',
+                            );
+
+                            // Registrar la compra
+                            final bool success =
+                                await buyService.createPurchase(compra);
+                            if (success) {
+                              // ignore: use_build_context_synchronously
+                              _alertConfirmPurchase(context);
+                            } else {
+                              _error(context);
+                            }
+                          } catch (e) {
+                            print('Error al procesar el pago: $e');
+                            // ignore: use_build_context_synchronously
+                            _error(context);
+                          }
+                        },
                         color: Colors.white,
                         colorBorder: buttonGreen,
                         border: 12,
@@ -293,5 +276,93 @@ class _PaymentAlternativesState extends State<PaymentAlternatives> {
         ),
       ),
     );
+  }
+
+  Future<void> _error(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomNotification(
+            width: 300,
+            height: 300,
+            assetImage: './assets/gifts/error.gif',
+            title: 'Error',
+            content: Container(
+              alignment: Alignment.center,
+              width: 250,
+              child: AutoSizeText(
+                'Ha sucedido un error inesperado, por favor intente de nuevo',
+                maxLines: 2,
+                maxFontSize: 26,
+                minFontSize: 4,
+                style: temaApp.textTheme.titleSmall!.copyWith(fontSize: 100),
+              ),
+            ),
+            button: Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll(buttonGreen),
+                    ),
+                    onPressed: () => Navigator.pop(context),
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: 80,
+                      height: 28,
+                      child: AutoSizeText('Aceptar',
+                          maxLines: 1,
+                          maxFontSize: 14,
+                          minFontSize: 4,
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  Future<void> _alertConfirmPurchase(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return CustomNotification(
+          width: 300,
+          height: 250,
+          assetImage: './assets/gifts/compra_realizada.gif',
+          title: 'Compra realizada',
+          content: Container(
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            alignment: Alignment.topCenter,
+            width: 250,
+            child: AutoSizeText(
+              'La compra se realizo correctamente!',
+              maxLines: 2,
+              maxFontSize: 18,
+              minFontSize: 4,
+              textAlign: TextAlign.center,
+              style: temaApp.textTheme.titleSmall!.copyWith(fontSize: 100),
+            ),
+          ),
+          button: const SizedBox.shrink(),
+        );
+      },
+    );
+
+    await Future.delayed(const Duration(seconds: 3));
+
+    if (mounted && Navigator.of(context).canPop()) {
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).pop(); // Cierra el diálogo
+    }
+
+    if (mounted) {
+      // ignore: use_build_context_synchronously
+      GoRouter.of(context).go('/menu'); // Navega a '/menu'
+    }
   }
 }
