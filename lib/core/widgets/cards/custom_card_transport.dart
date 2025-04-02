@@ -95,7 +95,7 @@ class _CustomCardTransportState extends State<CustomCardTransport> {
     }
   }
 
-  /// 🔥 **Muestra el diálogo para seleccionar la fecha de cargue**
+  ///  **Muestra el diálogo para seleccionar la fecha de cargue**
   Future<void> _showDateSelectionDialog() async {
     DateTime? selectedCargaDate;
     DateTime? entregaDate;
@@ -404,8 +404,8 @@ class _CustomCardTransportState extends State<CustomCardTransport> {
         final DateTime lastDate = dateToSelect.add(const Duration(days: 2));
         return Theme(
           data: ThemeData.light().copyWith(
-            primaryColor: buttonGreen, // Color de la barra superior
-            hintColor: Colors.green, // Color del selector
+            primaryColor: buttonGreen,
+            hintColor: Colors.green,
             colorScheme: ColorScheme.light(primary: buttonGreen),
             buttonTheme:
                 const ButtonThemeData(textTheme: ButtonTextTheme.primary),

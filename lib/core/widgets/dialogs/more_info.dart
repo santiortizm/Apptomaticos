@@ -6,12 +6,13 @@ class MoreInfo extends StatefulWidget {
   final double width;
   final double height;
   final String text;
-
+  final double widthTextDialog;
   const MoreInfo(
       {super.key,
       required this.width,
       required this.height,
-      required this.text});
+      required this.text,
+      required this.widthTextDialog});
 
   @override
   State<MoreInfo> createState() => _MoreInfoState();
@@ -56,6 +57,7 @@ class _MoreInfoState extends State<MoreInfo> {
                       Container(
                         alignment: Alignment.topCenter,
                         width: 250,
+                        height: widget.widthTextDialog,
                         child: AutoSizeText(
                           textAlign: TextAlign.justify,
                           widget.text,
@@ -73,7 +75,7 @@ class _MoreInfoState extends State<MoreInfo> {
             });
       },
       child: Container(
-        padding: EdgeInsets.all(12),
+        padding: EdgeInsets.all(10),
         alignment: Alignment.center,
         width: 300,
         height: 80,
@@ -88,10 +90,12 @@ class _MoreInfoState extends State<MoreInfo> {
               size: 20,
             ),
             SizedBox(
-              width: 240,
-              child: Text(
+              width: 220,
+              child: AutoSizeText(
                 widget.text,
                 maxLines: 2,
+                maxFontSize: 12,
+                minFontSize: 10,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.left,
                 style: temaApp.textTheme.titleSmall!.copyWith(fontSize: 12),

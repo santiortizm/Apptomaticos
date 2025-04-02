@@ -184,6 +184,7 @@ class _MyOrdersState extends State<MyOrders> {
                         height: 190,
                         text:
                             'Sus pedidos aparecerán aquí cuando un transportador los acepte. Una vez asignado, podrá ver toda la información del envío.',
+                        widthTextDialog: 120,
                       ),
                       Expanded(
                         child: FutureBuilder<List<Transport>>(

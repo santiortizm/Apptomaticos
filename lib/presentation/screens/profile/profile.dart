@@ -1,4 +1,5 @@
 import 'package:App_Tomaticos/core/constants/colors.dart';
+import 'package:App_Tomaticos/core/services/user_services.dart';
 import 'package:App_Tomaticos/core/widgets/avatars/avatar.dart';
 import 'package:App_Tomaticos/presentation/themes/app_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -14,6 +15,7 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   final supabase = Supabase.instance.client;
+  final UserService userService = UserService(Supabase.instance.client);
 
   String? _imageUrl;
   Map<String, dynamic>? _userInfo;
@@ -25,7 +27,7 @@ class _ProfileState extends State<Profile> {
     _loadUserProfileData();
   }
 
-  /// Carga los datos del perfil: información del usuario y rol
+  /// Carga los datos del perfil
   Future<void> _loadUserProfileData() async {
     final user = supabase.auth.currentUser;
     if (user == null) return;
@@ -37,7 +39,6 @@ class _ProfileState extends State<Profile> {
           .eq('idUsuario', user.id)
           .single();
 
-      // Verificar si la imagen existe en Supabase Storage
       final imagePath = 'profiles/${user.id}/profile.jpg';
       final response =
           await supabase.storage.from('profiles').list(path: user.id);
@@ -60,11 +61,6 @@ class _ProfileState extends State<Profile> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
@@ -73,13 +69,12 @@ class _ProfileState extends State<Profile> {
       width: size.width,
       height: size.height,
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.7),
+        color: Colors.white.withOpacity(0.7),
         borderRadius: BorderRadius.circular(20),
       ),
       child: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(
-          spacing: 16,
           children: [
             Container(
               width: 350,
@@ -106,44 +101,71 @@ class _ProfileState extends State<Profile> {
                       onTap: () {
                         Scaffold.of(context).openDrawer();
                       },
-                      child: Image(
+                      child: Image.asset(
+                        './assets/images/icon_button/menu.png',
                         width: 50,
                         height: 40,
-                        image:
-                            AssetImage('./assets/images/icon_button/menu.png'),
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-            _cardInfo('Nombre', _userInfo?['nombre']),
-            _cardInfo('Apellido', _userInfo?['apellido']),
-            _cardInfo('Rol', _userInfo?['rol']),
-            _cardInfo('Celular', _userInfo?['celular']),
-            _cardInfo('Correo', supabase.auth.currentUser?.email),
+            _cardInfo(
+              'Nombre',
+              _userInfo?['nombre'],
+              IconButton(
+                onPressed: () => _editDialog(context, 'nombre'),
+                icon: Icon(
+                  Icons.edit_rounded,
+                  color: redApp,
+                ),
+              ),
+            ),
+            _cardInfo(
+              'Apellido',
+              _userInfo?['apellido'],
+              IconButton(
+                onPressed: () => _editDialog(context, 'apellido'),
+                icon: Icon(
+                  Icons.edit_rounded,
+                  color: redApp,
+                ),
+              ),
+            ),
+            _cardInfo('Rol', _userInfo?['rol'], const SizedBox.shrink()),
+            _cardInfo(
+              'Celular',
+              _userInfo?['celular'],
+              IconButton(
+                onPressed: () => _editDialog(context, 'celular'),
+                icon: Icon(
+                  Icons.edit_rounded,
+                  color: redApp,
+                ),
+              ),
+            ),
+            _cardInfo('Correo', supabase.auth.currentUser?.email,
+                const SizedBox.shrink()),
           ],
         ),
       ),
     );
   }
 
-  Widget _cardInfo(
-    String titleInfo,
-    String? subTitle,
-  ) {
+  Widget _cardInfo(String titleInfo, String? subTitle, Widget editButton) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      margin: const EdgeInsets.symmetric(vertical: 5),
       decoration: BoxDecoration(
         color: cardInfo,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 3,
             children: [
               SizedBox(
                 width: 120,
@@ -153,9 +175,10 @@ class _ProfileState extends State<Profile> {
                   minFontSize: 11,
                   maxLines: 1,
                   style: temaApp.textTheme.titleSmall!.copyWith(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700),
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
               SizedBox(
@@ -166,15 +189,67 @@ class _ProfileState extends State<Profile> {
                   minFontSize: 4,
                   maxLines: 1,
                   style: temaApp.textTheme.titleSmall!.copyWith(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.normal),
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.normal,
+                  ),
                 ),
               ),
             ],
           ),
+          editButton,
         ],
       ),
+    );
+  }
+
+  /// Muestra el diálogo de edición del perfil
+  Future<void> _editDialog(BuildContext contextDialog, String field) async {
+    final TextEditingController controller = TextEditingController(
+      text: _userInfo?[field] ?? '',
+    );
+
+    await showDialog(
+      context: contextDialog,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text('Editar $field'),
+          content: TextField(
+            controller: controller,
+            decoration: InputDecoration(
+              labelText: 'Nuevo $field',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final user = supabase.auth.currentUser;
+                if (user == null) return;
+
+                final bool success = await userService.updateInfoUser(
+                  user.id,
+                  {field: controller.text.trim()},
+                );
+
+                if (success) {
+                  Navigator.pop(dialogContext);
+                  _loadUserProfileData(); // Recarga los datos actualizados
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Error al actualizar')),
+                  );
+                }
+              },
+              child: const Text('Editar'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

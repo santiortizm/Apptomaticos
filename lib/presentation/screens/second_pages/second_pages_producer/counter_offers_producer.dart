@@ -173,10 +173,12 @@ class _CounterOffersProducerState extends State<CounterOffersProducer> {
                         ),
                       ),
                       MoreInfo(
-                          width: 300,
-                          height: 250,
-                          text:
-                              'Aquí se mostrarán las ofertas realizadas por los comerciantes. Estas estarán visibles solo 30 minutos. Si no responde en ese tiempo, la oferta será rechazada automáticamente y el comerciante será notificado.'),
+                        width: 300,
+                        height: 255,
+                        text:
+                            'Aquí se mostrarán las ofertas realizadas por los comerciantes. Estas estarán visibles solo 30 minutos. Si no responde en ese tiempo, la oferta será rechazada automáticamente y el comerciante será notificado.',
+                        widthTextDialog: 180,
+                      ),
                       Expanded(
                         child: FutureBuilder<List<CounterOffer>>(
                           future: producerOffersFuture,

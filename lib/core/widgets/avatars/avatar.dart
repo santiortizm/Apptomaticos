@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:App_Tomaticos/core/constants/colors.dart';
 import 'package:App_Tomaticos/core/services/image_service.dart';
+import 'package:App_Tomaticos/core/widgets/dialogs/custom_alert_dialog.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -42,7 +44,7 @@ class _AvatarState extends State<Avatar> {
     });
   }
 
-  /// ✅ Verifica y solicita permisos antes de abrir la cámara o galería
+  ///  Verifica y solicita permisos antes de abrir la cámara o galería
   Future<bool> _checkPermissions(ImageSource source) async {
     Permission permission =
         (source == ImageSource.camera) ? Permission.camera : Permission.photos;
@@ -61,7 +63,7 @@ class _AvatarState extends State<Avatar> {
     return false;
   }
 
-  /// ✅ Abre la cámara o la galería si tiene permisos
+  ///  Abre la cámara o la galería si tiene permisos
   Future<void> _pickImage(ImageSource source) async {
     bool hasPermission = await _checkPermissions(source);
     if (!hasPermission) return;
@@ -174,27 +176,6 @@ class _AvatarState extends State<Avatar> {
   }
 
   /// Confirma si el usuario quiere cambiar la imagen actual
-  Future<bool> _confirmImageChange() async {
-    return await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Confirmar cambio'),
-            content:
-                const Text('¿Estás seguro de que quieres cambiar la imagen?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancelar'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: const Text('Editar'),
-              ),
-            ],
-          ),
-        ) ??
-        false;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -238,5 +219,28 @@ class _AvatarState extends State<Avatar> {
         ],
       ),
     );
+  }
+
+  Future<bool> _confirmImageChange() async {
+    return await showDialog<bool>(
+            context: context,
+            builder: (context) => CustomAlertDialog(
+                width: 300,
+                height: 300,
+                assetImage: './assets/gifts/camara.gif',
+                title: 'Confirmar cambio',
+                content: SizedBox(
+                  width: 250,
+                  child: AutoSizeText(
+                    '¿Estás seguro de que quieres cambiar la imagen?',
+                    maxLines: 2,
+                    maxFontSize: 35,
+                    minFontSize: 4,
+                    textAlign: TextAlign.justify,
+                  ),
+                ),
+                onPressedAcept: () => Navigator.pop(context, true),
+                onPressedCancel: () => Navigator.pop(context, false))) ??
+        false;
   }
 }

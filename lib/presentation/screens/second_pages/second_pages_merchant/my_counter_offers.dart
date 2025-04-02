@@ -174,10 +174,12 @@ class _MyCounterOffersState extends State<MyCounterOffers> {
                           ),
                         ),
                         MoreInfo(
-                            width: 300,
-                            height: 340,
-                            text:
-                                'En esta sección solo verá las contraofertas aceptadas por el productor. Si no son aceptadas en 30 minutos, se rechazarán automáticamente y se le notificará. Una vez aceptadas, tendrá 30 minutos para finalizar la compra; de lo contrario, las canastas solicitadas volverán a estar disponibles.'),
+                          width: 300,
+                          height: 255,
+                          text:
+                              'En esta sección solo verá las contraofertas aceptadas por el productor. Si no son aceptadas en 30 minutos, se rechazarán automáticamente y se le notificará. Una vez aceptadas, tendrá 30 minutos para finalizar la compra; de lo contrario, las canastas solicitadas volverán a estar disponibles.',
+                          widthTextDialog: 180,
+                        ),
                         Expanded(
                           child: FutureBuilder<List<CounterOffer>>(
                             future: producerOffersFuture,

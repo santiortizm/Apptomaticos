@@ -22,4 +22,18 @@ class UserService {
       return null;
     }
   }
+
+  Future<bool> updateInfoUser(
+      String idUsuario, Map<String, dynamic> updates) async {
+    try {
+      final response = await supabaseClient
+          .from('usuarios')
+          .update(updates)
+          .eq('idUsuario', idUsuario)
+          .select();
+      return response.isNotEmpty;
+    } catch (e) {
+      return false;
+    }
+  }
 }
