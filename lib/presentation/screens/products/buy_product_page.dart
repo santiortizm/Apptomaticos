@@ -115,6 +115,7 @@ class _BuyProductPageState extends State<BuyProductPage> {
                           horizontal: size.width * 0.05,
                           vertical: size.height * 0.05),
                       child: Container(
+                        padding: EdgeInsets.only(top: 10),
                         width: size.width * 1,
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -137,7 +138,8 @@ class _BuyProductPageState extends State<BuyProductPage> {
                                         Icons.arrow_back,
                                         color: Colors.black,
                                       ),
-                                      SizedBox(
+                                      Container(
+                                        alignment: Alignment.center,
                                         height: 30,
                                         child: AutoSizeText(
                                           'Atrás',

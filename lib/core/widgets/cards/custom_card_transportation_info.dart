@@ -150,154 +150,158 @@ class _CustomCardTransportationInfoState
                           return SingleChildScrollView(
                             padding: EdgeInsets.symmetric(
                                 vertical: size.height * 0.025),
-                            child: Column(
-                              spacing: 12,
-                              children: [
-                                AutoSizeText(
-                                  textAlign: TextAlign.center,
-                                  'Estado del transporte del producto',
-                                  maxFontSize: 26,
-                                  minFontSize: 18,
-                                  maxLines: 2,
-                                  style: temaApp.textTheme.titleSmall!.copyWith(
-                                    fontSize: 26,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: size.width * 0.8,
-                                  child: AutoSizeText(
-                                    'Seleccione el estado actual del transporte del producto: \n - En camino: Indique que ha recibido el producto del agricultor.\n- En central de abastos: Indique que el producto está listo para ser entregado al destinatario.\nSeleccione la opción correspondiente para actualizar el estado del transporte.',
-                                    maxFontSize: 18,
-                                    minFontSize: 16,
-                                    maxLines: 13,
-                                    textAlign: TextAlign.justify,
+                            child: SizedBox(
+                              width: 400,
+                              child: Column(
+                                spacing: 12,
+                                children: [
+                                  AutoSizeText(
+                                    textAlign: TextAlign.center,
+                                    'Estado del transporte del producto',
+                                    maxFontSize: 26,
+                                    minFontSize: 18,
+                                    maxLines: 2,
                                     style:
                                         temaApp.textTheme.titleSmall!.copyWith(
                                       fontSize: 26,
                                       color: Colors.black,
-                                      fontWeight: FontWeight.normal,
+                                      fontWeight: FontWeight.w700,
                                     ),
                                   ),
-                                ),
-                                Padding(
-                                    padding: const EdgeInsets.only(top: 20),
-                                    child: Column(
-                                      children: [
-                                        if (widget.estado == 'Aceptado')
-                                          CustomButton(
-                                            onPressed: () async {
-                                              // Actualizar estado del transporte
-                                              try {
-                                                await supabase
-                                                    .from('transportes')
-                                                    .update({
-                                                  'estado': 'En Camino'
-                                                }).eq('idTransporte',
-                                                        widget.idTransporte);
-                                                // ignore: use_build_context_synchronously
-                                                Navigator.pop(context);
-                                                // ignore: use_build_context_synchronously
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  SnackBar(
-                                                      backgroundColor:
-                                                          buttonGreen,
-                                                      content: Text(
-                                                          'Estado del transporte actualizado correctamente')),
-                                                );
-                                              } catch (e) {
-                                                // ignore: use_build_context_synchronously
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  SnackBar(
-                                                      backgroundColor: redApp,
-                                                      content: Text(
-                                                          'Intente nuevamente hubo un error al actualizar el estado del transporte')),
-                                                );
-                                              }
-                                            },
-                                            color: buttonGreen,
-                                            colorBorder: buttonGreen,
-                                            border: 12,
-                                            width: 0.4,
-                                            height: 0.07,
-                                            elevation: 1,
-                                            sizeBorder: 0,
-                                            child: AutoSizeText(
-                                              'En Camino',
-                                              maxLines: 1,
-                                              maxFontSize: 20,
-                                              minFontSize: 18,
-                                              style: temaApp
-                                                  .textTheme.titleSmall!
-                                                  .copyWith(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 30,
+                                  SizedBox(
+                                    width: size.width * 0.8,
+                                    child: AutoSizeText(
+                                      'Seleccione el estado actual del transporte del producto: \n - En camino: Indique que ha recibido el producto del agricultor.\n- En central de abastos: Indique que el producto está listo para ser entregado al destinatario.\nSeleccione la opción correspondiente para actualizar el estado del transporte.',
+                                      maxFontSize: 18,
+                                      minFontSize: 16,
+                                      maxLines: 13,
+                                      textAlign: TextAlign.justify,
+                                      style: temaApp.textTheme.titleSmall!
+                                          .copyWith(
+                                        fontSize: 26,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                      padding: const EdgeInsets.only(top: 20),
+                                      child: Column(
+                                        children: [
+                                          if (widget.estado == 'Aceptado')
+                                            CustomButton(
+                                              onPressed: () async {
+                                                // Actualizar estado del transporte
+                                                try {
+                                                  await supabase
+                                                      .from('transportes')
+                                                      .update({
+                                                    'estado': 'En Camino'
+                                                  }).eq('idTransporte',
+                                                          widget.idTransporte);
+                                                  // ignore: use_build_context_synchronously
+                                                  Navigator.pop(context);
+                                                  // ignore: use_build_context_synchronously
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                        backgroundColor:
+                                                            buttonGreen,
+                                                        content: Text(
+                                                            'Estado del transporte actualizado correctamente')),
+                                                  );
+                                                } catch (e) {
+                                                  // ignore: use_build_context_synchronously
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                        backgroundColor: redApp,
+                                                        content: Text(
+                                                            'Intente nuevamente hubo un error al actualizar el estado del transporte')),
+                                                  );
+                                                }
+                                              },
+                                              color: buttonGreen,
+                                              colorBorder: buttonGreen,
+                                              border: 12,
+                                              width: 0.4,
+                                              height: 0.07,
+                                              elevation: 1,
+                                              sizeBorder: 0,
+                                              child: AutoSizeText(
+                                                'En Camino',
+                                                maxLines: 1,
+                                                maxFontSize: 20,
+                                                minFontSize: 18,
+                                                style: temaApp
+                                                    .textTheme.titleSmall!
+                                                    .copyWith(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 30,
+                                                ),
                                               ),
-                                            ),
-                                          )
-                                        else
-                                          CustomButton(
-                                            onPressed: () async {
-                                              // Actualizar estado del transporte
-                                              try {
-                                                await supabase
-                                                    .from('transportes')
-                                                    .update({
-                                                  'estado':
-                                                      'En Central de abastos'
-                                                }).eq('idTransporte',
-                                                        widget.idTransporte);
+                                            )
+                                          else
+                                            CustomButton(
+                                              onPressed: () async {
+                                                // Actualizar estado del transporte
+                                                try {
+                                                  await supabase
+                                                      .from('transportes')
+                                                      .update({
+                                                    'estado':
+                                                        'En Central de abastos'
+                                                  }).eq('idTransporte',
+                                                          widget.idTransporte);
 
-                                                // ignore: use_build_context_synchronously
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  SnackBar(
-                                                      backgroundColor:
-                                                          buttonGreen,
-                                                      content: Text(
-                                                          'Estado del transporte actualizado correctamente')),
-                                                );
-                                                // ignore: use_build_context_synchronously
-                                                Navigator.pop(context);
-                                              } catch (e) {
-                                                // ignore: use_build_context_synchronously
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  SnackBar(
-                                                      backgroundColor: redApp,
-                                                      content: Text(
-                                                          'Intente nuevamente hubo un error al actualizar el estado del transporte')),
-                                                );
-                                              }
-                                            },
-                                            color: buttonGreen,
-                                            colorBorder: buttonGreen,
-                                            border: 12,
-                                            width: 0.4,
-                                            height: 0.07,
-                                            elevation: 1,
-                                            sizeBorder: 0,
-                                            child: AutoSizeText(
-                                              'En Central de abastos',
-                                              maxLines: 1,
-                                              maxFontSize: 20,
-                                              minFontSize: 14,
-                                              style: temaApp
-                                                  .textTheme.titleSmall!
-                                                  .copyWith(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 30,
+                                                  // ignore: use_build_context_synchronously
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                        backgroundColor:
+                                                            buttonGreen,
+                                                        content: Text(
+                                                            'Estado del transporte actualizado correctamente')),
+                                                  );
+                                                  // ignore: use_build_context_synchronously
+                                                  Navigator.pop(context);
+                                                } catch (e) {
+                                                  // ignore: use_build_context_synchronously
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                        backgroundColor: redApp,
+                                                        content: Text(
+                                                            'Intente nuevamente hubo un error al actualizar el estado del transporte')),
+                                                  );
+                                                }
+                                              },
+                                              color: buttonGreen,
+                                              colorBorder: buttonGreen,
+                                              border: 12,
+                                              width: 0.4,
+                                              height: 0.07,
+                                              elevation: 1,
+                                              sizeBorder: 0,
+                                              child: AutoSizeText(
+                                                'En Central de abastos',
+                                                maxLines: 1,
+                                                maxFontSize: 20,
+                                                minFontSize: 14,
+                                                style: temaApp
+                                                    .textTheme.titleSmall!
+                                                    .copyWith(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 30,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                      ],
-                                    )),
-                              ],
+                                        ],
+                                      )),
+                                ],
+                              ),
                             ),
                           );
                         },

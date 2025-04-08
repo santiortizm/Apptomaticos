@@ -145,12 +145,21 @@ class _AddProductPageState extends State<AddProductPage> {
                             ),
                           ),
                         ),
-                        TextFormFieldWidget(
-                          labelText: 'Nombre Producto',
-                          keyboardType: TextInputType.name,
-                          controller: _model.nameController,
-                          icon: Icons.shopping_cart,
-                        ),
+                        DropDownFieldController(
+                            labelText: 'Nombre Producto',
+                            selectedValue: _model.selectedProduct,
+                            options: _model.productOptions,
+                            onChanged: (value) {
+                              setState(() {
+                                _model.selectedProduct = value;
+                              });
+                            }),
+                        // TextFormFieldWidget(
+                        //   labelText: 'Nombre Producto',
+                        //   keyboardType: TextInputType.name,
+                        //   controller: _model.nameController,
+                        //   icon: Icons.shopping_cart,
+                        // ),
                         TextFormFieldWidget(
                           labelText: 'Cantidad (CANASTA)',
                           keyboardType: TextInputType.number,
@@ -238,7 +247,7 @@ class _AddProductPageState extends State<AddProductPage> {
                               child: CustomButton(
                                 onPressed: () async {
                                   try {
-                                    if (_model.nameController.text.isEmpty ||
+                                    if (_model.selectedProduct == null ||
                                         _model
                                             .quantityController.text.isEmpty ||
                                         _model.harvestDateController.text
@@ -257,8 +266,7 @@ class _AddProductPageState extends State<AddProductPage> {
                                     final response = await supabase
                                         .from('productos')
                                         .insert({
-                                      'nombreProducto':
-                                          _model.nameController.text,
+                                      'nombreProducto': _model.selectedProduct,
                                       'cantidad': int.parse(
                                           _model.quantityController.text),
                                       'descripcion':
@@ -279,13 +287,14 @@ class _AddProductPageState extends State<AddProductPage> {
                                     // Verificar si response contiene datos
                                     if (response.isNotEmpty) {
                                       // Limpiar campos
-                                      _model.nameController.clear();
+                                      // _model.nameController.clear();
                                       _model.quantityController.clear();
                                       _model.descriptionController.clear();
                                       _model.harvestDateController.clear();
                                       _model.expirationDateController.clear();
                                       _model.priceController.clear();
                                       setState(() {
+                                        _model.selectedProduct = null;
                                         _model.selectedMaturity = null;
                                         _model.selectedFertilizer = null;
                                       });

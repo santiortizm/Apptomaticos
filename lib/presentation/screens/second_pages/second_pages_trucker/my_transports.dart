@@ -191,13 +191,40 @@ class _MyTransportsState extends State<MyTransports> {
                             if (snapshot.data == null ||
                                 snapshot.data!.isEmpty) {
                               return const Center(
-                                  child: Text(
-                                      'No tienes transportes disponibles.'));
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image(
+                                      image: AssetImage(
+                                          './assets/images/more_icons/no_transports.png'),
+                                      width: 60,
+                                      height: 60,
+                                    ),
+                                    Text('No hay transportes disponibles'),
+                                  ],
+                                ),
+                              );
                             }
 
                             final transports = snapshot.data!
                                 .where((t) => t.estado != 'Finalizado')
                                 .toList();
+                            if (transports.isEmpty) {
+                              return const Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image(
+                                      image: AssetImage(
+                                          './assets/images/more_icons/no_transports.png'),
+                                      width: 60,
+                                      height: 60,
+                                    ),
+                                    Text('No hay transportes disponibles'),
+                                  ],
+                                ),
+                              );
+                            }
                             return RefreshIndicator(
                               onRefresh: _refreshTransports,
                               child: ListView.builder(

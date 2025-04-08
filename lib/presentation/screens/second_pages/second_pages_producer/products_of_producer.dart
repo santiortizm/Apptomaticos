@@ -205,7 +205,33 @@ class _ProductsOfProducerState extends State<ProductsOfProducer> {
                               );
                             }
 
-                            final productos = snapshot.data!;
+                            final productos = snapshot.data!
+                                .where(
+                                  (p) => p.cantidad != 0,
+                                )
+                                .toList();
+                            if (productos.isEmpty) {
+                              return const Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image(
+                                      image: AssetImage(
+                                          './assets/images/more_icons/no_products.png'),
+                                      width: 60,
+                                      height: 60,
+                                    ),
+                                    SizedBox(
+                                      width: 240,
+                                      child: Text(
+                                        'Actualmente no tiene productos publicados. Para comenzar a vender, publique un producto desde la pantalla de inicio.',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
                             return RefreshIndicator(
                               onRefresh: _refreshProducts,
                               child: ListView.builder(

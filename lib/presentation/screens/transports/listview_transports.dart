@@ -95,7 +95,29 @@ class _ListviewTransportsState extends State<ListviewTransports> {
             );
           }
 
-          final transports = snapshot.data!;
+          final transports = snapshot.data!
+              .where(
+                (t) =>
+                    t.estadoCompra != 'Transportando' &&
+                    t.estadoCompra != 'Finalizado',
+              )
+              .toList();
+          if (transports.isEmpty) {
+            return const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image(
+                    image: AssetImage(
+                        './assets/images/more_icons/no_transports.png'),
+                    width: 60,
+                    height: 60,
+                  ),
+                  Text('No hay transportes disponibles'),
+                ],
+              ),
+            );
+          }
           return RefreshIndicator(
             onRefresh: _refreshTransports,
             child: ListView.builder(

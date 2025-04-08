@@ -69,7 +69,7 @@ class _ProfileState extends State<Profile> {
       width: size.width,
       height: size.height,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.7),
+        color: Colors.white.withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(20),
       ),
       child: SingleChildScrollView(
@@ -217,16 +217,20 @@ class _ProfileState extends State<Profile> {
           content: TextField(
             controller: controller,
             decoration: InputDecoration(
-              labelText: 'Nuevo $field',
+              labelText: field,
               border: OutlineInputBorder(),
             ),
           ),
           actions: [
             TextButton(
+              style:
+                  ButtonStyle(foregroundColor: WidgetStatePropertyAll(redApp)),
               onPressed: () => Navigator.pop(dialogContext),
               child: const Text('Cancelar'),
             ),
             ElevatedButton(
+              style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(buttonGreen)),
               onPressed: () async {
                 final user = supabase.auth.currentUser;
                 if (user == null) return;
@@ -245,7 +249,10 @@ class _ProfileState extends State<Profile> {
                   );
                 }
               },
-              child: const Text('Editar'),
+              child: const Text(
+                'Editar',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ],
         );

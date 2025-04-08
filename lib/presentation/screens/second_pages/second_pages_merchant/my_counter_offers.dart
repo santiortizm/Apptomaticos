@@ -124,6 +124,7 @@ class _MyCounterOffersState extends State<MyCounterOffers> {
                         horizontal: size.width * 0.025,
                         vertical: size.height * 0.025),
                     child: Column(
+                      spacing: 12,
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(top: 10, left: 10),
@@ -216,6 +217,21 @@ class _MyCounterOffersState extends State<MyCounterOffers> {
                                       o.estadoOferta != 'En Espera' &&
                                       o.estadoPago != 'Finalizado')
                                   .toList();
+                              if (ofertas.isEmpty) {
+                                return const Center(
+                                    child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image(
+                                      image: AssetImage(
+                                          './assets/images/more_icons/contra_oferta.png'),
+                                      width: 60,
+                                      height: 60,
+                                    ),
+                                    Text('No tienes contra ofertas.'),
+                                  ],
+                                ));
+                              }
                               return RefreshIndicator(
                                 onRefresh: _refreshOffers,
                                 child: ListView.builder(

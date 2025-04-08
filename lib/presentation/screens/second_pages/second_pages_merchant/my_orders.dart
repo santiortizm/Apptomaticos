@@ -128,6 +128,7 @@ class _MyOrdersState extends State<MyOrders> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Column(
+                    spacing: 12,
                     children: [
                       // Botón Atrás
                       Padding(
@@ -218,6 +219,21 @@ class _MyOrdersState extends State<MyOrders> {
                             final orders = snapshot.data!
                                 .where((o) => o.estado != 'Finalizado')
                                 .toList();
+                            if (orders.isEmpty) {
+                              return const Center(
+                                  child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image(
+                                    image: AssetImage(
+                                        './assets/images/more_icons/no_hay_pedidos.png'),
+                                    width: 60,
+                                    height: 60,
+                                  ),
+                                  Text('No hay pedidos realizadas'),
+                                ],
+                              ));
+                            }
                             return RefreshIndicator(
                               onRefresh: _refreshTransports,
                               child: ListView.builder(

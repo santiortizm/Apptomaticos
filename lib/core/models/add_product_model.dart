@@ -16,11 +16,16 @@ class AddProductModel {
 
   String? selectedMaturity;
   String? selectedFertilizer;
-
+  String? selectedProduct;
   // Lista de objetos de ejemplo para los dropdowns
+
   final List<String> maturityOptions = ['Verde', 'Maduro', 'Muy Maduro'];
   final List<String> fertilizerOptions = ['Etileno', 'Sin Etileno'];
-
+  final List<String> productOptions = [
+    'Tomate Chonto',
+    'Tomate Eterei',
+    'Tomate Libertador'
+  ];
   // Método para seleccionar la fecha de cosecha usando el datepicker
   void selectHarvestDate(BuildContext context) async {
     final DateTime? pickedDate = await showDialog<DateTime>(

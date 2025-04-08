@@ -121,6 +121,7 @@ class _CounterOffersProducerState extends State<CounterOffersProducer> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Column(
+                    spacing: 12,
                     children: [
                       // Botón Atrás
                       Padding(
@@ -212,6 +213,21 @@ class _CounterOffersProducerState extends State<CounterOffersProducer> {
                             final ofertas = snapshot.data!
                                 .where((o) => o.estadoOferta != 'Rechazado')
                                 .toList();
+                            if (ofertas.isEmpty) {
+                              return const Center(
+                                  child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image(
+                                    image: AssetImage(
+                                        './assets/images/more_icons/contra_oferta.png'),
+                                    width: 60,
+                                    height: 60,
+                                  ),
+                                  Text('No tienes contra ofertas.'),
+                                ],
+                              ));
+                            }
                             return RefreshIndicator(
                               onRefresh: _refreshOffers,
                               child: ListView.builder(
